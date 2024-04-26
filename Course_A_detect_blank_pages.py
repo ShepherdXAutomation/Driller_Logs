@@ -1,38 +1,52 @@
+import fitz  # PyMuPDF
+from PIL import Image
+import numpy as np
 import os
-import fitz
 
-directory = r"C:\Users\calla\Documents\Shepherd Automation\Shepherd Automation\Code\Natif.AI\Cooke County\logs"
+def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01):
+    """
+    Determine if a page is blank based on the count of truly dark pixels.
+    
+    Parameters:
+    - page: The PDF page object.
+    - dark_threshold: Pixel intensity threshold; pixels darker (less than this value) are considered black.
+    - black_pixel_threshold: Percentage of dark pixels below which a page is considered blank.
+    """
+    # Render page as a pixmap (an image)
+    pix = page.get_pixmap()
+    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    
+    # Convert the image to grayscale
+    gray = img.convert('L')
+    
+    # Apply threshold to turn gray/dark pixels into white and keep only truly dark pixels as black
+    # Any pixel value below 'dark_threshold' is turned black (0), otherwise white (255)
+    bw = gray.point(lambda p: 0 if p < dark_threshold else 255, '1')
+    
+    # Convert to numpy array for analysis
+    np_image = np.array(bw)
+    
+    # Count black pixels (in this '1' image, 0 is black and 1 is white)
+    black_pixels = np.sum(np_image == 0)
+    total_pixels = np_image.size
+    
+    # Calculate black pixel ratio
+    black_pixel_ratio = black_pixels / total_pixels
 
-def is_blank_page(pdf_path, page_number):
-    pdf_document = fitz.open(pdf_path)
-    page = pdf_document[page_number]
-    text = page.get_text("text")
-    return not text.strip()  # Check if the page has no visible text
+    print(f"Black pixels: {black_pixels}")
+    
+    # Consider the page blank if the black pixel ratio is below the black_pixel_threshold
+    return black_pixels < 250
 
-def remove_blank_pages(pdf_path):
-    pdf_document = fitz.open(pdf_path)
-    pages_to_remove = []
 
-    for page_number in range(len(pdf_document)):
-        if is_blank_page(pdf_path, page_number):
-            pages_to_remove.append(page_number)
-
-    # Remove blank pages in reverse order to avoid index issues
-    for page_number in reversed(pages_to_remove):
-        pdf_document.delete_page(page_number)
-
-    # Save the modified PDF
-    pdf_document.save("/path/to/modified/pdf/file.pdf")
-    pdf_document.close()
 
 # Example usage:
-
-
-# first, we loop through the directory of files 
-    # then we loop through the pages in each file deleting the blank ones
+directory = r"C:\Users\calla\Documents\Shepherd Automation\Shepherd Automation\Code\Natif.AI\Driller_Logs\logs"
 for filename in os.listdir(directory):
     pdf_path = os.path.join(directory, filename)
-    pdf_document = fitz.open(pdf_path)
-    for page_number in range(len(pdf_document)):
-        if is_blank_page(pdf_path, page_number):
-            print(f"{pdf_document}:Page {page_number} is blank.")
+    doc = fitz.open(pdf_path)
+    for page_number, page in enumerate(doc, start=1):
+        if is_blank_page_by_pixels(page):
+            print(f"Page {page_number} is considered blank.")
+        else:
+            print(f"Page {page_number} is not blank.")
