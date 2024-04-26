@@ -1,3 +1,7 @@
+# Detect blank page script whitewashes the pdf file, converts it to black and white binary image, then counts the black pixels in each image.
+# If the amount of black pixels is below a threshold, it considers it blank. This has been the most accurate attempt so far.
+# I believe somwhere around 95% accuracy.
+
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
