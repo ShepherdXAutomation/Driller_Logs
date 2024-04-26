@@ -2,7 +2,7 @@ import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
 import os
-
+import pandas as pd
 def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01):
     """
     Determine if a page is blank based on the count of truly dark pixels.
@@ -36,10 +36,8 @@ def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01)
     print(f"Black pixels: {black_pixels}")
     
     # Consider the page blank if the black pixel ratio is below the black_pixel_threshold
-    return black_pixels < 250
-
-
-
+    return black_pixels < 20
+blanks = []
 # Example usage:
 directory = r"C:\Users\calla\Documents\Shepherd Automation\Shepherd Automation\Code\Natif.AI\Driller_Logs\logs"
 for filename in os.listdir(directory):
@@ -47,6 +45,16 @@ for filename in os.listdir(directory):
     doc = fitz.open(pdf_path)
     for page_number, page in enumerate(doc, start=1):
         if is_blank_page_by_pixels(page):
-            print(f"Page {page_number} is considered blank.")
+            print(f"Page {pdf_path} is considered blank.")
+            blanks.append(pdf_path)
         else:
-            print(f"Page {page_number} is not blank.")
+            continue
+for item in blanks:
+    print(item)
+blank_files_log = 'filenames.xlsx'
+if os.path.exists(blank_files_log):
+    os.remove(blank_files_log)
+# Create a DataFrame
+df = pd.DataFrame(blanks, columns=['Filename'])
+# Save to Excel
+df.to_excel('filenames.xlsx', index=False)
