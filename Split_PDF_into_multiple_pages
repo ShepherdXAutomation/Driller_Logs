@@ -1,0 +1,34 @@
+import os
+from PyPDF2 import PdfFileReader, PdfFileWriter
+import os
+from PyPDF2 import PdfFileReader, PdfFileWriter
+
+
+def split_pdf(file_path):
+    # Open the PDF file
+    with open(file_path, 'rb') as file:
+        pdf = PdfFileReader(file)
+        num_pages = pdf.getNumPages()
+
+        # Create a directory to store the individual pages
+        output_dir = os.path.splitext(file_path)[0] + '_pages'
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Split the PDF into individual pages
+        for page_num in range(num_pages):
+            output_pdf = PdfFileWriter()
+            output_pdf.addPage(pdf.getPage(page_num))
+
+            # Save each page as a separate PDF file
+            output_file_path = os.path.join(output_dir, f'page_{page_num + 1}.pdf')
+            with open(output_file_path, 'wb') as output_file:
+                output_pdf.write(output_file)
+
+        print(f'Successfully split the PDF into {num_pages} pages.')
+
+# Loop through a directory and split PDF files into individual pages
+directory_path = '/path/to/your/directory'
+for file_name in os.listdir(directory_path):
+    if file_name.endswith('.pdf'):
+        file_path = os.path.join(directory_path, file_name)
+        split_pdf(file_path)
