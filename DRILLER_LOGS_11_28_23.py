@@ -5,7 +5,7 @@ import requests
 import os
 # CREAT DRILLER LOG OBJECT VIA CLASS
 NATIF_API_BASE_URL = "https://api.natif.ai"
-API_KEY = "6GwQ1Hygy6arOKdaWfbMabz8CCTppmnK"  # TODO: Insert or load your API-key secret here
+API_KEY = ""  # TODO: Insert or load your API-key secret here
 
 class Well:
     def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink):
