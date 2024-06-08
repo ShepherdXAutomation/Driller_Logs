@@ -59,6 +59,6 @@ def split_pdf_by_keywords(pdf_path, keywords, output_dir):
 
 # Usage
 pdf_path = "../Cooke County by Operators DL_C.pdf"
-output_dir = "./split_pdfs"
-keywords = ["bess", "another keyword", "yet another keyword"]
+output_dir = "../split_pdfs"
+keywords = ["Bess Mason Log Service", "Texas Well Log Service"]
 split_pdf_by_keywords(pdf_path, keywords, output_dir)
