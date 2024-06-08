@@ -2,6 +2,7 @@ import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
 import os
+import argparse
 
 def ocr_page(page):
     # Convert PDF page to an image
@@ -57,8 +58,17 @@ def split_pdf_by_keywords(pdf_path, keywords, output_dir):
     pdf_document.close()
     print("Splitting completed successfully.")
 
-# Usage
-pdf_path = "../Cooke County by Operators DL_C.pdf"
-output_dir = "../split_pdfs"
-keywords = ["Bess Mason Log Service", "Texas Well Log Service"]
-split_pdf_by_keywords(pdf_path, keywords, output_dir)
+def main():
+    parser = argparse.ArgumentParser(description="Split PDF by keywords")
+    parser.add_argument("pdf_path", type=str, help="Path to the PDF file")
+    parser.add_argument("--keywords", type=str, nargs="+", default=["Bess Mason Log Service", "Texas Well Log Service", "Panhandle"],
+                        help="Keywords to split the PDF by")
+    parser.add_argument("--output_dir", type=str, default="../split_pdfs",
+                        help="Directory to save the split PDFs")
+
+    args = parser.parse_args()
+
+    split_pdf_by_keywords(args.pdf_path, args.keywords, args.output_dir)
+
+if __name__ == "__main__":
+    main()
