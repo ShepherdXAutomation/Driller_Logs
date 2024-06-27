@@ -3,9 +3,13 @@ import urllib.parse
 import openpyxl
 import requests
 import os
+import sqlite3
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
 # CREAT DRILLER LOG OBJECT VIA CLASS
 NATIF_API_BASE_URL = "https://api.natif.ai"
-API_KEY = ""  # TODO: Insert or load your API-key secret here
+API_KEY = "7G1OxQViCF6KhhAlRHl64p2l8poOCp2s"  # TODO: Insert or load your API-key secret here
 
 class Well:
     def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink):
@@ -22,28 +26,32 @@ class Well:
         self.well_number = well_number
         self.elevation = elevation
         self.hyperlink = hyperlink
+
 def extract(field, result):
-    name = field
     field = result.get("extractions", {}).get(field, {})
     if field is not None:
         return field.get("value")
     else:
         return ""
+
 def check_date(date):
     input_string = date
-    # Check if the string starts with '20'
     if input_string.startswith("20"):
-    # Replace '20' with '19'
         modified_string = "19" + input_string[2:]
         return modified_string
     else:
         return date
+
 def process_via_natif_api(file_path, workflow, language, include):
-    # Encapsulates HTTP calls to the natif.ai processing API
-    headers = {"Accept": "application/json", "Authorization": "ApiKey " + API_KEY}
+    headers = {"Accept": "application/json", "Authorization": f"ApiKey {API_KEY}"}
     params = {"include": include}
     workflow_config = {"language": language}
     url = f"{NATIF_API_BASE_URL}/processing/{workflow}?{urllib.parse.urlencode(params, doseq=True)}"
+    
+    # Debugging information
+    print("URL:", url)
+    print("Headers:", headers)
+    
     with open(file_path, "rb") as file:
         response = requests.post(
             url,
@@ -51,6 +59,10 @@ def process_via_natif_api(file_path, workflow, language, include):
             data={"parameters": json.dumps(workflow_config)},
             files={"file": file},
         )
+        # Debugging information
+        print("Response status code:", response.status_code)
+        print("Response text:", response.text)
+        
         if not response.ok:
             raise Exception(response.text)
         while response.status_code == 202:
@@ -61,51 +73,91 @@ def process_via_natif_api(file_path, workflow, language, include):
             )
             response = requests.get(url, headers=headers)
         return response.json()
+
+def select_directory():
+    root = tk.Tk()
+    root.withdraw()
+    directory = filedialog.askdirectory()
+    return directory
+
+def select_excel_file():
+    root = tk.Tk()
+    root.withdraw()
+    file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")])
+    return file_path
+
+def store_in_database(well):
+    conn = sqlite3.connect('well_data.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.hyperlink))
+    conn.commit()
+    conn.close()
+
 def loop():
-    directory = "./logs/"
-    # Loop through files in the directory
+    directory = select_directory()
+    if not directory:
+        print("No directory selected. Exiting.")
+        return
+    
+    excel_file = select_excel_file()
+    if not excel_file:
+        print("No Excel file selected. Exiting.")
+        return
+    
+    try:
+        workbook = openpyxl.load_workbook(excel_file)
+    except FileNotFoundError:
+        print(f"Excel file '{excel_file}' not found. Exiting.")
+        return
+    worksheet = workbook.active
+
     pdf_files = [file for file in os.listdir(directory) if file.endswith(".pdf")]
-    pdf_files_sorted = sorted(pdf_files, key=lambda x: int(x.split('_Part')[1].split('.')[0]))
+    
+    def extract_part_number(filename):
+        try:
+            return int(filename.split('_')[1])
+        except (IndexError, ValueError):
+            return float('inf')  # Place files without '_<number>' at the end
+    
+    pdf_files_sorted = sorted(pdf_files, key=extract_part_number)
     
     for filename in pdf_files_sorted:
-        file_path = os.path.join(directory, filename)  # Get the full file path
+        file_path = os.path.join(directory, filename)
         print(file_path)
-        relative_path = f"./logs/{filename}"  # Create the relative path
         workflow = "912286fc-dae2-4e29-95a2-e04563a2d667"
-        print(file_path)
         lang = "de"
-        include = ["extractions","ocr"]
+        include = ["extractions", "ocr"]
         result = process_via_natif_api(file_path, workflow, lang, include)
-        build_hyperlink = f'=HYPERLINK("./logs/{filename}", "{filename}")'
+        build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
         print(build_hyperlink)
-        my_well = Well( file_path, log_service=extract("log_service", result), company=extract('company', result), county=extract('county',result), farm=extract('farm', result), commenced_date=extract('commenced', result), completed_date=extract('completed', result), total_depth=extract('total_depth', result), initial_production=extract("intitial_procution",result), location=extract('location', result), well_number=extract('well_number', result), elevation=extract('elevation', result), hyperlink=build_hyperlink)
-        # NEED THIS CODE BECAUSE IT NATIF.AI RETURNS 19** AS 20**. BASICALLY, FOR SOME REASON IT ADDS 100 YEARS. SO WE HAVE TO CHECK FOR THAT ON THE JSON RESPONSE AND ACCOUNT FOR IT.
+        my_well = Well(
+            file_path,
+            log_service=extract("log_service", result),
+            company=extract('company', result),
+            county=extract('county', result),
+            farm=extract('farm', result),
+            commenced_date=extract('commenced', result),
+            completed_date=extract('completed', result),
+            total_depth=extract('total_depth', result),
+            initial_production=extract("initial_production", result),
+            location=extract('location', result),
+            well_number=extract('well_number', result),
+            elevation=extract('elevation', result),
+            hyperlink=build_hyperlink
+        )
         my_well.commenced_date = check_date(my_well.commenced_date)
         my_well.completed_date = check_date(my_well.completed_date)
-        # Load the workbook
-        workbook = openpyxl.load_workbook('my_workbook.xlsx')
-        # Select the worksheet
-        worksheet = workbook.active
-        # Append the object as a single row
+        
+        # Store in the Excel workbook
         row = [my_well.log_service, my_well.company, my_well.county, my_well.farm, my_well.commenced_date, my_well.completed_date, my_well.total_depth, my_well.initial_production, my_well.location, my_well.well_number, my_well.elevation, my_well.hyperlink]
         worksheet.append(row)
-        # Save the workbook
-        workbook.save('my_workbook.xlsx')
+        workbook.save(excel_file)
+        
+        # Store in the SQL database
+        store_in_database(my_well)
 
 if __name__ == "__main__":
-  loop()  
-
-
-
-# PULL THE LOG SERVICE
-# PULL COMPANY
-# PULL COUNTY
-# PULL FARM
-# PULL COMMENCED
-# PULL COMPLETED
-# PULL TOTAL_DEPTH
-# PULL INITIAL_PRODUCTION
-# PULL LOCATION
-# PULL WELL_NUMBER
-# PULL ELEVATION
-# EXPORT EACH OBJECT TO A ROW IN A CSV 
+    loop()
