@@ -3,6 +3,8 @@ import pytesseract
 from PIL import Image
 import os
 import argparse
+import tkinter as tk
+from tkinter import messagebox
 
 def ocr_page(page):
     # Convert PDF page to an image
@@ -57,6 +59,12 @@ def split_pdf_by_keywords(pdf_path, keywords, output_dir):
 
     pdf_document.close()
     print("Splitting completed successfully.")
+
+    # Show completion message with the number of PDFs created
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+    messagebox.showinfo("Completed", f"Splitting completed successfully.\nTotal PDFs created: {split_counter}")
+    root.destroy()
 
 def main():
     parser = argparse.ArgumentParser(description="Split PDF by keywords")
