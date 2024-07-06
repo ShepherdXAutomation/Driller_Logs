@@ -1,13 +1,13 @@
 import json
 import urllib.parse
-import openpyxl
 import requests
 import os
 import sqlite3
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from tkinter.ttk import Progressbar
+import threading
 
-# CREAT DRILLER LOG OBJECT VIA CLASS
 NATIF_API_BASE_URL = "https://api.natif.ai"
 API_KEY = "7G1OxQViCF6KhhAlRHl64p2l8poOCp2s"  # TODO: Insert or load your API-key secret here
 
@@ -48,10 +48,6 @@ def process_via_natif_api(file_path, workflow, language, include):
     workflow_config = {"language": language}
     url = f"{NATIF_API_BASE_URL}/processing/{workflow}?{urllib.parse.urlencode(params, doseq=True)}"
     
-    # Debugging information
-    print("URL:", url)
-    print("Headers:", headers)
-    
     with open(file_path, "rb") as file:
         response = requests.post(
             url,
@@ -59,36 +55,39 @@ def process_via_natif_api(file_path, workflow, language, include):
             data={"parameters": json.dumps(workflow_config)},
             files={"file": file},
         )
-        # Debugging information
-        print("Response status code:", response.status_code)
-        print("Response text:", response.text)
         
         if not response.ok:
             raise Exception(response.text)
         while response.status_code == 202:
             processing_id = response.json()["processing_id"]
-            RESULT_URI = f"${NATIF_API_BASE_URL}/processing/results/{processing_id}?{params}"
-            url = RESULT_URI.format(
-                processing_id=processing_id, params=urllib.parse.urlencode(params)
-            )
-            response = requests.get(url, headers=headers)
+            RESULT_URI = f"{NATIF_API_BASE_URL}/processing/results/{processing_id}?{urllib.parse.urlencode(params)}"
+            response = requests.get(RESULT_URI, headers=headers)
         return response.json()
 
 def select_directory():
-    root = tk.Tk()
-    root.withdraw()
-    directory = filedialog.askdirectory()
+    directory = filedialog.askdirectory(title="Select Directory")
     return directory
-
-def select_excel_file():
-    root = tk.Tk()
-    root.withdraw()
-    file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")])
-    return file_path
 
 def store_in_database(well):
     conn = sqlite3.connect('well_data.db')
     cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS wells (
+            file_name TEXT,
+            log_service TEXT,
+            company TEXT,
+            county TEXT,
+            farm TEXT,
+            commenced_date TEXT,
+            completed_date TEXT,
+            total_depth TEXT,
+            initial_production TEXT,
+            location TEXT,
+            well_number TEXT,
+            elevation TEXT,
+            hyperlink TEXT
+        )
+    ''')
     cursor.execute('''
         INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -96,24 +95,7 @@ def store_in_database(well):
     conn.commit()
     conn.close()
 
-def loop():
-    directory = select_directory()
-    if not directory:
-        print("No directory selected. Exiting.")
-        return
-    
-    excel_file = select_excel_file()
-    if not excel_file:
-        print("No Excel file selected. Exiting.")
-        return
-    
-    try:
-        workbook = openpyxl.load_workbook(excel_file)
-    except FileNotFoundError:
-        print(f"Excel file '{excel_file}' not found. Exiting.")
-        return
-    worksheet = workbook.active
-
+def process_files(directory, progress_label, progress_bar):
     pdf_files = [file for file in os.listdir(directory) if file.endswith(".pdf")]
     
     def extract_part_number(filename):
@@ -123,16 +105,17 @@ def loop():
             return float('inf')  # Place files without '_<number>' at the end
     
     pdf_files_sorted = sorted(pdf_files, key=extract_part_number)
-    
-    for filename in pdf_files_sorted:
+    total_files = len(pdf_files_sorted)
+    progress_bar["maximum"] = total_files
+
+    for idx, filename in enumerate(pdf_files_sorted, 1):
         file_path = os.path.join(directory, filename)
-        print(file_path)
         workflow = "912286fc-dae2-4e29-95a2-e04563a2d667"
         lang = "de"
         include = ["extractions", "ocr"]
         result = process_via_natif_api(file_path, workflow, lang, include)
         build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
-        print(build_hyperlink)
+        
         my_well = Well(
             file_path,
             log_service=extract("log_service", result),
@@ -151,13 +134,37 @@ def loop():
         my_well.commenced_date = check_date(my_well.commenced_date)
         my_well.completed_date = check_date(my_well.completed_date)
         
-        # Store in the Excel workbook
-        row = [my_well.log_service, my_well.company, my_well.county, my_well.farm, my_well.commenced_date, my_well.completed_date, my_well.total_depth, my_well.initial_production, my_well.location, my_well.well_number, my_well.elevation, my_well.hyperlink]
-        worksheet.append(row)
-        workbook.save(excel_file)
-        
         # Store in the SQL database
         store_in_database(my_well)
 
-if __name__ == "__main__":
-    loop()
+        progress_label.config(text=f"Processed {idx}/{total_files} files")
+        progress_bar["value"] = idx
+        root.update_idletasks()
+
+    messagebox.showinfo("Complete", "Processing completed successfully.")
+
+def start_process():
+    directory = select_directory()
+    if not directory:
+        messagebox.showwarning("Warning", "No directory selected. Exiting.")
+        return
+    
+    thread = threading.Thread(target=process_files, args=(directory, progress_label, progress_bar))
+    thread.start()
+
+root = tk.Tk()
+root.title("Natif API PDF Processor")
+
+frame = tk.Frame(root, padx=20, pady=20)
+frame.pack()
+
+run_btn = tk.Button(frame, text="Run", command=start_process)
+run_btn.pack(pady=10)
+
+progress_label = tk.Label(frame, text="Select directories to start.")
+progress_label.pack(pady=10)
+
+progress_bar = Progressbar(frame, length=300, mode='determinate')
+progress_bar.pack(pady=10)
+
+root.mainloop()

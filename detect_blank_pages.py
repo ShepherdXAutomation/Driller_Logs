@@ -1,5 +1,5 @@
 import fitz  # PyMuPDF
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 import os
 import pandas as pd
@@ -16,15 +16,29 @@ def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01)
     - dark_threshold: Pixel intensity threshold; pixels darker (less than this value) are considered black.
     - black_pixel_threshold: Percentage of dark pixels below which a page is considered blank.
     """
+    # Convert PDF page to pixmap
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     
-    gray = img.convert('L')
+    # Calculate the amount to crop (approximately 1 inch on left and right)
+    dpi = 72  # Assume 72 DPI
+    inch = dpi  # 1 inch in pixels
+    left_crop = inch
+    right_crop = inch
     
+    # Crop the image
+    img_cropped = img.crop((left_crop, 0, img.width - right_crop, img.height))
+    
+    # Convert the image to grayscale
+    gray = img_cropped.convert('L')
+    
+    # Apply threshold to turn gray/dark pixels into white and keep only truly dark pixels as black
     bw = gray.point(lambda p: 0 if p < dark_threshold else 255, '1')
     
+    # Convert to numpy array for analysis
     np_image = np.array(bw)
     
+    # Count black pixels (in this '1' image, 0 is black and 1 is white)
     black_pixels = np.sum(np_image == 0)
     total_pixels = np_image.size
     
@@ -32,6 +46,7 @@ def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01)
 
     print(f"Black pixels: {black_pixels}")
     
+    # Consider the page blank if the black pixel ratio is below the black_pixel_threshold
     return black_pixels < 20
 
 def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
