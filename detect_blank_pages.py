@@ -1,5 +1,5 @@
 import fitz  # PyMuPDF
-from PIL import Image, ImageOps
+from PIL import Image
 import numpy as np
 import os
 import pandas as pd
@@ -7,7 +7,36 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar
 
-def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01):
+def convert_tiff_to_pdf(tiff_file_path, pdf_file_path):
+    try:
+        # Open the TIFF file
+        tiff_image = Image.open(tiff_file_path)
+
+        # Ensure the image is in RGB mode
+        if tiff_image.mode != 'RGB':
+            tiff_image = tiff_image.convert('RGB')
+
+        # Save the image as a PDF
+        tiff_image.save(pdf_file_path, 'PDF', resolution=100.0)
+        print(f"Converted {tiff_file_path} to {pdf_file_path}")
+    except Exception as e:
+        print(f"Failed to convert {tiff_file_path}: {e}")
+
+def convert_all_tiffs_in_directory(directory, progress_label, progress_bar):
+    tiff_files = [f for f in os.listdir(directory) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')]
+    total_tiff_files = len(tiff_files)
+    progress_bar["maximum"] = total_tiff_files
+
+    for idx, filename in enumerate(tiff_files, 1):
+        tiff_file_path = os.path.join(directory, filename)
+        pdf_file_path = os.path.join(directory, f"{os.path.splitext(filename)[0]}.pdf")
+        convert_tiff_to_pdf(tiff_file_path, pdf_file_path)
+        
+        progress_label.config(text=f"Converted {idx}/{total_tiff_files} TIFF files to PDF")
+        progress_bar["value"] = idx
+        root.update_idletasks()
+
+def is_blank_page_by_pixels(page, dark_threshold=65, black_pixel_threshold=0.01):
     """
     Determine if a page is blank based on the count of truly dark pixels.
     
@@ -51,7 +80,7 @@ def is_blank_page_by_pixels(page, dark_threshold=50, black_pixel_threshold=0.01)
 
 def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
-    pdf_files = [f for f in os.listdir(input_dir) if f.endswith('.pdf')]
+    pdf_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
     total_files = len(pdf_files)
     progress_bar["maximum"] = total_files
 
@@ -96,11 +125,16 @@ def select_directory():
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        total_files = len([f for f in os.listdir(input_dir) if f.endswith('.pdf')])
-        progress_label.config(text=f"Total PDF files: {total_files}")
+        total_tiff_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')])
+        total_pdf_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')])
+        progress_label.config(text=f"Total TIFF files: {total_tiff_files}, Total PDF files: {total_pdf_files}")
 
 def start_process():
     if input_dir and output_dir:
+        # Convert all TIFF files to PDF
+        convert_all_tiffs_in_directory(input_dir, progress_label, progress_bar)
+        
+        # Remove blank pages from PDF files
         remove_blank_pages(input_dir, output_dir, progress_label, progress_bar)
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
@@ -117,7 +151,7 @@ select_btn.pack(pady=10)
 run_btn = tk.Button(frame, text="Run", command=start_process)
 run_btn.pack(pady=10)
 
-progress_label = tk.Label(frame, text="Total PDF files: 0")
+progress_label = tk.Label(frame, text="Total TIFF files: 0, Total PDF files: 0")
 progress_label.pack(pady=10)
 
 progress_bar = Progressbar(frame, length=300, mode='determinate')
