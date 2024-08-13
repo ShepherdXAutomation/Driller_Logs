@@ -51,38 +51,44 @@ def index():
 @app.route('/serve-file/')
 def serve_file():
     raw_file_path = request.args.get('file_path')
+    
+    # Add debug statements
+    print(f"Debug: Received file_path argument: {raw_file_path}")
+    
     if not raw_file_path:
+        print("Debug: No file_path received, returning 404")
         abort(404)
     
     # Decode URL-encoded characters
     raw_file_path = unquote(raw_file_path)
-    print(f"Raw file path received: {raw_file_path}")
+    print(f"Debug: Decoded file path: {raw_file_path}")
     
     # Extract the correct file path using regex
     match = re.search(r'HYPERLINK\(["\']([^"\']+)["\']', raw_file_path, re.IGNORECASE)
     if match:
         extracted_path = match.group(1)
-        print(f"Extracted file path: {extracted_path}")
+        print(f"Debug: Extracted file path from hyperlink: {extracted_path}")
     else:
-        print("Failed to extract file path from the hyperlink.")
+        print("Debug: Failed to extract file path from the hyperlink, returning 404")
         abort(404)  # If we can't extract the path, return 404
 
     # Normalize the file path to handle different separators
     normalized_path = os.path.normpath(extracted_path)
-    print(f"Normalized file path: {normalized_path}")
+    print(f"Debug: Normalized file path: {normalized_path}")
 
     # Check if the file exists
     if not os.path.isfile(normalized_path):
-        print(f"File does not exist: {normalized_path}")
+        print(f"Debug: File does not exist: {normalized_path}")
         abort(404)
 
     try:
+        print(f"Debug: Serving file: {normalized_path}")
         return send_file(normalized_path, as_attachment=False)
     except Exception as e:
-        print(f"Error serving file: {e}")
+        print(f"Debug: Error serving file: {e}")
         abort(404)
 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True,port=5001)

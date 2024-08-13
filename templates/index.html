@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Well Data Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Well Data Search</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="query">Search Query:</label>
+                <input type="text" class="form-control" id="query" name="query">
+            </div>
+            <div class="form-group">
+                <label for="column">Search Column:</label>
+                <select class="form-control" id="column" name="column">
+                    <option value="file_name">File Name</option>
+                    <option value="log_service">Log Service</option>
+                    <option value="company">Company</option>
+                    <option value="county">County</option>
+                    <option value="farm">Farm</option>
+                    <option value="commenced_date">Commenced Date</option>
+                    <option value="completed_date">Completed Date</option>
+                    <option value="total_depth">Total Depth</option>
+                    <option value="initial_production">Initial Production</option>
+                    <option value="location">Location</option>
+                    <option value="well_number">Well Number</option>
+                    <option value="elevation">Elevation</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>File Name</th>
+                    <th>Log Service</th>
+                    <th>Company</th>
+                    <th>County</th>
+                    <th>Farm</th>
+                    <th>Commenced Date</th>
+                    <th>Completed Date</th>
+                    <th>Total Depth</th>
+                    <th>Initial Production</th>
+                    <th>Location</th>
+                    <th>Well Number</th>
+                    <th>Elevation</th>
+                    <th>Hyperlink</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for well in wells %}
+                <tr>
+                    <td>{{ well.id }}</td>
+                    <td>{{ well.log_service }}</td>
+                    <td>{{ well.company }}</td>
+                    <td>{{ well.county }}</td>
+                    <td>{{ well.farm }}</td>
+                    <td>{{ well.commenced_date }}</td>
+                    <td>{{ well.completed_date }}</td>
+                    <td>{{ well.total_depth }}</td>
+                    <td>{{ well.initial_production }}</td>
+                    <td>{{ well.location }}</td>
+                    <td>{{ well.well_number }}</td>
+                    <td>{{ well.elevation }}</td>
+                    <td>
+                        <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
