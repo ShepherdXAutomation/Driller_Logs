@@ -8,6 +8,8 @@ from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar
 import threading
 
+#Take in input directory, move them to output directory and ensure they have a unique name, upload them to natif, then take the response and store it to SQLite
+
 NATIF_API_BASE_URL = "https://api.natif.ai"
 API_KEY = "7G1OxQViCF6KhhAlRHl64p2l8poOCp2s"  # TODO: Insert or load your API-key secret here
 
