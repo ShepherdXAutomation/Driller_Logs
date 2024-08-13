@@ -3,12 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Well Data Search</title>
+    <title>SER Driller Log Data Search</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px; /* Smaller text size */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            width: 100%;
+        }
+        table {
+            width: 100%; /* Use 100% of the container's width */
+            border-collapse: collapse;
+            table-layout: auto; /* Auto layout for table */
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Ellipsis for overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+        th {
+            background-color: #f2f2f2;
+            position: relative; /* Position relative for resizer */
+        }
+        /* Remove min-width for better responsiveness */
+        .table-container table th, .table-container table td {
+            min-width: 80px; /* Set a minimal width for better readability */
+        }
+        /* Footer styling */
+        .footer {
+            text-align: center;
+            padding: 20px;
+        }
+        .footer img {
+            width: 100px; /* Adjust the size as needed */
+            height: auto;
+        }
+        .footer-text {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>Well Data Search</h1>
+    <div class="container-fluid mt-4 content">
+        <h1>SER Driller Log Data Search</h1>
         <form method="POST">
             <div class="form-group">
                 <label for="query">Search Query:</label>
@@ -17,7 +67,6 @@
             <div class="form-group">
                 <label for="column">Search Column:</label>
                 <select class="form-control" id="column" name="column">
-                    <option value="file_name">File Name</option>
                     <option value="log_service">Log Service</option>
                     <option value="company">Company</option>
                     <option value="county">County</option>
@@ -29,53 +78,61 @@
                     <option value="location">Location</option>
                     <option value="well_number">Well Number</option>
                     <option value="elevation">Elevation</option>
+                    <option value="materials">Materials</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
 
-        <table class="table table-striped mt-4">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>File Name</th>
-                    <th>Log Service</th>
-                    <th>Company</th>
-                    <th>County</th>
-                    <th>Farm</th>
-                    <th>Commenced Date</th>
-                    <th>Completed Date</th>
-                    <th>Total Depth</th>
-                    <th>Initial Production</th>
-                    <th>Location</th>
-                    <th>Well Number</th>
-                    <th>Elevation</th>
-                    <th>Hyperlink</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for well in wells %}
-                <tr>
-                    <td>{{ well.id }}</td>
-                    <td>{{ well.log_service }}</td>
-                    <td>{{ well.company }}</td>
-                    <td>{{ well.county }}</td>
-                    <td>{{ well.farm }}</td>
-                    <td>{{ well.commenced_date }}</td>
-                    <td>{{ well.completed_date }}</td>
-                    <td>{{ well.total_depth }}</td>
-                    <td>{{ well.initial_production }}</td>
-                    <td>{{ well.location }}</td>
-                    <td>{{ well.well_number }}</td>
-                    <td>{{ well.elevation }}</td>
-                    <td>
-                        <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
-                    </td>
-                    
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-container mt-4">
+            <table id="wellTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Log Service</th>
+                        <th>Company</th>
+                        <th>County</th>
+                        <th>Farm</th>
+                        <th>Commenced Date</th>
+                        <th>Completed Date</th>
+                        <th>Total Depth</th>
+                        <th>Initial Production</th>
+                        <th>Location</th>
+                        <th>Well Number</th>
+                        <th>Elevation</th>
+                        <th>Materials</th>
+                        <th>Hyperlink</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for well in wells %}
+                    <tr>
+                        <td>{{ well.log_service }}</td>
+                        <td>{{ well.company }}</td>
+                        <td>{{ well.county }}</td>
+                        <td>{{ well.farm }}</td>
+                        <td>{{ well.commenced_date }}</td>
+                        <td>{{ well.completed_date }}</td>
+                        <td>{{ well.total_depth }}</td>
+                        <td>{{ well.initial_production }}</td>
+                        <td>{{ well.location }}</td>
+                        <td>{{ well.well_number }}</td>
+                        <td>{{ well.elevation }}</td>
+                        <td>{{ well.materials[:30] }}...</td>
+                        <td>
+                            <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</body>
-</html>
+
+   <!-- Footer with Image and Text -->
+<!-- Footer with Image and Text -->
+<!-- Footer with Image and Text -->
+<div class="footer">
+    <div class="footer-text" style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Shepherd Automation LLC">
+</div>
+
