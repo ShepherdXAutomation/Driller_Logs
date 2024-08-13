@@ -9,12 +9,12 @@ from tkinter.ttk import Progressbar
 import threading
 
 #Take in input directory, move them to output directory and ensure they have a unique name, upload them to natif, then take the response and store it to SQLite
-
+#Add option to select model for processing.
 NATIF_API_BASE_URL = "https://api.natif.ai"
 API_KEY = "7G1OxQViCF6KhhAlRHl64p2l8poOCp2s"  # TODO: Insert or load your API-key secret here
 
 class Well:
-    def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink):
+    def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, materials, hyperlink):
         self.file_name = file_name
         self.log_service = log_service
         self.company = company
@@ -27,6 +27,7 @@ class Well:
         self.location = location
         self.well_number = well_number
         self.elevation = elevation
+        self.materials = materials
         self.hyperlink = hyperlink
 
 def extract(field, result):
@@ -87,13 +88,14 @@ def store_in_database(well):
             location TEXT,
             well_number TEXT,
             elevation TEXT,
+            materials TEXT,
             hyperlink TEXT
         )
     ''')
     cursor.execute('''
-        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.hyperlink))
+        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, materials, hyperlink)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.materials, well.hyperlink))
     conn.commit()
     conn.close()
 
@@ -112,7 +114,7 @@ def process_files(directory, progress_label, progress_bar):
 
     for idx, filename in enumerate(pdf_files_sorted, 1):
         file_path = os.path.join(directory, filename)
-        workflow = "912286fc-dae2-4e29-95a2-e04563a2d667"
+        workflow = "cb19bee2-32f3-47f1-bd0f-4579d337883d"
         lang = "de"
         include = ["extractions", "ocr"]
         result = process_via_natif_api(file_path, workflow, lang, include)
@@ -131,6 +133,7 @@ def process_files(directory, progress_label, progress_bar):
             location=extract('location', result),
             well_number=extract('well_number', result),
             elevation=extract('elevation', result),
+            materials=extract('materials', result),
             hyperlink=build_hyperlink
         )
         my_well.commenced_date = check_date(my_well.commenced_date)

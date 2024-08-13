@@ -6,11 +6,11 @@ from sqlalchemy import text
 from urllib.parse import unquote
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/drewc/Driller_Logs-1/Driller_Logs/well_data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/calla/desktop/Driller_Logs/well_data.db'
 db = SQLAlchemy(app)
 
 class Well(db.Model):
-    __tablename__ = 'wells'  # Ensure the table name is correct
+    __tablename__ = 'wells'
 
     id = db.Column(db.Integer, primary_key=True)
     file_name = db.Column(db.String(100))
@@ -25,7 +25,8 @@ class Well(db.Model):
     location = db.Column(db.String(100))
     well_number = db.Column(db.String(100))
     elevation = db.Column(db.String(100))
-    hyperlink = db.Column(db.String(255))  # Increased size in case of longer paths
+    materials = db.Column(db.Text)
+    hyperlink = db.Column(db.String(255))
 
 # Confirm the connection
 with app.app_context():
@@ -41,28 +42,77 @@ def index():
         query = request.form.get('query')
         column = request.form.get('column')
         if query and column:
-            wells = Well.query.filter(getattr(Well, column).like(f'%{query}%')).all()
+            wells = Well.query.with_entities(
+                Well.id,
+                Well.file_name,
+                Well.log_service,
+                Well.company,
+                Well.county,
+                Well.farm,
+                Well.commenced_date,
+                Well.completed_date,
+                Well.total_depth,
+                Well.initial_production,
+                Well.location,
+                Well.well_number,
+                Well.elevation,
+                Well.materials,
+                Well.hyperlink
+            ).filter(getattr(Well, column).like(f'%{query}%')).all()
         else:
-            wells = Well.query.limit(100).all()
+            wells = Well.query.with_entities(
+                Well.id,
+                Well.file_name,
+                Well.log_service,
+                Well.company,
+                Well.county,
+                Well.farm,
+                Well.commenced_date,
+                Well.completed_date,
+                Well.total_depth,
+                Well.initial_production,
+                Well.location,
+                Well.well_number,
+                Well.elevation,
+                Well.materials,
+                Well.hyperlink
+            ).limit(10000).all()
     else:
-        wells = Well.query.limit(100).all()
+        wells = Well.query.with_entities(
+            Well.id,
+            Well.file_name,
+            Well.log_service,
+            Well.company,
+            Well.county,
+            Well.farm,
+            Well.commenced_date,
+            Well.completed_date,
+            Well.total_depth,
+            Well.initial_production,
+            Well.location,
+            Well.well_number,
+            Well.elevation,
+            Well.materials,
+            Well.hyperlink
+        ).limit(10000).all()
+
     return render_template('index.html', wells=wells)
 
 @app.route('/serve-file/')
 def serve_file():
     raw_file_path = request.args.get('file_path')
-    
-    # Add debug statements
+
+    # Debug statements
     print(f"Debug: Received file_path argument: {raw_file_path}")
-    
+
     if not raw_file_path:
         print("Debug: No file_path received, returning 404")
         abort(404)
-    
+
     # Decode URL-encoded characters
     raw_file_path = unquote(raw_file_path)
     print(f"Debug: Decoded file path: {raw_file_path}")
-    
+
     # Extract the correct file path using regex
     match = re.search(r'HYPERLINK\(["\']([^"\']+)["\']', raw_file_path, re.IGNORECASE)
     if match:
@@ -91,4 +141,4 @@ def serve_file():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True,port=5001)
+    app.run(debug=True, port=5001)

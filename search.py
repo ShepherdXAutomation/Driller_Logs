@@ -1,88 +1,120 @@
-import os
+import tkinter as tk
+from tkinter import ttk, messagebox
+import sqlite3
+import webbrowser
 import re
-from flask import Flask, render_template, request, send_file, abort, url_for
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
-from urllib.parse import unquote
+import os
+import ctypes
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/drewc/Driller_Logs-1/Driller_Logs/well_data.db'
-db = SQLAlchemy(app)
+def get_total_records():
+    conn = sqlite3.connect('well_data.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM wells")
+    total = cursor.fetchone()[0]
+    conn.close()
+    return total
 
-class Well(db.Model):
-    __tablename__ = 'wells'  # Ensure the table name is correct
-
-    id = db.Column(db.Integer, primary_key=True)
-    file_name = db.Column(db.String(100))
-    log_service = db.Column(db.String(100))
-    company = db.Column(db.String(100))
-    county = db.Column(db.String(100))
-    farm = db.Column(db.String(100))
-    commenced_date = db.Column(db.String(100))
-    completed_date = db.Column(db.String(100))
-    total_depth = db.Column(db.String(100))
-    initial_production = db.Column(db.String(100))
-    location = db.Column(db.String(100))
-    well_number = db.Column(db.String(100))
-    elevation = db.Column(db.String(100))
-    hyperlink = db.Column(db.String(255))  # Increased size in case of longer paths
-
-# Confirm the connection
-with app.app_context():
-    try:
-        db.session.execute(text('SELECT 1'))
-        print("Successfully connected to the database.")
-    except Exception as e:
-        print(f"Failed to connect to the database: {e}")
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        query = request.form.get('query')
-        column = request.form.get('column')
-        if query and column:
-            wells = Well.query.filter(getattr(Well, column).like(f'%{query}%')).all()
-        else:
-            wells = Well.query.limit(100).all()
+def search_database(query, column):
+    conn = sqlite3.connect('well_data.db')
+    cursor = conn.cursor()
+    if query:
+        sql_query = f"SELECT * FROM wells WHERE {column} LIKE ?"
+        cursor.execute(sql_query, ('%' + query + '%',))
     else:
-        wells = Well.query.limit(100).all()
-    return render_template('index.html', wells=wells)
+        sql_query = "SELECT * FROM wells LIMIT 1000"
+        cursor.execute(sql_query)
+    results = cursor.fetchall()
+    conn.close()
+    return results
 
-@app.route('/serve-file/')
-def serve_file():
-    raw_file_path = request.args.get('file_path')
-    if not raw_file_path:
-        abort(404)
+def on_search():
+    query = search_entry.get()
+    column = column_var.get()
+    results = search_database(query, column)
+    update_treeview(results)
+
+def update_treeview(results):
+    for row in tree.get_children():
+        tree.delete(row)
+    for result in results:
+        tree.insert('', 'end', values=result)
+
+def extract_file_path(hyperlink):
+    match = re.search(r'HYPERLINK\("([^"]+)', hyperlink)
+    return match.group(1) if match else None
+
+def on_item_double_click(event):
+    selected_item = tree.selection()
+    if selected_item:
+        item = tree.item(selected_item)
+        hyperlink = item['values'][-1]  # Assuming the hyperlink is the last column
+        file_path = extract_file_path(hyperlink)
+        if file_path:
+            webbrowser.open(file_path)
+
+def create_gui():
+    global search_entry, column_var, tree, total_records_label
     
-    # Decode URL-encoded characters
-    raw_file_path = unquote(raw_file_path)
-    print(f"Raw file path received: {raw_file_path}")
+    root = tk.Tk()
+    root.title("Well Data Search")
+
+   
+     # Set the taskbar icon using a relative path
+    icon_path = os.path.join(os.path.dirname(__file__), 'assets', 'view.png')
     
-    # Extract the correct file path using regex
-    match = re.search(r'HYPERLINK\(["\']([^"\']+)["\']', raw_file_path, re.IGNORECASE)
-    if match:
-        extracted_path = match.group(1)
-        print(f"Extracted file path: {extracted_path}")
-    else:
-        print("Failed to extract file path from the hyperlink.")
-        abort(404)  # If we can't extract the path, return 404
+    
+    # Change taskbar icon using ctypes
+    app_id = 'mycompany.myproduct.subproduct.version'  # Arbitrary string
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+    hwnd = ctypes.windll.user32.GetActiveWindow()
+    hicon = ctypes.windll.user32.LoadImageW(None, icon_path, 1, 0, 0, 0x00000010)
+    ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, hicon)
+   
+    frame = ttk.Frame(root, padding="10")
+    frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    
+    ttk.Label(frame, text="Search Query:").grid(row=0, column=0, sticky=tk.W)
+    search_entry = ttk.Entry(frame, width=50)
+    search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E))
+    
+    ttk.Label(frame, text="Search Column:").grid(row=1, column=0, sticky=tk.W)
+    column_var = tk.StringVar()
+    column_options = ['file_name', 'log_service', 'company', 'county', 'farm', 'commenced_date', 'completed_date', 'total_depth', 'initial_production', 'location', 'well_number', 'elevation', 'materials']
+    column_menu = ttk.OptionMenu(frame, column_var, column_options[0], *column_options)
+    column_menu.grid(row=1, column=1, sticky=(tk.W, tk.E))
+    
+    search_button = ttk.Button(frame, text="Search", command=on_search)
+    search_button.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E))
+    
+    total_records_label = ttk.Label(frame, text=f"Total Records: {get_total_records()}")
+    total_records_label.grid(row=3, column=0, columnspan=2, sticky=tk.W)
 
-    # Normalize the file path to handle different separators
-    normalized_path = os.path.normpath(extracted_path)
-    print(f"Normalized file path: {normalized_path}")
+    columns = ['id', 'file_name', 'log_service', 'company', 'county', 'farm', 'commenced_date', 'completed_date', 'total_depth', 'initial_production', 'location', 'well_number', 'elevation', 'materials', 'hyperlink']
+    tree = ttk.Treeview(frame, columns=columns, show='headings')
+    for col in columns:
+        tree.heading(col, text=col)
+        tree.column(col, width=100)
+    tree.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-    # Check if the file exists
-    if not os.path.isfile(normalized_path):
-        print(f"File does not exist: {normalized_path}")
-        abort(404)
+    tree.bind('<Double-1>', on_item_double_click)
+    
+    # Add vertical scrollbar
+    vsb = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+    vsb.grid(row=4, column=2, sticky='ns')
+    tree.configure(yscrollcommand=vsb.set)
 
-    try:
-        return send_file(normalized_path, as_attachment=False)
-    except Exception as e:
-        print(f"Error serving file: {e}")
-        abort(404)
+    # Add horizontal scrollbar
+    hsb = ttk.Scrollbar(frame, orient="horizontal", command=tree.xview)
+    hsb.grid(row=5, column=0, columnspan=2, sticky='ew')
+    tree.configure(xscrollcommand=hsb.set)
+
+    # Make the frame expandable
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
+    frame.columnconfigure(1, weight=1)
+    frame.rowconfigure(4, weight=1)
+    
+    root.mainloop()
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+    create_gui()

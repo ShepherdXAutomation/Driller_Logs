@@ -4,7 +4,7 @@ import sqlite3
 conn = sqlite3.connect('well_data.db')
 cursor = conn.cursor()
 
-# Create a table for the well data
+# Create a table for the well data with the Materials column before the Hyperlink column
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS wells (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS wells (
     location TEXT,
     well_number TEXT,
     elevation TEXT,
+    materials TEXT,
     hyperlink TEXT
 )
 ''')

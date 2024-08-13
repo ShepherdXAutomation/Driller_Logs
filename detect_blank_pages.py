@@ -36,7 +36,7 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
         progress_bar["value"] = idx
         root.update_idletasks()
 
-def is_blank_page_by_pixels(page, dark_threshold=65, black_pixel_threshold=0.01):
+def is_blank_page_by_pixels(page, dark_threshold=52, black_pixel_threshold=0.01):
     # Convert PDF page to pixmap
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
