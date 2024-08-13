@@ -22,14 +22,14 @@ def convert_tiff_to_pdf(tiff_file_path, pdf_file_path):
     except Exception as e:
         print(f"Failed to convert {tiff_file_path}: {e}")
 
-def convert_all_tiffs_in_directory(directory, progress_label, progress_bar):
-    tiff_files = [f for f in os.listdir(directory) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')]
+def convert_all_tiffs_in_directory(input_directory, output_directory, progress_label, progress_bar):
+    tiff_files = [f for f in os.listdir(input_directory) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')]
     total_tiff_files = len(tiff_files)
     progress_bar["maximum"] = total_tiff_files
 
     for idx, filename in enumerate(tiff_files, 1):
-        tiff_file_path = os.path.join(directory, filename)
-        pdf_file_path = os.path.join(directory, f"{os.path.splitext(filename)[0]}.pdf")
+        tiff_file_path = os.path.join(input_directory, filename)
+        pdf_file_path = os.path.join(output_directory, f"{os.path.splitext(filename)[0]}.pdf")
         convert_tiff_to_pdf(tiff_file_path, pdf_file_path)
         
         progress_label.config(text=f"Converted {idx}/{total_tiff_files} TIFF files to PDF")
@@ -37,14 +37,6 @@ def convert_all_tiffs_in_directory(directory, progress_label, progress_bar):
         root.update_idletasks()
 
 def is_blank_page_by_pixels(page, dark_threshold=65, black_pixel_threshold=0.01):
-    """
-    Determine if a page is blank based on the count of truly dark pixels.
-    
-    Parameters:
-    - page: The PDF page object.
-    - dark_threshold: Pixel intensity threshold; pixels darker (less than this value) are considered black.
-    - black_pixel_threshold: Percentage of dark pixels below which a page is considered blank.
-    """
     # Convert PDF page to pixmap
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
@@ -129,18 +121,20 @@ def select_directory():
         total_pdf_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')])
         progress_label.config(text=f"Total TIFF files: {total_tiff_files}, Total PDF files: {total_pdf_files}")
 
-def start_process():
+def start_convert():
     if input_dir and output_dir:
-        # Convert all TIFF files to PDF
-        convert_all_tiffs_in_directory(input_dir, progress_label, progress_bar)
-        
-        # Remove blank pages from PDF files
+        convert_all_tiffs_in_directory(input_dir, output_dir, progress_label, progress_bar)
+    else:
+        messagebox.showwarning("Warning", "Please select both input and output directories first.")
+
+def start_remove_blanks():
+    if input_dir and output_dir:
         remove_blank_pages(input_dir, output_dir, progress_label, progress_bar)
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
 root = tk.Tk()
-root.title("PDF Blank Page Remover")
+root.title("TIFF to PDF Converter and PDF Blank Page Remover")
 
 frame = tk.Frame(root, padx=20, pady=20)
 frame.pack()
@@ -148,8 +142,11 @@ frame.pack()
 select_btn = tk.Button(frame, text="Select Directories", command=select_directory)
 select_btn.pack(pady=10)
 
-run_btn = tk.Button(frame, text="Run", command=start_process)
-run_btn.pack(pady=10)
+convert_btn = tk.Button(frame, text="Convert TIFFs to PDFs", command=start_convert)
+convert_btn.pack(pady=10)
+
+remove_blanks_btn = tk.Button(frame, text="Remove Blank Pages from PDFs", command=start_remove_blanks)
+remove_blanks_btn.pack(pady=10)
 
 progress_label = tk.Label(frame, text="Total TIFF files: 0, Total PDF files: 0")
 progress_label.pack(pady=10)
