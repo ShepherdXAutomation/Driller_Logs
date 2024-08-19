@@ -7,6 +7,18 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar
 
+# Function to generate a unique file name in the output directory
+def generate_unique_filename(output_directory, base_filename, extension):
+    counter = 1
+    unique_filename = f"{base_filename}{extension}"
+    
+    while os.path.exists(os.path.join(output_directory, unique_filename)):
+        unique_filename = f"{base_filename}_{counter}{extension}"
+        counter += 1
+        
+    return unique_filename
+
+# Convert TIFF to PDF ensuring the file name is unique
 def convert_tiff_to_pdf(tiff_file_path, pdf_file_path):
     try:
         # Open the TIFF file
@@ -22,6 +34,7 @@ def convert_tiff_to_pdf(tiff_file_path, pdf_file_path):
     except Exception as e:
         print(f"Failed to convert {tiff_file_path}: {e}")
 
+# Convert all TIFF files in the directory
 def convert_all_tiffs_in_directory(input_directory, output_directory, progress_label, progress_bar):
     tiff_files = [f for f in os.listdir(input_directory) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')]
     total_tiff_files = len(tiff_files)
@@ -29,8 +42,9 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
 
     for idx, filename in enumerate(tiff_files, 1):
         tiff_file_path = os.path.join(input_directory, filename)
-        pdf_file_path = os.path.join(output_directory, f"{os.path.splitext(filename)[0]}.pdf")
-        convert_tiff_to_pdf(tiff_file_path, pdf_file_path)
+        base_filename = os.path.splitext(filename)[0]
+        unique_pdf_file_path = os.path.join(output_directory, generate_unique_filename(output_directory, base_filename, ".pdf"))
+        convert_tiff_to_pdf(tiff_file_path, unique_pdf_file_path)
         
         progress_label.config(text=f"Converted {idx}/{total_tiff_files} TIFF files to PDF")
         progress_bar["value"] = idx
@@ -78,7 +92,7 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
 
     for idx, filename in enumerate(pdf_files, 1):
         input_path = os.path.join(input_dir, filename)
-        output_path = os.path.join(output_dir, filename)
+        unique_output_path = os.path.join(output_dir, generate_unique_filename(output_dir, os.path.splitext(filename)[0], ".pdf"))
         pdf_document = fitz.open(input_path)
         pages_to_remove = []
 
@@ -91,7 +105,7 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
             pdf_document.delete_page(page_number)
 
         if len(pdf_document) > 0:
-            pdf_document.save(output_path)
+            pdf_document.save(unique_output_path)
         pdf_document.close()
 
         progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
