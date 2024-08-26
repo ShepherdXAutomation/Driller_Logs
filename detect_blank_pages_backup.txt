@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from tkinter.ttk import Progressbar, Label, Scale
+from tkinter.ttk import Progressbar
 
 # Function to generate a unique file name in the output directory
 def generate_unique_filename(output_directory, base_filename, extension):
@@ -50,8 +50,7 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
         progress_bar["value"] = idx
         root.update_idletasks()
 
-# Determine if a page is blank based on pixel analysis
-def is_blank_page_by_pixels(page, dark_threshold=52):
+def is_blank_page_by_pixels(page, dark_threshold=52, black_pixel_threshold=0.01):
     # Convert PDF page to pixmap
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
@@ -82,8 +81,8 @@ def is_blank_page_by_pixels(page, dark_threshold=52):
 
     print(f"Black pixels: {black_pixels}")
     
-    # Consider the page blank if the black pixel ratio is below a fixed threshold
-    return black_pixel_ratio < 0.01  # Fixed threshold for black pixel ratio
+    # Consider the page blank if the black pixel ratio is below the black_pixel_threshold
+    return black_pixels < 20
 
 def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
@@ -98,7 +97,7 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
         pages_to_remove = []
 
         for page_number in range(len(pdf_document)):
-            if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
+            if is_blank_page_by_pixels(pdf_document[page_number]):
                 pages_to_remove.append(page_number)
                 blanks.append(f"{input_path} - Page {page_number + 1}")
 
@@ -162,11 +161,6 @@ convert_btn.pack(pady=10)
 
 remove_blanks_btn = tk.Button(frame, text="Remove Blank Pages from PDFs", command=start_remove_blanks)
 remove_blanks_btn.pack(pady=10)
-
-# Add slider for adjusting pixel darkness threshold
-dark_threshold_slider = tk.Scale(frame, from_=0, to=255, orient=tk.HORIZONTAL, label="Pixel Darkness")
-dark_threshold_slider.set(52)  # Default value
-dark_threshold_slider.pack(pady=10)
 
 progress_label = tk.Label(frame, text="Total TIFF files: 0, Total PDF files: 0")
 progress_label.pack(pady=10)

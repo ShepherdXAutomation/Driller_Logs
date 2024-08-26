@@ -18,7 +18,10 @@ def split_pdf_by_keywords(pdf_path, keywords, output_dir):
     # Open the PDF file
     pdf_document = fitz.open(pdf_path)
     keywords = [keyword.lower() for keyword in keywords]
-    
+
+    # Extract the original file name without the extension
+    original_file_name = os.path.splitext(os.path.basename(pdf_path))[0]
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -35,9 +38,9 @@ def split_pdf_by_keywords(pdf_path, keywords, output_dir):
             print(f"Page {page_num + 1} Text:\n{text}\n{'-'*40}")
 
         if any(keyword in text for keyword in keywords):
-            # Save the split PDF
+            # Save the split PDF with original file name and counter
             if page_num > split_start_page:
-                split_pdf_path = os.path.join(output_dir, f'split_{split_counter}.pdf')
+                split_pdf_path = os.path.join(output_dir, f'{original_file_name}_{split_counter}.pdf')
                 split_doc = fitz.open()  # Create a new PDF document
                 for split_page_num in range(split_start_page, page_num):
                     split_doc.insert_pdf(pdf_document, from_page=split_page_num, to_page=split_page_num)
@@ -50,7 +53,7 @@ def split_pdf_by_keywords(pdf_path, keywords, output_dir):
     
     # Save the last split
     if split_start_page < len(pdf_document):
-        split_pdf_path = os.path.join(output_dir, f'split_{split_counter}.pdf')
+        split_pdf_path = os.path.join(output_dir, f'{original_file_name}_{split_counter}.pdf')
         split_doc = fitz.open()  # Create a new PDF document
         for split_page_num in range(split_start_page, len(pdf_document)):
             split_doc.insert_pdf(pdf_document, from_page=split_page_num, to_page=split_page_num)
@@ -76,7 +79,13 @@ def main():
 
     args = parser.parse_args()
 
-    split_pdf_by_keywords(args.pdf_path, args.keywords, args.output_dir)
+    try:
+        split_pdf_by_keywords(args.pdf_path, args.keywords, args.output_dir)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        # Ensure the script terminates completely if management.py ends
+        os._exit(0)
 
 if __name__ == "__main__":
     main()

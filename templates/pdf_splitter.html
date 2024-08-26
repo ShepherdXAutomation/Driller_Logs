@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Splitter</title>
+</head>
+<body>
+    <h1>PDF Splitter</h1>
+    <form method="post" enctype="multipart/form-data">
+        <label for="file">Select PDF file:</label>
+        <input type="file" name="file" id="file" required><br><br>
+        
+        <label for="keywords">Enter keywords to split by (comma-separated):</label>
+        <input type="text" name="keywords" id="keywords"><br><br>
+
+        <label for="output_dir">Select Output Directory:</label>
+        <input type="text" name="output_dir" id="output_dir" required placeholder="Enter or paste output directory path"><br><br>
+
+        <label for="manual_mode">Enable Manual Mode:</label>
+        <input type="checkbox" name="manual_mode" id="manual_mode"><br><br>
+
+        <button type="submit">Start Processing</button>
+    </form>
+</body>
+</html>

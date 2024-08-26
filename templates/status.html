@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Status</title>
+</head>
+<body>
+    <h1>Processing...</h1>
+    <p>{{ 'Processing' if processing else 'Completed' }}</p>
+
+    {% if processing %}
+        <form method="post">
+            <button type="submit">Cancel</button>
+        </form>
+    {% else %}
+        <p>Download the processed files from the output folder.</p>
+    {% endif %}
+</body>
+</html>
