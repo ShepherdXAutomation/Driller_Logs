@@ -33,6 +33,11 @@ class PDFViewer:
         self.next_button = Button(master, text="Next >", command=self.show_next_pdf, state='disabled')
         self.next_button.pack(side='right', padx=20)
 
+        # Bind arrow keys and 'd' key for delete
+        master.bind('<Left>', lambda event: self.show_previous_pdf())
+        master.bind('<Right>', lambda event: self.show_next_pdf())
+        master.bind('<d>', lambda event: self.delete_pdf())
+
     def select_folder(self):
         folder_path = filedialog.askdirectory()
         if folder_path:
