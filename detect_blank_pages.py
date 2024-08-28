@@ -1,3 +1,4 @@
+import threading
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
@@ -138,13 +139,13 @@ def select_directory():
 
 def start_convert():
     if input_dir and output_dir:
-        convert_all_tiffs_in_directory(input_dir, output_dir, progress_label, progress_bar)
+        threading.Thread(target=convert_all_tiffs_in_directory, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
 def start_remove_blanks():
     if input_dir and output_dir:
-        remove_blank_pages(input_dir, output_dir, progress_label, progress_bar)
+        threading.Thread(target=remove_blank_pages, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
