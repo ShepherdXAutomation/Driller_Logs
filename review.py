@@ -24,14 +24,35 @@ class PDFViewer:
         self.canvas = Canvas(master)
         self.canvas.pack()
 
+        # Navigation buttons
         self.prev_button = Button(master, text="< Previous", command=self.show_previous_pdf, state='disabled')
-        self.prev_button.pack(side='left', padx=20)
-
-        self.delete_button = Button(master, text="Delete PDF", command=self.delete_pdf, state='disabled')
-        self.delete_button.pack(side='left', padx=20)
+        self.prev_button.pack(side='left', padx=5)
 
         self.next_button = Button(master, text="Next >", command=self.show_next_pdf, state='disabled')
-        self.next_button.pack(side='right', padx=20)
+        self.next_button.pack(side='right', padx=5)
+
+        # Buttons to skip forward/backward by 10, 20, 50 logs
+        self.skip_back_10 = Button(master, text="<< 10", command=lambda: self.skip_pdfs(-10), state='disabled')
+        self.skip_back_10.pack(side='left', padx=5)
+
+        self.skip_back_20 = Button(master, text="<< 20", command=lambda: self.skip_pdfs(-20), state='disabled')
+        self.skip_back_20.pack(side='left', padx=5)
+
+        self.skip_back_50 = Button(master, text="<< 50", command=lambda: self.skip_pdfs(-50), state='disabled')
+        self.skip_back_50.pack(side='left', padx=5)
+
+        self.skip_forward_10 = Button(master, text="10 >>", command=lambda: self.skip_pdfs(10), state='disabled')
+        self.skip_forward_10.pack(side='right', padx=5)
+
+        self.skip_forward_20 = Button(master, text="20 >>", command=lambda: self.skip_pdfs(20), state='disabled')
+        self.skip_forward_20.pack(side='right', padx=5)
+
+        self.skip_forward_50 = Button(master, text="50 >>", command=lambda: self.skip_pdfs(50), state='disabled')
+        self.skip_forward_50.pack(side='right', padx=5)
+
+        # Delete button
+        self.delete_button = Button(master, text="Delete PDF", command=self.delete_pdf, state='disabled')
+        self.delete_button.pack(pady=10)
 
         # Bind arrow keys and 'd' key for delete
         master.bind('<Left>', lambda event: self.show_previous_pdf())
@@ -79,6 +100,13 @@ class PDFViewer:
             self.load_pdf()
             self.update_buttons()
 
+    def skip_pdfs(self, offset):
+        new_index = self.current_pdf + offset
+        if 0 <= new_index < len(self.pdf_files):
+            self.current_pdf = new_index
+            self.load_pdf()
+            self.update_buttons()
+
     def delete_pdf(self):
         if self.pdf_document:
             self.pdf_document.close()
@@ -99,6 +127,14 @@ class PDFViewer:
         self.prev_button.config(state='normal' if self.current_pdf > 0 else 'disabled')
         self.next_button.config(state='normal' if self.current_pdf < len(self.pdf_files) - 1 else 'disabled')
         self.delete_button.config(state='normal' if self.pdf_files else 'disabled')
+
+        # Enable/disable skip buttons based on the current PDF index
+        self.skip_back_10.config(state='normal' if self.current_pdf >= 10 else 'disabled')
+        self.skip_back_20.config(state='normal' if self.current_pdf >= 20 else 'disabled')
+        self.skip_back_50.config(state='normal' if self.current_pdf >= 50 else 'disabled')
+        self.skip_forward_10.config(state='normal' if self.current_pdf <= len(self.pdf_files) - 11 else 'disabled')
+        self.skip_forward_20.config(state='normal' if self.current_pdf <= len(self.pdf_files) - 21 else 'disabled')
+        self.skip_forward_50.config(state='normal' if self.current_pdf <= len(self.pdf_files) - 51 else 'disabled')
 
 if __name__ == "__main__":
     root = Tk()
