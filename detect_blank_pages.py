@@ -255,9 +255,11 @@ cancel_btn = tk.Button(frame, text="Cancel", command=cancel_operation)  # Cancel
 cancel_btn.pack(pady=10)
 
 # Add slider for adjusting pixel darkness threshold
-dark_threshold_slider = tk.Scale(frame, from_=50, to=95, orient=tk.HORIZONTAL, label="Sensitivity (Inverse - Lower sensitivity removes more pages.)")
+dark_threshold_slider = tk.Scale(frame, from_=50, to=95, orient=tk.HORIZONTAL, label="Sensitivity")
 dark_threshold_slider.set(52)  # Default value
 dark_threshold_slider.pack(pady=10)
+slider_label = tk.Label(frame, text="Inverse - Lower sensitivity removes more pages.")
+slider_label.pack(pady=10)
 
 progress_label = tk.Label(frame, text="Total TIFF files: 0, Total PDF files: 0")
 progress_label.pack(pady=10)
