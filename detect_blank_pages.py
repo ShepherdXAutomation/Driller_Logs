@@ -1,4 +1,5 @@
 import threading
+import shutil
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
@@ -7,6 +8,9 @@ import pandas as pd
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar, Label, Scale
+
+# Global event to signal cancelation
+cancel_event = threading.Event()
 
 # Function to generate a unique file name in the output directory
 def generate_unique_filename(output_directory, base_filename, extension):
@@ -42,6 +46,10 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
     progress_bar["maximum"] = total_tiff_files
 
     for idx, filename in enumerate(tiff_files, 1):
+        if cancel_event.is_set():
+            progress_label.config(text="Operation canceled.")
+            break
+
         tiff_file_path = os.path.join(input_directory, filename)
         base_filename = os.path.splitext(filename)[0]
         unique_pdf_file_path = os.path.join(output_directory, generate_unique_filename(output_directory, base_filename, ".pdf"))
@@ -66,10 +74,63 @@ def is_blank_page_by_pixels(page, dark_threshold=52):
     black_pixels = np.sum(np_image == 0)
     total_pixels = np_image.size
     black_pixel_ratio = black_pixels / total_pixels
-    print(f"Black pixels: {black_pixels}")
-    return black_pixel_ratio < 0.01
+    print(f"Page has {black_pixel_ratio:.2%} black pixels.")  # Debug output
+    return black_pixel_ratio < 0.01  # Adjust this threshold as needed
 
 def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
+    blanks = []
+    pdf_files = [f for f in os.listdir(output_dir) if f.lower().endswith('.pdf')]
+    total_files = len(pdf_files)
+    progress_bar["maximum"] = total_files
+
+    for idx, filename in enumerate(pdf_files, 1):
+        if cancel_event.is_set():
+            progress_label.config(text="Operation canceled.")
+            break
+
+        file_path = os.path.join(output_dir, filename)
+        print(f"Processing file: {file_path}")  # Debug output
+
+        pdf_document = fitz.open(file_path)
+        pages_to_remove = []
+
+        for page_number in range(len(pdf_document)):
+            print(f"Checking page {page_number + 1}/{len(pdf_document)}")  # Debug output
+            if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
+                pages_to_remove.append(page_number)
+                blanks.append(f"{file_path} - Page {page_number + 1}")
+                print(f"Page {page_number + 1} marked for removal.")  # Debug output
+
+        if pages_to_remove:
+            print(f"Removing {len(pages_to_remove)} pages.")  # Debug output
+            for page_number in reversed(pages_to_remove):
+                pdf_document.delete_page(page_number)
+
+            # Save to a temporary file
+            temp_file_path = os.path.join(output_dir, f"temp_{filename}")
+            pdf_document.save(temp_file_path)
+            pdf_document.close()
+
+            # Replace original file with the updated file
+            os.replace(temp_file_path, file_path)
+        else:
+            pdf_document.close()
+
+        progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
+        progress_bar["value"] = idx
+        root.update_idletasks()
+
+    if not cancel_event.is_set():
+        messagebox.showinfo("Complete", "Detection and removal of blank pages completed successfully.")
+    
+    blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
+    if os.path.exists(blank_files_log):
+        os.remove(blank_files_log)
+    
+    df = pd.DataFrame(blanks, columns=['Filename'])
+    df.to_excel(blank_files_log, index=False)
+
+def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
     pdf_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
     total_files = len(pdf_files)
@@ -117,35 +178,54 @@ def select_directory():
             os.makedirs(output_dir)
 
         total_tiff_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')])
-        total_pdf_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')])
+        total_pdf_files = len([f for f in os.listdir(output_dir) if f.lower().endswith('.pdf')])
         progress_label.config(text=f"Total TIFF files: {total_tiff_files}, Total PDF files: {total_pdf_files}")
         input_dir_label.config(text=f"Input: {input_dir}")
         output_dir_label.config(text=f"Output: {output_dir}")  # Update output directory label
 
 def start_convert():
     if input_dir and output_dir:
+        cancel_event.clear()  # Clear the cancel event
         threading.Thread(target=convert_all_tiffs_in_directory, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
 def start_remove_blanks():
     if input_dir and output_dir:
+        cancel_event.clear()  # Clear the cancel event
         threading.Thread(target=remove_blank_pages, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
 def start_convert_and_remove_blanks():
     if input_dir and output_dir:
+        cancel_event.clear()  # Clear the cancel event
         threading.Thread(target=convert_and_remove_blanks, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
 def convert_and_remove_blanks(input_dir, output_dir, progress_label, progress_bar):
     # Step 1: Convert all TIFF files to PDFs
-    convert_all_tiffs_in_directory(input_dir, output_dir, progress_label, progress_bar)
+    temp_dir = os.path.join(output_dir, "temp")
+    # Create the "temp" directory if it doesn't exist
+    os.makedirs(temp_dir, exist_ok=True)
+    convert_all_tiffs_in_directory(input_dir, temp_dir, progress_label, progress_bar)
+   
 
     # Step 2: Remove blank pages from the generated PDFs
-    remove_blank_pages(input_dir, output_dir, progress_label, progress_bar)
+    remove_blank_pages2(temp_dir, output_dir, progress_label, progress_bar)
+    shutil.rmtree(temp_dir)
+
+
+
+def cancel_operation():
+    cancel_event.set()  # Signal the cancel event
+
+def start_remove_blanks2():
+    if input_dir and output_dir:
+        threading.Thread(target=remove_blank_pages2, args=(input_dir, output_dir, progress_label, progress_bar)).start()
+    else:
+        messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
 root = tk.Tk()
 root.title("TIFF to PDF Converter and PDF Blank Page Remover")
@@ -165,14 +245,17 @@ select_btn.pack(pady=10)
 convert_btn = tk.Button(frame, text="Convert TIFFs to PDFs", command=start_convert)
 convert_btn.pack(pady=10)
 
-remove_blanks_btn = tk.Button(frame, text="Remove Blank Pages from PDFs", command=start_remove_blanks)
+remove_blanks_btn = tk.Button(frame, text="Remove Blank Pages from PDFs", command=start_remove_blanks2)
 remove_blanks_btn.pack(pady=10)
 
 convert_and_remove_btn = tk.Button(frame, text="Convert and Remove Blank Pages", command=start_convert_and_remove_blanks)
 convert_and_remove_btn.pack(pady=10)
 
+cancel_btn = tk.Button(frame, text="Cancel", command=cancel_operation)  # Cancel button
+cancel_btn.pack(pady=10)
+
 # Add slider for adjusting pixel darkness threshold
-dark_threshold_slider = tk.Scale(frame, from_=0, to=255, orient=tk.HORIZONTAL, label="Pixel Darkness")
+dark_threshold_slider = tk.Scale(frame, from_=50, to=70, orient=tk.HORIZONTAL, label="Pixel Darkness")
 dark_threshold_slider.set(52)  # Default value
 dark_threshold_slider.pack(pady=10)
 
