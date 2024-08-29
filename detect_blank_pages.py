@@ -53,38 +53,21 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
 
 # Determine if a page is blank based on pixel analysis
 def is_blank_page_by_pixels(page, dark_threshold=52):
-    # Convert PDF page to pixmap
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    
-    # Calculate the amount to crop (approximately 1 inch on left and right)
-    dpi = 72  # Assume 72 DPI
-    inch = dpi  # 1 inch in pixels
+    dpi = 72  
+    inch = dpi  
     left_crop = inch
     right_crop = inch
-    
-    # Crop the image
     img_cropped = img.crop((left_crop, 0, img.width - right_crop, img.height))
-    
-    # Convert the image to grayscale
     gray = img_cropped.convert('L')
-    
-    # Apply threshold to turn gray/dark pixels into white and keep only truly dark pixels as black
     bw = gray.point(lambda p: 0 if p < dark_threshold else 255, '1')
-    
-    # Convert to numpy array for analysis
     np_image = np.array(bw)
-    
-    # Count black pixels (in this '1' image, 0 is black and 1 is white)
     black_pixels = np.sum(np_image == 0)
     total_pixels = np_image.size
-    
     black_pixel_ratio = black_pixels / total_pixels
-
     print(f"Black pixels: {black_pixels}")
-    
-    # Consider the page blank if the black pixel ratio is below a fixed threshold
-    return black_pixel_ratio < 0.01  # Fixed threshold for black pixel ratio
+    return black_pixel_ratio < 0.01
 
 def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
@@ -151,6 +134,19 @@ def start_remove_blanks():
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories first.")
 
+def start_convert_and_remove_blanks():
+    if input_dir and output_dir:
+        threading.Thread(target=convert_and_remove_blanks, args=(input_dir, output_dir, progress_label, progress_bar)).start()
+    else:
+        messagebox.showwarning("Warning", "Please select both input and output directories first.")
+
+def convert_and_remove_blanks(input_dir, output_dir, progress_label, progress_bar):
+    # Step 1: Convert all TIFF files to PDFs
+    convert_all_tiffs_in_directory(input_dir, output_dir, progress_label, progress_bar)
+
+    # Step 2: Remove blank pages from the generated PDFs
+    remove_blank_pages(input_dir, output_dir, progress_label, progress_bar)
+
 root = tk.Tk()
 root.title("TIFF to PDF Converter and PDF Blank Page Remover")
 
@@ -171,6 +167,9 @@ convert_btn.pack(pady=10)
 
 remove_blanks_btn = tk.Button(frame, text="Remove Blank Pages from PDFs", command=start_remove_blanks)
 remove_blanks_btn.pack(pady=10)
+
+convert_and_remove_btn = tk.Button(frame, text="Convert and Remove Blank Pages", command=start_convert_and_remove_blanks)
+convert_and_remove_btn.pack(pady=10)
 
 # Add slider for adjusting pixel darkness threshold
 dark_threshold_slider = tk.Scale(frame, from_=0, to=255, orient=tk.HORIZONTAL, label="Pixel Darkness")
