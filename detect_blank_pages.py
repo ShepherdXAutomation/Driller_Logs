@@ -136,6 +136,8 @@ def select_directory():
         total_tiff_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')])
         total_pdf_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')])
         progress_label.config(text=f"Total TIFF files: {total_tiff_files}, Total PDF files: {total_pdf_files}")
+        input_dir_label.config(text=f"Input: {input_dir}")
+        output_dir_label.config(text=f"Output: {output_dir}")  # Update output directory label
 
 def start_convert():
     if input_dir and output_dir:
@@ -154,6 +156,12 @@ root.title("TIFF to PDF Converter and PDF Blank Page Remover")
 
 frame = tk.Frame(root, padx=20, pady=20)
 frame.pack()
+
+input_dir_label = tk.Label(frame, text="Input: None")
+input_dir_label.pack(pady=10)
+
+output_dir_label = tk.Label(frame, text="Output: None")  # Label for output directory
+output_dir_label.pack(pady=10)
 
 select_btn = tk.Button(frame, text="Select Directories", command=select_directory)
 select_btn.pack(pady=10)

@@ -9,7 +9,7 @@
         /* Your Custom CSS for Buttons and Title */
         .type--A {
             --line_color: #555555;
-            --back_color: #98cfa58e;
+            --back_color: #FFFFFF;
         }
         .type--B {
             --line_color: #1b1919;
@@ -20,36 +20,60 @@
             --back_color: #DEFFFA;
         }
         .button {
-            position: relative;
-            z-index: 0;
-            width: 240px;
-            height: 56px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--line_color);
-            letter-spacing: 2px;
-            transition: all .3s ease;
-            display: inline-block; /* Ensure button is not stretched */
-        }
-        .button__text {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-        .button::before,
-        .button::after,
-        .button__text::before,
-        .button__text::after {
-            content: '';
-            position: absolute;
-            height: 3px;
-            border-radius: 2px;
-            background: var(--line_color);
-            transition: all .5s ease;
-        }
+    position: relative;
+    z-index: 0;
+    width: 240px;
+    height: 56px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    transition: all .3s ease;
+    display: inline-block; /* Ensure button is not stretched */
+    outline: none; /* Remove default outline */
+    border: none; /* Remove any borders */
+    box-shadow: none; /* Remove any box shadow */
+    background-color: var(--back_color); /* Ensure background is set */
+    border-radius: 28px; /* Ensure it's an oval */
+}
+
+.button__text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    box-shadow: none;
+}
+
+.button::before,
+.button::after,
+.button__text::before,
+.button__text::after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--line_color);
+    transition: all .5s ease;
+    outline: none;
+    box-shadow: none;
+}
+
+.button:hover {
+    letter-spacing: 6px;
+    border: none; /* Ensure no border on hover */
+    box-shadow: none; /* Remove any box shadow on hover */
+}
+
+/* Specific focus and hover states */
+.button:focus,
+.button:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
         .button::before {
             top: 0;
             left: 54px;
@@ -250,6 +274,16 @@
             }
         }
 
+        /* Remove any extra outlines */
+        .button:focus,
+        .button__text:focus,
+        button:focus,
+        button:hover,
+        button[type="submit"]:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
         /* Style for Page Title */
         .page-title {
             font-family: Arial, sans-serif;
@@ -281,44 +315,96 @@
     </style>
 </head>
 <body>
+    <!-- Your content here -->
+</body>
+</html>
+
+</head>
+<body>
     <div class="container-fluid mt-4 content">
-        <h1 class="page-title">SER Driller Log Data Search</h1> <!-- Apply the page-title class here -->
-        <form method="POST">
-            <div class="form-group">
-                <label for="query">Search Query:</label>
-                <input type="text" class="form-control" id="query" name="query">
-            </div>
-            <div class="form-group">
-                <label for="column">Search Column:</label>
-                <select class="form-control" id="column" name="column">
-                    <option value="log_service">Log Service</option>
-                    <option value="company">Company</option>
-                    <option value="county">County</option>
-                    <option value="farm">Farm</option>
-                    <option value="commenced_date">Commenced Date</option>
-                    <option value="completed_date">Completed Date</option>
-                    <option value="total_depth">Total Depth</option>
-                    <option value="initial_production">Initial Production</option>
-                    <option value="location">Location</option>
-                    <option value="well_number">Well Number</option>
-                    <option value="elevation">Elevation</option>
-                    <option value="materials">Materials</option>
-                </select>
-            </div>
-            <!-- Custom button aligned to the left -->
-            <a href="#" class="button type--A">
-                <div class="button__line"></div>
-                <div class="button__line"></div>
-                <span class="button__text">Search</span> <!-- Updated text -->
-                <div class="button__drow1"></div>
-                <div class="button__drow2"></div>
-            </a>
-        </form>
+        <h1 class="page-title">SER Driller Log Data Service</h1> <!-- Apply the page-title class here -->
+
+        <!-- Collapse Button -->
+       
+        
+        <button class="button type--A" type="button" data-toggle="collapse" data-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
+            <div class="button__line"></div>
+            <div class="button__line"></div>
+            <span class="button__text">Filter</span> <!-- Updated text -->
+           
+
+        </button>
+
+        <!-- Collapsible Search Form -->
+        <div class="collapse" id="searchForm">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="file_name">File Name:</label>
+                    <input type="text" class="form-control" id="file_name" name="file_name">
+                </div>
+                <div class="form-group">
+                    <label for="log_service">Log Service:</label>
+                    <input type="text" class="form-control" id="log_service" name="log_service">
+                </div>
+                <div class="form-group">
+                    <label for="company">Company:</label>
+                    <input type="text" class="form-control" id="company" name="company">
+                </div>
+                <div class="form-group">
+                    <label for="county">County:</label>
+                    <input type="text" class="form-control" id="county" name="county">
+                </div>
+                <div class="form-group">
+                    <label for="farm">Farm:</label>
+                    <input type="text" class="form-control" id="farm" name="farm">
+                </div>
+                <div class="form-group">
+                    <label for="commenced_date">Commenced Date:</label>
+                    <input type="text" class="form-control" id="commenced_date" name="commenced_date">
+                </div>
+                <div class="form-group">
+                    <label for="completed_date">Completed Date:</label>
+                    <input type="text" class="form-control" id="completed_date" name="completed_date">
+                </div>
+                <div class="form-group">
+                    <label for="total_depth">Total Depth:</label>
+                    <input type="text" class="form-control" id="total_depth" name="total_depth">
+                </div>
+                <div class="form-group">
+                    <label for="initial_production">Initial Production:</label>
+                    <input type="text" class="form-control" id="initial_production" name="initial_production">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" class="form-control" id="location" name="location">
+                </div>
+                <div class="form-group">
+                    <label for="well_number">Well Number:</label>
+                    <input type="text" class="form-control" id="well_number" name="well_number">
+                </div>
+                <div class="form-group">
+                    <label for="elevation">Elevation:</label>
+                    <input type="text" class="form-control" id="elevation" name="elevation">
+                </div>
+                <div class="form-group">
+                    <label for="materials">Materials:</label>
+                    <input type="text" class="form-control" id="materials" name="materials">
+                </div>
+                <!-- Custom button aligned to the left -->
+                <button type="submit" class="button type--A">
+                    <div class="button__line"></div>
+                    <div class="button__line"></div>
+                    <span class="button__text">Search</span> <!-- Updated text -->
+                    
+                </button>
+            </form>
+        </div>
 
         <div class="table-container mt-4">
             <table id="wellTable" class="table table-striped">
                 <thead>
                     <tr>
+                        <th>File Name</th>
                         <th>Log Service</th>
                         <th>Company</th>
                         <th>County</th>
@@ -337,6 +423,7 @@
                 <tbody>
                     {% for well in wells %}
                     <tr>
+                        <td>{{ well.file_name }}</td>
                         <td>{{ well.log_service }}</td>
                         <td>{{ well.company }}</td>
                         <td>{{ well.county }}</td>
@@ -348,7 +435,7 @@
                         <td>{{ well.location }}</td>
                         <td>{{ well.well_number }}</td>
                         <td>{{ well.elevation }}</td>
-                        <td>{{ well.materials[:30] }}...</td>
+                        <td>{{ well.materials }}</td>
                         <td>
                             <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
                         </td>
@@ -361,8 +448,13 @@
 
     <!-- Footer with Image and Text -->
     <div class="footer">
-        <div class="footer-text"  style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
+        <div class="footer-text" style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
     </div>
+
+    <!-- Bootstrap JS for Collapse -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>
