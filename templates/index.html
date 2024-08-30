@@ -339,10 +339,6 @@
         <div class="collapse" id="searchForm">
             <form method="POST">
                 <div class="form-group">
-                    <label for="file_name">File Name:</label>
-                    <input type="text" class="form-control" id="file_name" name="file_name">
-                </div>
-                <div class="form-group">
                     <label for="log_service">Log Service:</label>
                     <input type="text" class="form-control" id="log_service" name="log_service">
                 </div>
@@ -404,7 +400,6 @@
             <table id="wellTable" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>File Name</th>
                         <th>Log Service</th>
                         <th>Company</th>
                         <th>County</th>
@@ -423,7 +418,6 @@
                 <tbody>
                     {% for well in wells %}
                     <tr>
-                        <td>{{ well.file_name }}</td>
                         <td>{{ well.log_service }}</td>
                         <td>{{ well.company }}</td>
                         <td>{{ well.county }}</td>

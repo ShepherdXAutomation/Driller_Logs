@@ -6,7 +6,7 @@ from sqlalchemy import text
 from urllib.parse import unquote
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/calla/desktop/Driller_Logs/well_data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/ChrisClayton/desktop/Driller_Logs/well_data.db'
 db = SQLAlchemy(app)
 
 class Well(db.Model):
@@ -39,9 +39,18 @@ with app.app_context():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        query = request.form.get('query')
-        column = request.form.get('column')
-        if query and column:
+        filters = []
+        columns = ['file_name', 'log_service', 'company', 'county', 'farm', 'commenced_date', 
+                   'completed_date', 'total_depth', 'initial_production', 'location', 
+                   'well_number', 'elevation', 'materials']
+        
+        # Loop through each column and check if a corresponding query was provided
+        for column in columns:
+            query = request.form.get(column)
+            if query:
+                filters.append(getattr(Well, column).like(f'%{query}%'))
+
+        if filters:
             wells = Well.query.with_entities(
                 Well.id,
                 Well.file_name,
@@ -58,7 +67,7 @@ def index():
                 Well.elevation,
                 Well.materials,
                 Well.hyperlink
-            ).filter(getattr(Well, column).like(f'%{query}%')).all()
+            ).filter(*filters).all()
         else:
             wells = Well.query.with_entities(
                 Well.id,
