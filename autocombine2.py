@@ -11,10 +11,14 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 
 # Default headers, footers, and continuation indicators
-DEFAULT_HEADERS = ["Log Service"]
+DEFAULT_HEADERS = ["Log Service", "Bess Mason"]
 DEFAULT_FOOTERS = []
 CONTINUATION_INDICATORS = []
 
+def log_overwritten_file(log_file_path, file_path):
+    """Log the overwritten file to a log file."""
+    with open(log_file_path, 'a') as log_file:
+        log_file.write(f"Overwritten: {file_path}\n")
 
 
 def extract_text_with_ocr(image):
@@ -75,62 +79,86 @@ def process_pdfs(input_folder, output_folder, headers, footers, continuation_ind
     total_files = len(pdf_files) - 1
     progress['maximum'] = total_files
     
+    # Log file path
+    log_file_path = os.path.join(input_folder, "overwritten_files.log")
+    
     for i in range(total_files):
         front_pdf_path = pdf_files[i]
         back_pdf_path = pdf_files[i + 1]
         
         log.insert(tk.END, f"Processing pair: {front_pdf_path} and {back_pdf_path}\n")
         
-        # Extract text from the front page using PyMuPDF
-        text = ""
         try:
-            doc = fitz.open(front_pdf_path)
-            first_page = doc.load_page(0)
-            text = first_page.get_text()
-        except Exception as e:
-            log.insert(tk.END, f"Error with PyMuPDF text extraction on front page: {e}\n")
-        
-        if not text.strip():
-            log.insert(tk.END, f"No text found with PyMuPDF for {front_pdf_path}, trying OCR...\n")
-            image = convert_from_path(front_pdf_path)[0]
-            text = extract_text_with_ocr(image)
-        
-        # Output the extracted text to the log for debugging
-        log.insert(tk.END, f"Extracted text from front page {front_pdf_path}:\n{text}\n{'-'*40}\n")
-        
-        # Check for header on the front page
-        has_header, _ = detect_header_and_footer(text.lower(), [header.lower() for header in headers], footers)
-        
-        # Check if the back page is missing a header
-        is_continued, back_text = is_back_page_continued(back_pdf_path, continuation_indicators, log)
-        back_has_header, _ = detect_header_and_footer(back_text.lower(), [header.lower() for header in headers], footers)
-        
-        # Debugging output to understand the issue
-        log.insert(tk.END, f"Header detected on front page: {has_header}\n")
-        log.insert(tk.END, f"Header detected on back page: {back_has_header}\n")
-
-        # Condition: Front page has a header, back page is missing header = match
-        if has_header and not back_has_header:
-            # Create the output file name based on the first file's name
-            base_name = os.path.basename(front_pdf_path)
-            output_pdf = os.path.join(output_folder, f'{os.path.splitext(base_name)[0]}_merged.pdf')
+            # Extract text from the front page using OCR only
+            text = ""
+            try:
+                image = convert_from_path(front_pdf_path)[0]
+                text = extract_text_with_ocr(image)
+            except PDFPageCountError as e:
+                log.insert(tk.END, f"Error converting PDF to image: {e}\n")
+                continue
+            except Exception as e:
+                log.insert(tk.END, f"Unexpected error during OCR: {e}\n")
+                continue
             
-            merger = fitz.open()
-            merger.insert_pdf(fitz.open(front_pdf_path))
-            merger.insert_pdf(fitz.open(back_pdf_path))
-            merger.save(output_pdf)
-            merger.close()
-            log.insert(tk.END, f"Merged file created: {output_pdf}\n")
-            merged_files_count += 1
-        else:
-            log.insert(tk.END, f"Skipped merging: Front page missing header or back page has a header.\n")
+            # Output the extracted text to the log for debugging
+            log.insert(tk.END, f"Extracted text from front page {front_pdf_path}:\n{text}\n{'-'*40}\n")
+            
+            # Check for header on the front page
+            has_header, _ = detect_header_and_footer(text.lower(), [header.lower() for header in headers], footers)
+            
+            # Check if the back page is missing a header
+            try:
+                image = convert_from_path(back_pdf_path)[0]
+                back_text = extract_text_with_ocr(image)
+                back_has_header, _ = detect_header_and_footer(back_text.lower(), [header.lower() for header in headers], footers)
+            except PDFPageCountError as e:
+                log.insert(tk.END, f"Error converting PDF to image: {e}\n")
+                continue
+            except Exception as e:
+                log.insert(tk.END, f"Unexpected error during OCR: {e}\n")
+                continue
+            
+            # Debugging output to understand the issue
+            log.insert(tk.END, f"Header detected on front page: {has_header}\n")
+            log.insert(tk.END, f"Header detected on back page: {back_has_header}\n")
+
+            # Condition: Front page has a header, back page is missing header = match
+            if has_header and not back_has_header:
+                # Create the output file path with a "merged" suffix
+                base_name = os.path.basename(front_pdf_path)
+                merged_file_path = os.path.join(input_folder, f'{os.path.splitext(base_name)[0]}_merged.pdf')
+                
+                # Merge the PDFs
+                merger = fitz.open()  # This can be replaced with another library if fitz is no longer used
+                merger.insert_pdf(fitz.open(front_pdf_path))
+                merger.insert_pdf(fitz.open(back_pdf_path))
+                merger.save(merged_file_path)
+                merger.close()
+                
+                # Log the overwritten files
+                log_overwritten_file(log_file_path, front_pdf_path)
+                log_overwritten_file(log_file_path, back_pdf_path)
+                
+                # Delete the original files
+                os.remove(front_pdf_path)
+                os.remove(back_pdf_path)
+                
+                log.insert(tk.END, f"Merged file created and original files deleted: {merged_file_path}\n")
+                merged_files_count += 1
+            else:
+                log.insert(tk.END, f"Skipped merging: Front page missing header or back page has a header.\n")
+
+        except Exception as e:
+            log.insert(tk.END, f"Failed to process pair {front_pdf_path} and {back_pdf_path}: {e}\n")
+            continue
 
         # Update progress
         progress['value'] = i + 1
         log.see(tk.END)  # Scroll log to the latest entry
         log.update_idletasks()  # Ensure the GUI updates
 
-    messagebox.showinfo("Completed", f"PDF merging process completed. {merged_files_count} files created.")
+    messagebox.showinfo("Completed", f"PDF merging process completed. {merged_files_count} files created. See {log_file_path} for overwritten files.")
 
 
 
