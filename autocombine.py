@@ -11,9 +11,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 
 # Default headers, footers, and continuation indicators
-DEFAULT_HEADERS = ["STATE WELL LOG SERVICE", "COMPANY", "COUNTY", "WELL NO"]
-DEFAULT_FOOTERS = ["COPY OF ORIGINAL FILED WITH OIL", "TOTAL DEPTH"]
-CONTINUATION_INDICATORS = ["cont'd", "continued", "continuation"]
+DEFAULT_HEADERS = ["Log Service"]
+DEFAULT_FOOTERS = []
+CONTINUATION_INDICATORS = []
 
 def extract_text_with_ocr(image):
     return pytesseract.image_to_string(image)
@@ -53,11 +53,18 @@ def is_back_page_continued(pdf_path, continuation_indicators, log):
     return is_continued, text
 
 def compare_images(image1, image2):
+    # Convert images to grayscale
     gray1 = cv2.cvtColor(np.array(image1), cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(np.array(image2), cv2.COLOR_BGR2GRAY)
     
+    # Resize images to the same size if they have different dimensions
+    if gray1.shape != gray2.shape:
+        gray2 = cv2.resize(gray2, (gray1.shape[1], gray1.shape[0]))
+
+    # Calculate SSIM between the two images
     score, diff = ssim(gray1, gray2, full=True)
     return score
+
 
 def process_pdfs(input_folder, output_folder, headers, footers, continuation_indicators, log, progress):
     pdf_files = sorted([os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.pdf')])
@@ -89,29 +96,32 @@ def process_pdfs(input_folder, output_folder, headers, footers, continuation_ind
         # Output the extracted text to the log for debugging
         log.insert(tk.END, f"Extracted text from front page {front_pdf_path}:\n{text}\n{'-'*40}\n")
         
-        # Check for header, footer, and continuation indicators
-        has_header, has_footer = detect_header_and_footer(text, headers, footers)
-        is_continued, back_text = is_back_page_continued(back_pdf_path, continuation_indicators, log)
+        # Check for header on the front page
+        has_header, _ = detect_header_and_footer(text.lower(), [header.lower() for header in headers], footers)
         
-        # Flexible condition: Combine if at least one condition is met
-        if has_header or has_footer or is_continued:
-            front_image = convert_from_path(front_pdf_path)[0]
-            back_image = convert_from_path(back_pdf_path)[0]
-            similarity_score = compare_images(front_image, back_image)
+        # Check if the back page is missing a header
+        is_continued, back_text = is_back_page_continued(back_pdf_path, continuation_indicators, log)
+        back_has_header, _ = detect_header_and_footer(back_text.lower(), [header.lower() for header in headers], footers)
+        
+        # Debugging output to understand the issue
+        log.insert(tk.END, f"Header detected on front page: {has_header}\n")
+        log.insert(tk.END, f"Header detected on back page: {back_has_header}\n")
+
+        # Condition: Front page has a header, back page is missing header = match
+        if has_header and not back_has_header:
+            # Create the output file name based on the first file's name
+            base_name = os.path.basename(front_pdf_path)
+            output_pdf = os.path.join(output_folder, f'{os.path.splitext(base_name)[0]}_merged.pdf')
             
-            if similarity_score < 0.5:  # Threshold for front-back pair
-                output_pdf = os.path.join(output_folder, f'merged_{merged_files_count}.pdf')
-                merger = fitz.open()
-                merger.insert_pdf(fitz.open(front_pdf_path))
-                merger.insert_pdf(fitz.open(back_pdf_path))
-                merger.save(output_pdf)
-                merger.close()
-                log.insert(tk.END, f"Merged file created: {output_pdf}\n")
-                merged_files_count += 1
-            else:
-                log.insert(tk.END, f"Skipped merging: Low similarity between {front_pdf_path} and {back_pdf_path}\n")
+            merger = fitz.open()
+            merger.insert_pdf(fitz.open(front_pdf_path))
+            merger.insert_pdf(fitz.open(back_pdf_path))
+            merger.save(output_pdf)
+            merger.close()
+            log.insert(tk.END, f"Merged file created: {output_pdf}\n")
+            merged_files_count += 1
         else:
-            log.insert(tk.END, f"Skipped merging: No header/footer/continuation detected in {front_pdf_path} and {back_pdf_path}\n")
+            log.insert(tk.END, f"Skipped merging: Front page missing header or back page has a header.\n")
 
         # Update progress
         progress['value'] = i + 1
@@ -119,6 +129,10 @@ def process_pdfs(input_folder, output_folder, headers, footers, continuation_ind
         log.update_idletasks()  # Ensure the GUI updates
 
     messagebox.showinfo("Completed", f"PDF merging process completed. {merged_files_count} files created.")
+
+
+
+
 
 
 def start_processing(headers, footers, continuation_indicators, log, progress):
