@@ -11,7 +11,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 
 # Default headers, footers, and continuation indicators
-DEFAULT_HEADERS = ["Log Service", "Bess Mason"]
+DEFAULT_HEADERS = ["Log Service", "Bess Mason", "Zing", "Texas Well", "Woodson Oil", "Zingery", "Survey"]
 DEFAULT_FOOTERS = []
 CONTINUATION_INDICATORS = []
 
