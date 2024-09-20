@@ -12,7 +12,7 @@ import traceback
 import shutil
 
 # Default headers, footers, and continuation indicators
-DEFAULT_HEADERS = ["Log Service", "Bess Mason", "Zing", "Texas Well", "Woodson Oil", "Zingery", "Survey"]
+DEFAULT_HEADERS = ["Log Service", "Bess Mason", "Zing", "Texas Well", "Woodson Oil", "Zingery", "Survey", "Company", "County"]
 DEFAULT_FOOTERS = []
 CONTINUATION_INDICATORS = []
 

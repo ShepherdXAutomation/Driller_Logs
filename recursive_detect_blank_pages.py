@@ -9,6 +9,8 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar, Label, Scale
 
+Image.MAX_IMAGE_PIXELS = None
+
 # Global event to signal cancellation
 cancel_event = threading.Event()
 
@@ -257,14 +259,14 @@ remove_blanks_btn.pack(pady=10)
 convert_and_remove_btn = tk.Button(frame, text="Convert and Remove Blank Pages", command=start_convert_and_remove_blanks)
 convert_and_remove_btn.pack(pady=10)
 
-parent_folders_btn = tk.Button(frame, text="Process Subfolders", command=select_parent_folders)  # New button
+parent_folders_btn = tk.Button(frame, text="Master Conversion", command=select_parent_folders)  # New button
 parent_folders_btn.pack(pady=10)
 
 cancel_btn = tk.Button(frame, text="Cancel", command=cancel_operation)
 cancel_btn.pack(pady=10)
 
-dark_threshold_slider = tk.Scale(frame, from_=50, to=95, orient=tk.HORIZONTAL, label="Sensitivity")
-dark_threshold_slider.set(52)
+dark_threshold_slider = tk.Scale(frame, from_=50, to=1000, orient=tk.HORIZONTAL, label="Sensitivity")
+dark_threshold_slider.set(90)
 dark_threshold_slider.pack(pady=10)
 
 slider_label = tk.Label(frame, text="Inverse - Lower sensitivity removes more pages.")

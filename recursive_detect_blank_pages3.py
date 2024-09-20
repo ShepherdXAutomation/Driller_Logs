@@ -6,9 +6,10 @@ import numpy as np
 import os
 import pandas as pd
 import tkinter as tk
-from tkinter import filedialog, messagebox, Listbox, Scrollbar
+from tkinter import filedialog, messagebox, Listbox, Scrollbar, Text
 from tkinter.ttk import Progressbar, Label, Scale
 
+Image.MAX_IMAGE_PIXELS = None
 # Global event to signal cancellation
 cancel_event = threading.Event()
 
@@ -119,6 +120,15 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     
     df = pd.DataFrame(blanks, columns=['Filename'])
     df.to_excel(blank_files_log, index=False)
+
+def add_folders_from_text():
+    input_text = text_input_field.get("1.0", tk.END).strip()  # Get input and remove trailing newlines/spaces
+    directories = [d.strip() for d in input_text.split(",")]  # Split by comma and strip extra spaces
+    for directory in directories:
+        if os.path.isdir(directory):
+            input_dirs_listbox.insert(tk.END, directory)
+        else:
+            messagebox.showwarning("Warning", f"'{directory}' is not a valid directory.")
 
 def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
@@ -342,6 +352,16 @@ output_dir_label.pack(pady=10)
 # Listbox to display selected folders
 listbox_frame = tk.Frame(frame)
 listbox_frame.pack(pady=5, fill=tk.BOTH, expand=True)
+
+
+text_input_label = tk.Label(frame, text="Paste directories separated by commas:")
+text_input_label.pack(pady=5)
+
+text_input_field = Text(frame, height=5, width=60)
+text_input_field.pack(pady=5)
+
+add_text_button = tk.Button(frame, text="Add Folders from Text", command=add_folders_from_text)
+add_text_button.pack(pady=5)
 
 input_dirs_listbox = Listbox(listbox_frame, selectmode=tk.MULTIPLE, width=60, height=10)
 input_dirs_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
