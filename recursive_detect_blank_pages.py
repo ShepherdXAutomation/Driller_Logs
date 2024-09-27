@@ -1,16 +1,21 @@
+import os
+
+# Add the path to the libvips bin directory
+vips_path = r"C:\vips\bin"  # Replace with your actual path
+os.environ['PATH'] = vips_path + os.pathsep + os.environ['PATH']
+
 import threading
 import shutil
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
-import os
 import pandas as pd
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar, Label, Scale
 import time
 import mimetypes
-import pyvips  # Added for handling large TIFF files
+import pyvips  # Ensure this is after setting the PATH
 
 Image.MAX_IMAGE_PIXELS = None
 
@@ -25,13 +30,14 @@ failed_files_lock = threading.Lock()
 def get_file_info(file_path):
     try:
         stats = os.stat(file_path)
-        size = stats.st_size
+        size = stats.st_size / (1024 * 1024)  # Convert bytes to megabytes
+        size = round(size, 2)  # Round to 2 decimal places
         mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(stats.st_mtime))
         ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(stats.st_ctime))
         file_type = mimetypes.guess_type(file_path)[0] or 'Unknown'
         return {
             'File Path': file_path,
-            'Size (bytes)': size,
+            'Size (MB)': size,
             'Modified Time': mtime,
             'Created Time': ctime,
             'File Type': file_type
@@ -221,7 +227,7 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     df.to_excel(blank_files_log, index=False)
 
     if failed_files:
-        write_failed_files_log(output_dir)
+        write_failed_files_log(output_directory)
 
 def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
@@ -272,7 +278,7 @@ def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
     df.to_excel(blank_files_log, index=False)
 
     if failed_files:
-        write_failed_files_log(output_dir)
+        write_failed_files_log(output_directory)
 
 def select_directory():
     global input_dir, output_dir
