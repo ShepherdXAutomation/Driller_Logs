@@ -22,11 +22,11 @@ failed_files_lock = threading.Lock()
 def generate_unique_filename(output_directory, base_filename, extension):
     counter = 1
     unique_filename = f"{base_filename}{extension}"
-    
+
     while os.path.exists(os.path.join(output_directory, unique_filename)):
         unique_filename = f"{base_filename}_{counter}{extension}"
         counter += 1
-        
+
     return unique_filename
 
 def get_file_info(file_path):
@@ -63,7 +63,7 @@ def convert_tiff_to_pdf(tiff_file_path, pdf_file_path):
 
 # Convert all TIFF files in the directory
 def convert_all_tiffs_in_directory(input_directory, output_directory, progress_label, progress_bar):
-    tiff_files = [f for f in os.listdir(input_directory) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')]
+    tiff_files = [f for f in os.listdir(input_directory) if f.lower().endswith(('.tif', '.tiff'))]
     total_tiff_files = len(tiff_files)
     progress_bar["maximum"] = total_tiff_files
 
@@ -74,65 +74,22 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
 
         tiff_file_path = os.path.join(input_directory, filename)
         base_filename = os.path.splitext(filename)[0]
-        unique_pdf_file_path = os.path.join(output_directory, generate_unique_filename(output_directory, base_filename, ".pdf"))
+        unique_pdf_file_path = os.path.join(
+            output_directory,
+            generate_unique_filename(output_directory, base_filename, ".pdf")
+        )
         convert_tiff_to_pdf(tiff_file_path, unique_pdf_file_path)
-        
+
         progress_label.config(text=f"Converted {idx}/{total_tiff_files} TIFF files to PDF")
         progress_bar["value"] = idx
         root.update_idletasks()
-
-def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
-    blanks = []
-    pdf_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
-    total_files = len(pdf_files)
-    progress_bar["maximum"] = total_files
-
-    for idx, filename in enumerate(pdf_files, 1):
-        input_path = os.path.join(input_dir, filename)
-        unique_output_path = os.path.join(output_dir, generate_unique_filename(output_dir, os.path.splitext(filename)[0], ".pdf"))
-        pdf_document = fitz.open(input_path)
-        pages_to_remove = []
-
-        for page_number in range(len(pdf_document)):
-            if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
-                pages_to_remove.append(page_number)
-                blanks.append(f"{input_path} - Page {page_number + 1}")
-
-        for page_number in reversed(pages_to_remove):
-            pdf_document.delete_page(page_number)
-
-        if len(pdf_document) > 0:
-            pdf_document.save(unique_output_path)
-        pdf_document.close()
-
-        progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
-        progress_bar["value"] = idx
-        root.update_idletasks()
-    
-    # Save blanks to Excel log
-    blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
-    if os.path.exists(blank_files_log):
-        os.remove(blank_files_log)
-    
-    df = pd.DataFrame(blanks, columns=['Filename'])
-    df.to_excel(blank_files_log, index=False)
-
-    # **Add Text Log File**
-    blank_pages_log_txt = os.path.join(output_dir, 'blank_pages_removed.txt')
-    try:
-        with open(blank_pages_log_txt, 'w') as txt_file:
-            for blank in blanks:
-                txt_file.write(f"{blank}\n")
-        print(f"Blank pages log saved to {blank_pages_log_txt}")
-    except Exception as e:
-        print(f"Failed to write blank pages log: {e}")
 
 # Determine if a page is blank based on pixel analysis
 def is_blank_page_by_pixels(page, dark_threshold=90):
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    dpi = 72  
-    inch = dpi  
+    dpi = 72
+    inch = dpi
     left_crop = inch
     right_crop = inch
     img_cropped = img.crop((left_crop, 0, img.width - right_crop, img.height))
@@ -189,7 +146,7 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
     if os.path.exists(blank_files_log):
         os.remove(blank_files_log)
-    
+
     df = pd.DataFrame(blanks, columns=['Filename'])
     df.to_excel(blank_files_log, index=False)
 
@@ -202,9 +159,9 @@ def add_folders_from_text():
         else:
             messagebox.showwarning("Warning", f"'{directory}' is not a valid directory.")
 
-def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
+def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
-    pdf_files = [f for f in os.listdir(output_dir) if f.lower().endswith('.pdf')]
+    pdf_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
     total_files = len(pdf_files)
     progress_bar["maximum"] = total_files
 
@@ -213,54 +170,33 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
             progress_label.config(text="Operation canceled.")
             break
 
-        file_path = os.path.join(output_dir, filename)
-        print(f"Processing file: {file_path}")
-
-        pdf_document = fitz.open(file_path)
+        input_path = os.path.join(input_dir, filename)
+        unique_output_path = os.path.join(output_dir, generate_unique_filename(output_dir, os.path.splitext(filename)[0], ".pdf"))
+        pdf_document = fitz.open(input_path)
         pages_to_remove = []
 
         for page_number in range(len(pdf_document)):
-            print(f"Checking page {page_number + 1}/{len(pdf_document)}")
             if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
                 pages_to_remove.append(page_number)
-                blanks.append(f"{file_path} - Page {page_number + 1}")
-                print(f"Page {page_number + 1} marked for removal.")
+                blanks.append(f"{input_path} - Page {page_number + 1}")
 
-        if pages_to_remove:
-            print(f"Removing {len(pages_to_remove)} pages.")
-            for page_number in reversed(pages_to_remove):
-                pdf_document.delete_page(page_number)
+        for page_number in reversed(pages_to_remove):
+            pdf_document.delete_page(page_number)
 
-            temp_file_path = os.path.join(output_dir, f"temp_{filename}")
-            pdf_document.save(temp_file_path)
-            pdf_document.close()
-
-            os.replace(temp_file_path, file_path)
-        else:
-            pdf_document.close()
+        if len(pdf_document) > 0:
+            pdf_document.save(unique_output_path)
+        pdf_document.close()
 
         progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
         progress_bar["value"] = idx
         root.update_idletasks()
 
-    # Save blanks to Excel log
     blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
     if os.path.exists(blank_files_log):
         os.remove(blank_files_log)
-    
+
     df = pd.DataFrame(blanks, columns=['Filename'])
     df.to_excel(blank_files_log, index=False)
-
-    # **Add Text Log File**
-    blank_pages_log_txt = os.path.join(output_dir, 'blank_pages_removed.txt')
-    try:
-        with open(blank_pages_log_txt, 'w') as txt_file:
-            for blank in blanks:
-                txt_file.write(f"{blank}\n")
-        print(f"Blank pages log saved to {blank_pages_log_txt}")
-    except Exception as e:
-        print(f"Failed to write blank pages log: {e}")
-
 
 def select_directory():
     global input_dir, output_dir
@@ -327,13 +263,13 @@ def remove_selected_folder():
 
 def select_folders_with_listbox():
     output_dir = filedialog.askdirectory(title="Select Output Directory")
-    
+
     if not output_dir:
         messagebox.showwarning("Warning", "Please select an output directory.")
         return
     output_dir_label.config(text=f"Output: {output_dir}")  # Update output directory label
     input_dirs = list(input_dirs_listbox.get(0, tk.END))
-    
+
     if not input_dirs:
         messagebox.showwarning("Warning", "No folders selected.")
         return
@@ -342,13 +278,13 @@ def select_folders_with_listbox():
 
 def remove_blanks_with_listbox():
     output_dir = filedialog.askdirectory(title="Select Output Directory")
-    
+
     if not output_dir:
         messagebox.showwarning("Warning", "Please select an output directory.")
         return
     output_dir_label.config(text=f"Output: {output_dir}")  # Update output directory label
     input_dirs = list(input_dirs_listbox.get(0, tk.END))
-    
+
     if not input_dirs:
         messagebox.showwarning("Warning", "No folders selected.")
         return
@@ -357,21 +293,19 @@ def remove_blanks_with_listbox():
 
 def convert_pdf_with_listbox():
     output_dir = filedialog.askdirectory(title="Select Output Directory")
-    
+
     if not output_dir:
         messagebox.showwarning("Warning", "Please select an output directory.")
         return
     output_dir_label.config(text=f"Output: {output_dir}")  # Update output directory label
     input_dirs = list(input_dirs_listbox.get(0, tk.END))
-    
+
     if not input_dirs:
         messagebox.showwarning("Warning", "No folders selected.")
         return
 
     threading.Thread(target=process_selected_folders_convert, args=(input_dirs, output_dir, progress_label, progress_bar)).start()
-    
 
-# Use the same `process_selected_folders` function as before
 def process_selected_folders(input_dirs, output_dir, progress_label, progress_bar):
     cancel_event.clear()  # Clear the cancel event
     total_folders = len(input_dirs)
@@ -381,7 +315,7 @@ def process_selected_folders(input_dirs, output_dir, progress_label, progress_ba
         if cancel_event.is_set():
             progress_label.config(text="Operation canceled.")
             break
-        
+
         folder_name = os.path.basename(input_dir)
         output_subdir = os.path.join(output_dir, folder_name)
         os.makedirs(output_subdir, exist_ok=True)
@@ -402,7 +336,7 @@ def process_selected_folders_blanks(input_dirs, output_dir, progress_label, prog
         if cancel_event.is_set():
             progress_label.config(text="Operation canceled.")
             break
-        
+
         folder_name = os.path.basename(input_dir)
         output_subdir = os.path.join(output_dir, folder_name)
         os.makedirs(output_subdir, exist_ok=True)
@@ -424,7 +358,7 @@ def process_selected_folders_convert(input_dirs, output_dir, progress_label, pro
         if cancel_event.is_set():
             progress_label.config(text="Operation canceled.")
             break
-        
+
         folder_name = os.path.basename(input_dir)
         output_subdir = os.path.join(output_dir, folder_name)
         os.makedirs(output_subdir, exist_ok=True)
@@ -436,20 +370,29 @@ def process_selected_folders_convert(input_dirs, output_dir, progress_label, pro
         root.update_idletasks()
 
     progress_label.config(text="All selected folders processed successfully.")  # Update progress label after all folders are done
+
 def process_subfolders(input_parent_dir, output_parent_dir, progress_label, progress_bar):
     cancel_event.clear()  # Clear the cancel event
-    for subdir in os.listdir(input_parent_dir):
+    subdirs = [d for d in os.listdir(input_parent_dir) if os.path.isdir(os.path.join(input_parent_dir, d))]
+    total_subdirs = len(subdirs)
+    progress_bar["maximum"] = total_subdirs
+
+    for idx, subdir in enumerate(subdirs, 1):
         if cancel_event.is_set():
             progress_label.config(text="Operation canceled.")
             break
 
         input_subdir = os.path.join(input_parent_dir, subdir)
         output_subdir = os.path.join(output_parent_dir, subdir)
-        if os.path.isdir(input_subdir):
-            os.makedirs(output_subdir, exist_ok=True)
-            convert_and_remove_blanks(input_subdir, output_subdir, progress_label, progress_bar)
+        os.makedirs(output_subdir, exist_ok=True)
+        convert_and_remove_blanks(input_subdir, output_subdir, progress_label, progress_bar)
+
+        progress_label.config(text=f"Processed {idx}/{total_subdirs} subfolders")
+        progress_bar["value"] = idx
+        root.update_idletasks()
 
     progress_label.config(text="All folders processed successfully.")  # Update progress label after all folders are done
+
 def convert_large_tiffs_in_directory(input_directory, output_directory, progress_label, progress_bar):
     tiff_files = [f for f in os.listdir(input_directory) if f.lower().endswith(('.tif', '.tiff'))]
     total_tiff_files = len(tiff_files)
@@ -474,6 +417,7 @@ def convert_large_tiffs_in_directory(input_directory, output_directory, progress
 
     if failed_files:
         write_failed_files_log(output_directory)
+
 def select_parent_folders():
     input_parent_dir = filedialog.askdirectory(title="Select Parent Input Directory")
     output_parent_dir = filedialog.askdirectory(title="Select Parent Output Directory")
@@ -482,97 +426,36 @@ def select_parent_folders():
         threading.Thread(target=process_subfolders, args=(input_parent_dir, output_parent_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both parent input and output directories first.")
+
 def start_convert_large():
-    global input_dir, output_dir
     input_dir = filedialog.askdirectory(title="Select Input Directory")
     output_dir = filedialog.askdirectory(title="Select Output Directory")
-
     if input_dir and output_dir:
-        output_dir_label.config(text=f"Output: {output_dir}")  # Update output directory label
-        input_dir_label.config(text=f"Input: {input_dir}")    # Update input directory label
         cancel_event.clear()  # Clear the cancel event
         threading.Thread(target=convert_large_tiffs_in_directory, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories.")
-def reduce_tiff_size(input_tiff_path, output_tiff_path, target_size_mb=100):
-    try:
-        import subprocess
-        quality = 85  # Starting quality
-        resize_percent = 100  # Starting resize percentage
-
-        while True:
-            # Normalize paths
-            input_tiff_path = os.path.normpath(input_tiff_path)
-            output_tiff_path = os.path.normpath(output_tiff_path)
-
-            # Construct the ImageMagick command
-            command = [
-                'magick',
-                input_tiff_path,
-                '-resize', f'{resize_percent}%',
-                '-define', 'tiff:tile-geometry=256x256',
-                '-compress', 'jpeg',
-                '-quality', str(quality),
-                output_tiff_path
-            ]
-            # Run the command
-            subprocess.run(command, check=True)
-
-            # Check the output file size
-            size_mb = os.path.getsize(output_tiff_path) / (1024 * 1024)
-            print(f"Compressed image size: {size_mb:.2f} MB with quality {quality}% and resize {resize_percent}%")
-
-            # Check if the size is acceptable or if minimum thresholds are reached
-            if size_mb <= target_size_mb or quality <= 10 or resize_percent <= 10:
-                break
-
-            # Adjust quality and resize percentage
-            quality -= 5
-            resize_percent -= 10
-
-            # Ensure minimum values are not exceeded
-            if quality < 10:
-                quality = 10
-            if resize_percent < 10:
-                resize_percent = 10
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to reduce size of {input_tiff_path}: {e}")
-        file_info = get_file_info(input_tiff_path)
-        file_info['Error'] = str(e)
-        with failed_files_lock:
-            failed_files.append(file_info)
-        raise e
 
 def convert_large_tiff_to_pdf(tiff_file_path, pdf_file_path):
     try:
-        # Normalize paths
-        tiff_file_path = os.path.normpath(tiff_file_path)
-        pdf_file_path = os.path.normpath(pdf_file_path)
-
-        # Define a temporary path for the resized TIFF
-        temp_dir = os.path.join(os.path.dirname(pdf_file_path), 'temp')
-        os.makedirs(temp_dir, exist_ok=True)
-        temp_tiff_path = os.path.join(temp_dir, 'temp_resized.tif')
-
-        # Reduce the size of the TIFF image
-        reduce_tiff_size(tiff_file_path, temp_tiff_path, target_size_mb=100)
-
-        # Convert the resized TIFF to PDF using ImageMagick
+        # Use ImageMagick's 'magick' command via subprocess with resource limits
         import subprocess
-        command = ['magick', temp_tiff_path, '-compress', 'jpeg', pdf_file_path]
+        command = [
+            'magick',
+            '-limit', 'memory', '2GB',
+            '-limit', 'map', '4GB',
+            tiff_file_path,
+            '-compress', 'jpeg',
+            pdf_file_path
+        ]
         subprocess.run(command, check=True)
         print(f"Converted {tiff_file_path} to {pdf_file_path} using ImageMagick")
-
-        # Remove the temporary resized TIFF file and directory
-        os.remove(temp_tiff_path)
-        os.rmdir(temp_dir)
     except Exception as e:
         print(f"Failed to convert {tiff_file_path}: {e}")
         file_info = get_file_info(tiff_file_path)
         file_info['Error'] = str(e)
         with failed_files_lock:
             failed_files.append(file_info)
-
 
 def write_failed_files_log(output_directory):
     if failed_files:
@@ -595,7 +478,6 @@ output_dir_label.pack(pady=10)
 listbox_frame = tk.Frame(frame)
 listbox_frame.pack(pady=5, fill=tk.BOTH, expand=True)
 
-
 text_input_label = tk.Label(frame, text="Paste directories separated by commas:")
 text_input_label.pack(pady=5)
 
@@ -604,10 +486,6 @@ text_input_field.pack(pady=5)
 
 add_text_button = tk.Button(frame, text="Add Folders from Text", command=add_folders_from_text)
 add_text_button.pack(pady=5)
-
-# Buttons to add or remove folders
-add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
-add_folder_btn.pack(pady=5)
 
 input_dirs_listbox = Listbox(listbox_frame, selectmode=tk.MULTIPLE, width=60, height=10)
 input_dirs_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -619,7 +497,9 @@ scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 input_dirs_listbox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=input_dirs_listbox.yview)
 
-
+# Buttons to add or remove folders
+add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
+add_folder_btn.pack(pady=5)
 
 remove_folder_btn = tk.Button(frame, text="Remove Selected Folder(s)", command=remove_selected_folder)
 remove_folder_btn.pack(pady=5)
@@ -632,11 +512,12 @@ remove_blanks_btn.pack(pady=10)
 
 select_btn = tk.Button(frame, text="Convert to PDF AND Remove Blanks", command=select_folders_with_listbox)
 select_btn.pack(pady=10)
-# New button for converting large TIFFs to PDFs
-convert_large_btn = tk.Button(frame, text="Convert Large TIFs to PDFs", command=start_convert_large)
+
+# Modified button for converting large TIFFs to PDFs
+convert_large_btn = tk.Button(frame, text="Convert Large TIFFs to PDFs", command=start_convert_large)
 convert_large_btn.pack(pady=10)
 
-parent_folders_btn = tk.Button(frame, text="Master Conversion", command=select_parent_folders)  # Existing button
+parent_folders_btn = tk.Button(frame, text="Master Conversion", command=select_parent_folders)
 parent_folders_btn.pack(pady=10)
 
 cancel_btn = tk.Button(frame, text="Cancel", command=cancel_operation)
@@ -646,7 +527,7 @@ dark_threshold_slider = tk.Scale(frame, from_=65, to=125, orient=tk.HORIZONTAL, 
 dark_threshold_slider.set(100)
 dark_threshold_slider.pack(pady=10)
 
-slider_label = tk.Label(frame, text="Inverse - Lower sensitivity removes more pages. For best results use 90 for single page PDF's and 120 for multipage PDFs.")
+slider_label = tk.Label(frame, text="Inverse - Lower sensitivity removes more pages. For best results use 90 for single page PDFs and 120 for multipage PDFs.")
 slider_label.pack(pady=10)
 
 progress_label = tk.Label(frame, text="Total TIFF files: 0, Total PDF files: 0")

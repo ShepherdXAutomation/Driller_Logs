@@ -18,6 +18,6 @@ def list_full_directories_to_file(folder_path, output_file):
         print(f"Error occurred: {e}")
 
 # Usage
-folder_path = r'F:\\'
-output_path = r'F:\\output.txt'
+folder_path = r'I:\\'
+output_path = r'I:\\output.txt'
 list_full_directories_to_file(folder_path, output_path)
