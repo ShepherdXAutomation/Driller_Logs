@@ -1,7 +1,8 @@
+import datetime
 import threading
 import shutil
 import fitz  # PyMuPDF
-from PIL import Image
+from PIL import Image, ImageFilter
 import numpy as np
 import os
 import pandas as pd
@@ -10,8 +11,11 @@ from tkinter import filedialog, messagebox, Listbox, Scrollbar, Text
 from tkinter.ttk import Progressbar, Label, Scale
 import time
 import mimetypes
+from pdf2image import convert_from_path
+import pytesseract
 
 Image.MAX_IMAGE_PIXELS = None
+
 # Global event to signal cancellation
 cancel_event = threading.Event()
 # Global list to store failed files information
@@ -80,70 +84,64 @@ def convert_all_tiffs_in_directory(input_directory, output_directory, progress_l
         progress_label.config(text=f"Converted {idx}/{total_tiff_files} TIFF files to PDF")
         progress_bar["value"] = idx
         root.update_idletasks()
-
-def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
-    blanks = []
-    pdf_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
-    total_files = len(pdf_files)
-    progress_bar["maximum"] = total_files
-
-    for idx, filename in enumerate(pdf_files, 1):
-        input_path = os.path.join(input_dir, filename)
-        unique_output_path = os.path.join(output_dir, generate_unique_filename(output_dir, os.path.splitext(filename)[0], ".pdf"))
-        pdf_document = fitz.open(input_path)
-        pages_to_remove = []
-
-        for page_number in range(len(pdf_document)):
-            if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
-                pages_to_remove.append(page_number)
-                blanks.append(f"{input_path} - Page {page_number + 1}")
-
-        for page_number in reversed(pages_to_remove):
-            pdf_document.delete_page(page_number)
-
-        if len(pdf_document) > 0:
-            pdf_document.save(unique_output_path)
-        pdf_document.close()
-
-        progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
-        progress_bar["value"] = idx
-        root.update_idletasks()
+def is_blank_page(page, text_threshold=10, image_threshold=1, dark_pixel_ratio_threshold=0.01, dpi=150, adaptive_threshold=False, log_widget=None):
+    """
+    Determine if a PDF page is blank by checking for text using OCR.
     
-    # Save blanks to Excel log
-    blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
-    if os.path.exists(blank_files_log):
-        os.remove(blank_files_log)
-    
-    df = pd.DataFrame(blanks, columns=['Filename'])
-    df.to_excel(blank_files_log, index=False)
+    Parameters:
+    - page: PyMuPDF Page object.
+    - text_threshold: Minimum number of characters to consider the page as non-blank based on text.
+    - image_threshold: Unused for now, kept for backward compatibility.
+    - dark_pixel_ratio_threshold: Unused for now, kept for backward compatibility.
+    - dpi: Resolution for rendering the page to an image.
+    - adaptive_threshold: Unused for now, kept for backward compatibility.
+    - log_widget: Tkinter Text widget for logging (optional).
 
-    # **Add Text Log File**
-    blank_pages_log_txt = os.path.join(output_dir, 'blank_pages_removed.txt')
+    Returns:
+    - Boolean indicating whether the page is blank.
+    """
+    def log(message):
+        print(message)
+        if log_widget:
+            log_widget.insert(tk.END, message + "\n")
+            log_widget.see(tk.END)
+
+    # 1. Render page to image at specified DPI for OCR
     try:
-        with open(blank_pages_log_txt, 'w') as txt_file:
-            for blank in blanks:
-                txt_file.write(f"{blank}\n")
-        print(f"Blank pages log saved to {blank_pages_log_txt}")
-    except Exception as e:
-        print(f"Failed to write blank pages log: {e}")
+        # Extract the current PDF document and page number
+        pdf_document = page.parent
+        page_number = page.number
 
-# Determine if a page is blank based on pixel analysis
-def is_blank_page_by_pixels(page, dark_threshold=90):
-    pix = page.get_pixmap()
-    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    dpi = 72  
-    inch = dpi  
-    left_crop = inch
-    right_crop = inch
-    img_cropped = img.crop((left_crop, 0, img.width - right_crop, img.height))
-    gray = img_cropped.convert('L')
-    bw = gray.point(lambda p: 0 if p < dark_threshold else 255, '1')
-    np_image = np.array(bw)
-    black_pixels = np.sum(np_image == 0)
-    total_pixels = np_image.size
-    black_pixel_ratio = black_pixels / total_pixels
-    print(f"Page has {black_pixel_ratio:.2%} black pixels.")
-    return black_pixel_ratio < 0.01  # Adjust this threshold as needed
+        # Convert the specific page to an image
+        images = convert_from_path(pdf_document.name, first_page=page_number + 1, last_page=page_number + 1, dpi=dpi)
+        if not images:
+            log("No images were generated from the page for OCR.")
+            return False  # Assume not blank if we can't generate the image
+
+        img = images[0]
+        log(f"Rendered image size for OCR: {img.size}")
+    except Exception as e:
+        log(f"Error rendering page to image for OCR: {e}")
+        return False  # Unable to render, assume not blank
+
+    # 2. Extract text using OCR
+    try:
+        ocr_text = pytesseract.image_to_string(img).strip()
+        log(f"OCR extracted text length: {len(ocr_text)}")
+        log(f"OCR Extracted Text:\n{ocr_text}\n{'-'*40}")
+    except Exception as e:
+        log(f"Error during OCR text extraction: {e}")
+        ocr_text = ""
+
+    # 3. Check if the extracted text meets the threshold to consider it non-blank
+    if len(ocr_text) >= text_threshold:
+        log("Page contains text detected by OCR.")
+        return False  # Page has text, not blank
+
+    log("Page is considered blank based on OCR text extraction.")
+    return True  # Page is blank if no sufficient text is found
+
+
 
 def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
     blanks = []
@@ -159,12 +157,28 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
         file_path = os.path.join(output_dir, filename)
         print(f"Processing file: {file_path}")
 
-        pdf_document = fitz.open(file_path)
+        try:
+            pdf_document = fitz.open(file_path)
+        except Exception as e:
+            print(f"Failed to open {file_path}: {e}")
+            with failed_files_lock:
+                failed_files.append({'File Path': file_path, 'Error': str(e)})
+            continue
+
         pages_to_remove = []
 
         for page_number in range(len(pdf_document)):
             print(f"Checking page {page_number + 1}/{len(pdf_document)}")
-            if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
+            page = pdf_document[page_number]
+            is_blank = is_blank_page(
+                page,
+                text_threshold=10,
+                image_threshold=1,
+                dark_pixel_ratio_threshold=0.01,
+                dpi=150,
+                adaptive_threshold=False
+            )
+            if is_blank:
                 pages_to_remove.append(page_number)
                 blanks.append(f"{file_path} - Page {page_number + 1}")
                 print(f"Page {page_number + 1} marked for removal.")
@@ -175,23 +189,129 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
                 pdf_document.delete_page(page_number)
 
             temp_file_path = os.path.join(output_dir, f"temp_{filename}")
-            pdf_document.save(temp_file_path)
-            pdf_document.close()
-
-            os.replace(temp_file_path, file_path)
+            try:
+                pdf_document.save(temp_file_path)
+                pdf_document.close()
+                os.replace(temp_file_path, file_path)
+                print(f"Removed blank pages from {file_path}")
+            except Exception as e:
+                print(f"Failed to remove pages from {file_path}: {e}")
+                with failed_files_lock:
+                    failed_files.append({'File Path': file_path, 'Error': str(e)})
         else:
             pdf_document.close()
+            print(f"No blank pages found in {file_path}")
 
         progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
         progress_bar["value"] = idx
         root.update_idletasks()
 
-    blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
+    # Get current date and time
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    # Save blanks to Excel log with timestamp
+    blank_files_log = os.path.join(output_dir, f'Removed_Blank_Pages_{timestamp}.xlsx')
     if os.path.exists(blank_files_log):
         os.remove(blank_files_log)
-    
+
     df = pd.DataFrame(blanks, columns=['Filename'])
     df.to_excel(blank_files_log, index=False)
+    print(f"Excel log saved to {blank_files_log}")
+
+    # Save blanks to Text log with timestamp
+    blank_pages_log_txt = os.path.join(output_dir, f'blank_pages_removed_{timestamp}.txt')
+    try:
+        with open(blank_pages_log_txt, 'w') as txt_file:
+            for blank in blanks:
+                txt_file.write(f"{blank}\n")
+        print(f"Text log saved to {blank_pages_log_txt}")
+    except Exception as e:
+        print(f"Failed to write text log: {e}")
+
+def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
+    blanks = []
+    pdf_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
+    total_files = len(pdf_files)
+    progress_bar["maximum"] = total_files
+
+    for idx, filename in enumerate(pdf_files, 1):
+        if cancel_event.is_set():
+            progress_label.config(text="Operation canceled.")
+            break
+
+        input_path = os.path.join(input_dir, filename)
+        unique_output_path = os.path.join(output_dir, generate_unique_filename(output_dir, os.path.splitext(filename)[0], ".pdf"))
+        print(f"Processing file: {input_path}")
+
+        try:
+            pdf_document = fitz.open(input_path)
+        except Exception as e:
+            print(f"Failed to open {input_path}: {e}")
+            with failed_files_lock:
+                failed_files.append({'File Path': input_path, 'Error': str(e)})
+            continue
+
+        pages_to_remove = []
+
+        for page_number in range(len(pdf_document)):
+            print(f"Checking page {page_number + 1}/{len(pdf_document)}")
+            page = pdf_document[page_number]
+            is_blank = is_blank_page(
+                page,
+                text_threshold=10,
+                image_threshold=1,
+                dark_pixel_ratio_threshold=0.01,
+                dpi=150,
+                adaptive_threshold=False
+            )
+            if is_blank:
+                pages_to_remove.append(page_number)
+                blanks.append(f"{input_path} - Page {page_number + 1}")
+                print(f"Page {page_number + 1} marked for removal.")
+
+        if pages_to_remove:
+            print(f"Removing {len(pages_to_remove)} pages.")
+            for page_number in reversed(pages_to_remove):
+                pdf_document.delete_page(page_number)
+
+            try:
+                if len(pdf_document) > 0:
+                    pdf_document.save(unique_output_path)
+                    print(f"Saved modified PDF to {unique_output_path}")
+                pdf_document.close()
+            except Exception as e:
+                print(f"Failed to save modified PDF {unique_output_path}: {e}")
+                with failed_files_lock:
+                    failed_files.append({'File Path': unique_output_path, 'Error': str(e)})
+        else:
+            pdf_document.close()
+            print(f"No blank pages found in {input_path}")
+
+        progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
+        progress_bar["value"] = idx
+        root.update_idletasks()
+    
+    # Get current date and time
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    # Save blanks to Excel log with timestamp
+    blank_files_log = os.path.join(output_dir, f'Removed_Blank_Pages_{timestamp}.xlsx')
+    if os.path.exists(blank_files_log):
+        os.remove(blank_files_log)
+
+    df = pd.DataFrame(blanks, columns=['Filename'])
+    df.to_excel(blank_files_log, index=False)
+    print(f"Excel log saved to {blank_files_log}")
+
+    # Save blanks to Text log with timestamp
+    blank_pages_log_txt = os.path.join(output_dir, f'blank_pages_removed_{timestamp}.txt')
+    try:
+        with open(blank_pages_log_txt, 'w') as txt_file:
+            for blank in blanks:
+                txt_file.write(f"{blank}\n")
+        print(f"Text log saved to {blank_pages_log_txt}")
+    except Exception as e:
+        print(f"Failed to write text log: {e}")
 
 def add_folders_from_text():
     input_text = text_input_field.get("1.0", tk.END).strip()  # Get input and remove trailing newlines/spaces
@@ -202,102 +322,12 @@ def add_folders_from_text():
         else:
             messagebox.showwarning("Warning", f"'{directory}' is not a valid directory.")
 
-def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
-    blanks = []
-    pdf_files = [f for f in os.listdir(output_dir) if f.lower().endswith('.pdf')]
-    total_files = len(pdf_files)
-    progress_bar["maximum"] = total_files
-
-    for idx, filename in enumerate(pdf_files, 1):
-        if cancel_event.is_set():
-            progress_label.config(text="Operation canceled.")
-            break
-
-        file_path = os.path.join(output_dir, filename)
-        print(f"Processing file: {file_path}")
-
-        pdf_document = fitz.open(file_path)
-        pages_to_remove = []
-
-        for page_number in range(len(pdf_document)):
-            print(f"Checking page {page_number + 1}/{len(pdf_document)}")
-            if is_blank_page_by_pixels(pdf_document[page_number], dark_threshold=dark_threshold_slider.get()):
-                pages_to_remove.append(page_number)
-                blanks.append(f"{file_path} - Page {page_number + 1}")
-                print(f"Page {page_number + 1} marked for removal.")
-
-        if pages_to_remove:
-            print(f"Removing {len(pages_to_remove)} pages.")
-            for page_number in reversed(pages_to_remove):
-                pdf_document.delete_page(page_number)
-
-            temp_file_path = os.path.join(output_dir, f"temp_{filename}")
-            pdf_document.save(temp_file_path)
-            pdf_document.close()
-
-            os.replace(temp_file_path, file_path)
-        else:
-            pdf_document.close()
-
-        progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
-        progress_bar["value"] = idx
-        root.update_idletasks()
-
-    # Save blanks to Excel log
-    blank_files_log = os.path.join(output_dir, 'filenames.xlsx')
-    if os.path.exists(blank_files_log):
-        os.remove(blank_files_log)
-    
-    df = pd.DataFrame(blanks, columns=['Filename'])
-    df.to_excel(blank_files_log, index=False)
-
-    # **Add Text Log File**
-    blank_pages_log_txt = os.path.join(output_dir, 'blank_pages_removed.txt')
-    try:
-        with open(blank_pages_log_txt, 'w') as txt_file:
-            for blank in blanks:
-                txt_file.write(f"{blank}\n")
-        print(f"Blank pages log saved to {blank_pages_log_txt}")
-    except Exception as e:
-        print(f"Failed to write blank pages log: {e}")
-
-
-def select_directory():
-    global input_dir, output_dir
-
-    input_dir = filedialog.askdirectory(title="Select Input Directory")
-    output_dir = filedialog.askdirectory(title="Select Output Directory")
-
-    if input_dir and output_dir:
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
-        total_tiff_files = len([f for f in os.listdir(input_dir) if f.lower().endswith('.tif') or f.lower().endswith('.tiff')])
-        total_pdf_files = len([f for f in os.listdir(output_dir) if f.lower().endswith('.pdf')])
-        progress_label.config(text=f"Total TIFF files: {total_tiff_files}, Total PDF files: {total_pdf_files}")
-        input_dir_label.config(text=f"Input: {input_dir}")
-        output_dir_label.config(text=f"Output: {output_dir}")
-
-def start_convert():
-    if input_dir and output_dir:
-        cancel_event.clear()  # Clear the cancel event
-        threading.Thread(target=convert_all_tiffs_in_directory, args=(input_dir, output_dir, progress_label, progress_bar)).start()
-    else:
-        messagebox.showwarning("Warning", "Please select both input and output directories first.")
-
-def start_remove_blanks():
-    if input_dir and output_dir:
-        cancel_event.clear()  # Clear the cancel event
-        threading.Thread(target=remove_blank_pages, args=(input_dir, output_dir, progress_label, progress_bar)).start()
-    else:
-        messagebox.showwarning("Warning", "Please select both input and output directories first.")
-
-def start_convert_and_remove_blanks():
-    if input_dir and output_dir:
-        cancel_event.clear()  # Clear the cancel event
-        threading.Thread(target=convert_and_remove_blanks, args=(input_dir, output_dir, progress_label, progress_bar)).start()
-    else:
-        messagebox.showwarning("Warning", "Please select both input and output directories first.")
+def convert_and_remove_blanks(input_dir, output_dir, progress_label, progress_bar):
+    temp_dir = os.path.join(output_dir, "temp")
+    os.makedirs(temp_dir, exist_ok=True)
+    convert_all_tiffs_in_directory(input_dir, temp_dir, progress_label, progress_bar)
+    remove_blank_pages2(temp_dir, output_dir, progress_label, progress_bar)
+    shutil.rmtree(temp_dir)
 
 def convert_and_remove_blanks(input_dir, output_dir, progress_label, progress_bar):
     temp_dir = os.path.join(output_dir, "temp")
@@ -369,9 +399,7 @@ def convert_pdf_with_listbox():
         return
 
     threading.Thread(target=process_selected_folders_convert, args=(input_dirs, output_dir, progress_label, progress_bar)).start()
-    
 
-# Use the same `process_selected_folders` function as before
 def process_selected_folders(input_dirs, output_dir, progress_label, progress_bar):
     cancel_event.clear()  # Clear the cancel event
     total_folders = len(input_dirs)
@@ -436,6 +464,7 @@ def process_selected_folders_convert(input_dirs, output_dir, progress_label, pro
         root.update_idletasks()
 
     progress_label.config(text="All selected folders processed successfully.")  # Update progress label after all folders are done
+
 def process_subfolders(input_parent_dir, output_parent_dir, progress_label, progress_bar):
     cancel_event.clear()  # Clear the cancel event
     for subdir in os.listdir(input_parent_dir):
@@ -450,6 +479,7 @@ def process_subfolders(input_parent_dir, output_parent_dir, progress_label, prog
             convert_and_remove_blanks(input_subdir, output_subdir, progress_label, progress_bar)
 
     progress_label.config(text="All folders processed successfully.")  # Update progress label after all folders are done
+
 def convert_large_tiffs_in_directory(input_directory, output_directory, progress_label, progress_bar):
     tiff_files = [f for f in os.listdir(input_directory) if f.lower().endswith(('.tif', '.tiff'))]
     total_tiff_files = len(tiff_files)
@@ -474,6 +504,7 @@ def convert_large_tiffs_in_directory(input_directory, output_directory, progress
 
     if failed_files:
         write_failed_files_log(output_directory)
+
 def select_parent_folders():
     input_parent_dir = filedialog.askdirectory(title="Select Parent Input Directory")
     output_parent_dir = filedialog.askdirectory(title="Select Parent Output Directory")
@@ -482,6 +513,7 @@ def select_parent_folders():
         threading.Thread(target=process_subfolders, args=(input_parent_dir, output_parent_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both parent input and output directories first.")
+
 def start_convert_large():
     global input_dir, output_dir
     input_dir = filedialog.askdirectory(title="Select Input Directory")
@@ -494,6 +526,7 @@ def start_convert_large():
         threading.Thread(target=convert_large_tiffs_in_directory, args=(input_dir, output_dir, progress_label, progress_bar)).start()
     else:
         messagebox.showwarning("Warning", "Please select both input and output directories.")
+
 def reduce_tiff_size(input_tiff_path, output_tiff_path, target_size_mb=100):
     try:
         import subprocess
@@ -573,7 +606,6 @@ def convert_large_tiff_to_pdf(tiff_file_path, pdf_file_path):
         with failed_files_lock:
             failed_files.append(file_info)
 
-
 def write_failed_files_log(output_directory):
     if failed_files:
         df = pd.DataFrame(failed_files)
@@ -581,6 +613,7 @@ def write_failed_files_log(output_directory):
         if os.path.exists(log_file_path):
             os.remove(log_file_path)
         df.to_excel(log_file_path, index=False)
+        print(f"Failed files log saved to {log_file_path}")
 
 root = tk.Tk()
 root.title("TIFF to PDF Converter and PDF Blank Page Remover")
@@ -605,21 +638,18 @@ text_input_field.pack(pady=5)
 add_text_button = tk.Button(frame, text="Add Folders from Text", command=add_folders_from_text)
 add_text_button.pack(pady=5)
 
-# Buttons to add or remove folders
-add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
-add_folder_btn.pack(pady=5)
-
 input_dirs_listbox = Listbox(listbox_frame, selectmode=tk.MULTIPLE, width=60, height=10)
 input_dirs_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-input_dir_label = tk.Label(frame, text="Input: None")
-input_dir_label.pack(pady=10)
+
 
 scrollbar = Scrollbar(listbox_frame, orient=tk.VERTICAL)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 input_dirs_listbox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=input_dirs_listbox.yview)
 
-
+# Buttons to add or remove folders
+add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
+add_folder_btn.pack(pady=5)
 
 remove_folder_btn = tk.Button(frame, text="Remove Selected Folder(s)", command=remove_selected_folder)
 remove_folder_btn.pack(pady=5)
@@ -642,7 +672,8 @@ parent_folders_btn.pack(pady=10)
 cancel_btn = tk.Button(frame, text="Cancel", command=cancel_operation)
 cancel_btn.pack(pady=10)
 
-dark_threshold_slider = tk.Scale(frame, from_=65, to=125, orient=tk.HORIZONTAL, label="Sensitivity")
+# Adjusted slider range based on enhanced detection logic
+dark_threshold_slider = tk.Scale(frame, from_=100, to=140, orient=tk.HORIZONTAL, label="Sensitivity")
 dark_threshold_slider.set(100)
 dark_threshold_slider.pack(pady=10)
 
