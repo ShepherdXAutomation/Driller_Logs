@@ -614,7 +614,22 @@ def write_failed_files_log(output_directory):
             os.remove(log_file_path)
         df.to_excel(log_file_path, index=False)
         print(f"Failed files log saved to {log_file_path}")
+# Function to scan a folder and get all child directories
+def get_child_directories():
+    parent_dir = filedialog.askdirectory(title="Select Parent Directory to Scan")
+    
+    if parent_dir:
+        child_dirs = [os.path.join(parent_dir, subdir) for subdir in os.listdir(parent_dir) if os.path.isdir(os.path.join(parent_dir, subdir))]
+        
+        if child_dirs:
+            # Add the directories to the text field separated by commas
+            directories_string = ",".join(child_dirs)
+            text_input_field.delete(1.0, tk.END)  # Clear the text field
+            text_input_field.insert(tk.END, directories_string)  # Insert the new directories
+        else:
+            messagebox.showinfo("No Directories", "No child directories were found in the selected folder.")
 
+# Existing GUI setup
 root = tk.Tk()
 root.title("TIFF to PDF Converter and PDF Blank Page Remover")
 
@@ -628,24 +643,13 @@ output_dir_label.pack(pady=10)
 listbox_frame = tk.Frame(frame)
 listbox_frame.pack(pady=5, fill=tk.BOTH, expand=True)
 
-
 text_input_label = tk.Label(frame, text="Paste directories separated by commas:")
 text_input_label.pack(pady=5)
 
 text_input_field = Text(frame, height=5, width=60)
 text_input_field.pack(pady=5)
 
-add_text_button = tk.Button(frame, text="Add Folders from Text", command=add_folders_from_text)
-add_text_button.pack(pady=5)
 
-input_dirs_listbox = Listbox(listbox_frame, selectmode=tk.MULTIPLE, width=60, height=10)
-input_dirs_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-
-scrollbar = Scrollbar(listbox_frame, orient=tk.VERTICAL)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-input_dirs_listbox.config(yscrollcommand=scrollbar.set)
-scrollbar.config(command=input_dirs_listbox.yview)
 
 # Buttons to add or remove folders
 add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
@@ -653,6 +657,19 @@ add_folder_btn.pack(pady=5)
 
 remove_folder_btn = tk.Button(frame, text="Remove Selected Folder(s)", command=remove_selected_folder)
 remove_folder_btn.pack(pady=5)
+
+add_text_button = tk.Button(frame, text="Add Folders from Text", command=add_folders_from_text)
+add_text_button.pack(pady=5)
+# Button to scan for child directories
+get_child_dirs_btn = tk.Button(frame, text="Get Child Directories", command=get_child_directories)
+get_child_dirs_btn.pack(pady=5)
+input_dirs_listbox = Listbox(listbox_frame, selectmode=tk.MULTIPLE, width=60, height=10)
+input_dirs_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+scrollbar = Scrollbar(listbox_frame, orient=tk.VERTICAL)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+input_dirs_listbox.config(yscrollcommand=scrollbar.set)
+scrollbar.config(command=input_dirs_listbox.yview)
 
 convert_pdf_btn = tk.Button(frame, text="Convert to PDF", command=convert_pdf_with_listbox)
 convert_pdf_btn.pack(pady=10)
@@ -662,6 +679,7 @@ remove_blanks_btn.pack(pady=10)
 
 select_btn = tk.Button(frame, text="Convert to PDF AND Remove Blanks", command=select_folders_with_listbox)
 select_btn.pack(pady=10)
+
 # New button for converting large TIFFs to PDFs
 convert_large_btn = tk.Button(frame, text="Convert Large TIFs to PDFs", command=start_convert_large)
 convert_large_btn.pack(pady=10)
@@ -671,14 +689,6 @@ parent_folders_btn.pack(pady=10)
 
 cancel_btn = tk.Button(frame, text="Cancel", command=cancel_operation)
 cancel_btn.pack(pady=10)
-
-# Adjusted slider range based on enhanced detection logic
-dark_threshold_slider = tk.Scale(frame, from_=100, to=140, orient=tk.HORIZONTAL, label="Sensitivity")
-dark_threshold_slider.set(100)
-dark_threshold_slider.pack(pady=10)
-
-slider_label = tk.Label(frame, text="Inverse - Lower sensitivity removes more pages. For best results use 90 for single page PDF's and 120 for multipage PDFs.")
-slider_label.pack(pady=10)
 
 progress_label = tk.Label(frame, text="Total TIFF files: 0, Total PDF files: 0")
 progress_label.pack(pady=10)
