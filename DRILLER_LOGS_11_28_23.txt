@@ -4,14 +4,13 @@ import requests
 import os
 import sqlite3
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Listbox, Scrollbar
 from tkinter.ttk import Progressbar
 import threading
 
-#Take in input directory, move them to output directory and ensure they have a unique name, upload them to natif, then take the response and store it to SQLite
-#Add option to select model for processing.
+# Natif API constants
 NATIF_API_BASE_URL = "https://api.natif.ai"
-API_KEY = "r5KeXmtDF0Au07Tc3seyRBzrFAH5h2mx"  # TODO: Insert or load your API-key secret here
+API_KEY = "r5KeXmtDF0Au07Tc3seyRBzrFAH5h2mx"  # TODO: Insert your API key here
 
 class Well:
     def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, materials, hyperlink):
@@ -67,9 +66,15 @@ def process_via_natif_api(file_path, workflow, language, include):
             response = requests.get(RESULT_URI, headers=headers)
         return response.json()
 
-def select_directory():
-    directory = filedialog.askdirectory(title="Select Directory")
-    return directory
+def add_folder():
+    folder = filedialog.askdirectory(title="Select Input Directory")
+    if folder:
+        input_dirs_listbox.insert(tk.END, folder)
+
+def remove_selected_folder():
+    selected_indices = input_dirs_listbox.curselection()
+    for index in reversed(selected_indices):
+        input_dirs_listbox.delete(index)
 
 def store_in_database(well):
     conn = sqlite3.connect('well_data.db')
@@ -99,70 +104,87 @@ def store_in_database(well):
     conn.commit()
     conn.close()
 
-def process_files(directory, progress_label, progress_bar):
-    pdf_files = [file for file in os.listdir(directory) if file.endswith(".pdf")]
-    
-    def extract_part_number(filename):
-        try:
-            return int(filename.split('_')[1])
-        except (IndexError, ValueError):
-            return float('inf')  # Place files without '_<number>' at the end
-    
-    pdf_files_sorted = sorted(pdf_files, key=extract_part_number)
-    total_files = len(pdf_files_sorted)
+def process_files(input_dirs, progress_label, progress_bar):
+    total_files = sum(len([file for file in os.listdir(folder) if file.endswith(".pdf")]) for folder in input_dirs)
     progress_bar["maximum"] = total_files
+    processed_files = 0
 
-    for idx, filename in enumerate(pdf_files_sorted, 1):
-        file_path = os.path.join(directory, filename)
-        workflow = "cb19bee2-32f3-47f1-bd0f-4579d337883d"
-        lang = "de"
-        include = ["extractions", "ocr"]
-        result = process_via_natif_api(file_path, workflow, lang, include)
-        build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
+    for folder in input_dirs:
+        pdf_files = [file for file in os.listdir(folder) if file.endswith(".pdf")]
         
-        my_well = Well(
-            file_path,
-            log_service=extract("log_service", result),
-            company=extract('company', result),
-            county=extract('county', result),
-            farm=extract('farm', result),
-            commenced_date=extract('commenced', result),
-            completed_date=extract('completed', result),
-            total_depth=extract('total_depth', result),
-            initial_production=extract("initial_production", result),
-            location=extract('location', result),
-            well_number=extract('well_number', result),
-            elevation=extract('elevation', result),
-            materials=extract('materials', result),
-            hyperlink=build_hyperlink
-        )
-        my_well.commenced_date = check_date(my_well.commenced_date)
-        my_well.completed_date = check_date(my_well.completed_date)
-        
-        # Store in the SQL database
-        store_in_database(my_well)
+        for idx, filename in enumerate(pdf_files, 1):
+            file_path = os.path.join(folder, filename)
+            workflow = "cb19bee2-32f3-47f1-bd0f-4579d337883d"
+            lang = "de"
+            include = ["extractions", "ocr"]
+            result = process_via_natif_api(file_path, workflow, lang, include)
+            build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
+            
+            my_well = Well(
+                file_path,
+                log_service=extract("log_service", result),
+                company=extract('company', result),
+                county=extract('county', result),
+                farm=extract('farm', result),
+                commenced_date=extract('commenced', result),
+                completed_date=extract('completed', result),
+                total_depth=extract('total_depth', result),
+                initial_production=extract("initial_production", result),
+                location=extract('location', result),
+                well_number=extract('well_number', result),
+                elevation=extract('elevation', result),
+                materials=extract('materials', result),
+                hyperlink=build_hyperlink
+            )
+            my_well.commenced_date = check_date(my_well.commenced_date)
+            my_well.completed_date = check_date(my_well.completed_date)
+            
+            # Store in the SQL database
+            store_in_database(my_well)
 
-        progress_label.config(text=f"Processed {idx}/{total_files} files")
-        progress_bar["value"] = idx
-        root.update_idletasks()
+            processed_files += 1
+            progress_label.config(text=f"Processed {processed_files}/{total_files} files")
+            progress_bar["value"] = processed_files
+            root.update_idletasks()
 
     messagebox.showinfo("Complete", "Processing completed successfully.")
 
 def start_process():
-    directory = select_directory()
-    if not directory:
-        messagebox.showwarning("Warning", "No directory selected. Exiting.")
+    input_dirs = list(input_dirs_listbox.get(0, tk.END))
+    if not input_dirs:
+        messagebox.showwarning("Warning", "No directories selected. Exiting.")
         return
     
-    thread = threading.Thread(target=process_files, args=(directory, progress_label, progress_bar))
+    thread = threading.Thread(target=process_files, args=(input_dirs, progress_label, progress_bar))
     thread.start()
 
+# GUI Setup
 root = tk.Tk()
 root.title("Natif API PDF Processor")
 
 frame = tk.Frame(root, padx=20, pady=20)
 frame.pack()
 
+# Listbox to display selected folders
+listbox_frame = tk.Frame(frame)
+listbox_frame.pack(pady=5, fill=tk.BOTH, expand=True)
+
+input_dirs_listbox = Listbox(listbox_frame, selectmode=tk.MULTIPLE, width=60, height=10)
+input_dirs_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+scrollbar = Scrollbar(listbox_frame, orient=tk.VERTICAL)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+input_dirs_listbox.config(yscrollcommand=scrollbar.set)
+scrollbar.config(command=input_dirs_listbox.yview)
+
+# Buttons to add or remove folders
+add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
+add_folder_btn.pack(pady=5)
+
+remove_folder_btn = tk.Button(frame, text="Remove Selected Folder(s)", command=remove_selected_folder)
+remove_folder_btn.pack(pady=5)
+
+# Run button to start the process
 run_btn = tk.Button(frame, text="Run", command=start_process)
 run_btn.pack(pady=10)
 

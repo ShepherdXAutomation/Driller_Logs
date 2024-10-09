@@ -274,22 +274,44 @@ def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
             for page_number in reversed(pages_to_remove):
                 pdf_document.delete_page(page_number)
 
-            try:
-                if len(pdf_document) > 0:
-                    pdf_document.save(unique_output_path)
-                    print(f"Saved modified PDF to {unique_output_path}")
-                pdf_document.close()
-            except Exception as e:
-                print(f"Failed to save modified PDF {unique_output_path}: {e}")
-                with failed_files_lock:
-                    failed_files.append({'File Path': unique_output_path, 'Error': str(e)})
-        else:
+        # Save the document (even if no pages were removed)
+        try:
+            if len(pdf_document) > 0:
+                pdf_document.save(unique_output_path)
+                print(f"Saved modified PDF to {unique_output_path}")
             pdf_document.close()
-            print(f"No blank pages found in {input_path}")
+        except Exception as e:
+            print(f"Failed to save modified PDF {unique_output_path}: {e}")
+            with failed_files_lock:
+                failed_files.append({'File Path': unique_output_path, 'Error': str(e)})
+            continue
 
         progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
         progress_bar["value"] = idx
         root.update_idletasks()
+
+    # Get current date and time
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    # Save blanks to Excel log with timestamp
+    blank_files_log = os.path.join(output_dir, f'Removed_Blank_Pages_{timestamp}.xlsx')
+    if os.path.exists(blank_files_log):
+        os.remove(blank_files_log)
+
+    df = pd.DataFrame(blanks, columns=['Filename'])
+    df.to_excel(blank_files_log, index=False)
+    print(f"Excel log saved to {blank_files_log}")
+
+    # Save blanks to Text log with timestamp
+    blank_pages_log_txt = os.path.join(output_dir, f'blank_pages_removed_{timestamp}.txt')
+    try:
+        with open(blank_pages_log_txt, 'w') as txt_file:
+            for blank in blanks:
+                txt_file.write(f"{blank}\n")
+        print(f"Text log saved to {blank_pages_log_txt}")
+    except Exception as e:
+        print(f"Failed to write text log: {e}")
+
     
     # Get current date and time
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')

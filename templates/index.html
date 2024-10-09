@@ -400,6 +400,7 @@
             <table id="wellTable" class="table table-striped">
                 <thead>
                     <tr>
+                        <th>Hyperlink</th>
                         <th>Log Service</th>
                         <th>Company</th>
                         <th>County</th>
@@ -412,12 +413,14 @@
                         <th>Well Number</th>
                         <th>Elevation</th>
                         <th>Materials</th>
-                        <th>Hyperlink</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for well in wells %}
                     <tr>
+                        <td>
+                            <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
+                        </td>
                         <td>{{ well.log_service }}</td>
                         <td>{{ well.company }}</td>
                         <td>{{ well.county }}</td>
@@ -430,9 +433,6 @@
                         <td>{{ well.well_number }}</td>
                         <td>{{ well.elevation }}</td>
                         <td>{{ well.materials }}</td>
-                        <td>
-                            <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
-                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

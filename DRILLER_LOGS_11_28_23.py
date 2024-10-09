@@ -37,12 +37,16 @@ def extract(field, result):
         return ""
 
 def check_date(date):
-    input_string = date
+    if date is None or not isinstance(date, str):
+        return ""  # Return an empty string or a default value if date is None or not a string
+    
+    input_string = date.strip()  # Ensure there are no leading or trailing spaces
     if input_string.startswith("20"):
         modified_string = "19" + input_string[2:]
         return modified_string
     else:
         return date
+
 
 def process_via_natif_api(file_path, workflow, language, include):
     headers = {"Accept": "application/json", "Authorization": f"ApiKey {API_KEY}"}
@@ -104,7 +108,7 @@ def store_in_database(well):
     conn.commit()
     conn.close()
 
-def process_files(input_dirs, progress_label, progress_bar):
+def process_files(input_dirs, progress_label, progress_bar, current_file_label):
     total_files = sum(len([file for file in os.listdir(folder) if file.endswith(".pdf")]) for folder in input_dirs)
     progress_bar["maximum"] = total_files
     processed_files = 0
@@ -117,6 +121,10 @@ def process_files(input_dirs, progress_label, progress_bar):
             workflow = "cb19bee2-32f3-47f1-bd0f-4579d337883d"
             lang = "de"
             include = ["extractions", "ocr"]
+
+            # Update the current file label
+            current_file_label.config(text=f"Processing: {filename}")
+            
             result = process_via_natif_api(file_path, workflow, lang, include)
             build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
             
@@ -155,8 +163,17 @@ def start_process():
         messagebox.showwarning("Warning", "No directories selected. Exiting.")
         return
     
-    thread = threading.Thread(target=process_files, args=(input_dirs, progress_label, progress_bar))
+    thread = threading.Thread(target=process_files, args=(input_dirs, progress_label, progress_bar, current_file_label))
     thread.start()
+
+# Function to add all child folders in the selected directory
+def add_child_folders():
+    parent_folder = filedialog.askdirectory(title="Select Parent Directory")
+    if parent_folder:
+        for root_dir, dirs, files in os.walk(parent_folder):
+            for dir_name in dirs:
+                folder_path = os.path.join(root_dir, dir_name)
+                input_dirs_listbox.insert(tk.END, folder_path)
 
 # GUI Setup
 root = tk.Tk()
@@ -181,6 +198,9 @@ scrollbar.config(command=input_dirs_listbox.yview)
 add_folder_btn = tk.Button(frame, text="Add Folder", command=add_folder)
 add_folder_btn.pack(pady=5)
 
+add_child_folders_btn = tk.Button(frame, text="Add All Child Folders", command=add_child_folders)
+add_child_folders_btn.pack(pady=5)
+
 remove_folder_btn = tk.Button(frame, text="Remove Selected Folder(s)", command=remove_selected_folder)
 remove_folder_btn.pack(pady=5)
 
@@ -193,5 +213,9 @@ progress_label.pack(pady=10)
 
 progress_bar = Progressbar(frame, length=300, mode='determinate')
 progress_bar.pack(pady=10)
+
+# Label to display the current file being processed
+current_file_label = tk.Label(frame, text="Current file: None")
+current_file_label.pack(pady=10)
 
 root.mainloop()
