@@ -1,6 +1,6 @@
 import os
 import re
-from flask import Flask, render_template, request, send_file, abort, url_for
+from flask import Flask, render_template, request, send_file, abort, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from urllib.parse import unquote
@@ -146,6 +146,15 @@ def serve_file():
     except Exception as e:
         print(f"Debug: Error serving file: {e}")
         abort(404)
+
+@app.route('/delete_entry/<int:id>', methods=['DELETE'])
+def delete_entry(id):
+    well = Well.query.get(id)
+    if well:
+        db.session.delete(well)
+        db.session.commit()
+        return jsonify({'message': 'Entry deleted successfully'}), 200
+    return jsonify({'message': 'Entry not found'}), 404
 
 if __name__ == "__main__":
     with app.app_context():

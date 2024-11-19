@@ -30,11 +30,25 @@ class Well:
         self.hyperlink = hyperlink
 
 def extract(field, result):
-    field = result.get("extractions", {}).get(field, {})
-    if field is not None:
-        return field.get("value")
-    else:
-        return ""
+    """Extract field value handling nested structures like county.county"""
+    extractions = result.get("extractions", {})
+    field_data = extractions.get(field, {})
+    
+    # Handle nested structure (e.g., county.county)
+    if isinstance(field_data, dict) and field in field_data:
+        nested_data = field_data[field]
+        if isinstance(nested_data, dict):
+            return nested_data.get("value")
+    
+    # Handle standard structure
+    elif isinstance(field_data, dict):
+        return field_data.get("value")
+    
+    # Handle simple values
+    elif field_data is not None:
+        return field_data
+    
+    return ""
 
 def check_date(date):
     if date is None or not isinstance(date, str):
@@ -126,6 +140,10 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
             current_file_label.config(text=f"Processing: {filename}")
             
             result = process_via_natif_api(file_path, workflow, lang, include)
+            
+            # Print the API response result to the command line
+            print(f"API response for {filename}: {json.dumps(result, indent=4)}")
+            
             build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
             
             my_well = Well(
@@ -153,9 +171,6 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
             processed_files += 1
             progress_label.config(text=f"Processed {processed_files}/{total_files} files")
             progress_bar["value"] = processed_files
-            root.update_idletasks()
-
-    messagebox.showinfo("Complete", "Processing completed successfully.")
 
 def start_process():
     input_dirs = list(input_dirs_listbox.get(0, tk.END))

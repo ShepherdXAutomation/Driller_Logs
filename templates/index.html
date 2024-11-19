@@ -6,7 +6,6 @@
     <title>SER Driller Log Data Search</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Your Custom CSS for Buttons and Title */
         .type--A {
             --line_color: #555555;
             --back_color: #FFFFFF;
@@ -20,60 +19,64 @@
             --back_color: #DEFFFA;
         }
         .button {
-    position: relative;
-    z-index: 0;
-    width: 240px;
-    height: 56px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    transition: all .3s ease;
-    display: inline-block; /* Ensure button is not stretched */
-    outline: none; /* Remove default outline */
-    border: none; /* Remove any borders */
-    box-shadow: none; /* Remove any box shadow */
-    background-color: var(--back_color); /* Ensure background is set */
-    border-radius: 28px; /* Ensure it's an oval */
-}
-
-.button__text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    outline: none;
-    box-shadow: none;
-}
-
-.button::before,
-.button::after,
-.button__text::before,
-.button__text::after {
-    content: '';
-    position: absolute;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--line_color);
-    transition: all .5s ease;
-    outline: none;
-    box-shadow: none;
-}
-
-.button:hover {
-    letter-spacing: 6px;
-    border: none; /* Ensure no border on hover */
-    box-shadow: none; /* Remove any box shadow on hover */
-}
-
-/* Specific focus and hover states */
-.button:focus,
-.button:active {
-    outline: none;
-    border: none;
-    box-shadow: none;
-}
+            position: relative;
+            z-index: 0;
+            width: 240px;
+            height: 56px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: all .3s ease;
+            display: inline-block; /* Ensure button is not stretched */
+            outline: none; /* Remove default outline */
+            border: none; /* Remove any borders */
+            box-shadow: none; /* Remove any box shadow */
+            background-color: var(--back_color); /* Ensure background is set */
+            border-radius: 28px; /* Ensure it's an oval */
+        }
+        .delete-button {
+            color: #ffffff;
+            background-color: #dc3545;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .button__text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            outline: none;
+            box-shadow: none;
+        }
+        .button::before,
+        .button::after,
+        .button__text::before,
+        .button__text::after {
+            content: '';
+            position: absolute;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--line_color);
+            transition: all .5s ease;
+            outline: none;
+            box-shadow: none;
+        }
+        .button:hover {
+            letter-spacing: 6px;
+            border: none; /* Ensure no border on hover */
+            box-shadow: none; /* Remove any box shadow on hover */
+        }
+        .button:focus,
+        .button:active {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
         .button::before {
             top: 0;
             left: 54px;
@@ -273,18 +276,7 @@
                 width: 124px;
             }
         }
-
-        /* Remove any extra outlines */
-        .button:focus,
-        .button__text:focus,
-        button:focus,
-        button:hover,
-        button[type="submit"]:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        /* Style for Page Title */
+        /* Additional Styles */
         .page-title {
             font-family: Arial, sans-serif;
             font-size: 24px;
@@ -293,51 +285,101 @@
             text-align: center;
             margin-top: 20px;
         }
-
-        /* Restoring Scrollability */
         .table-container {
-            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-x: auto;
             width: 100%;
         }
         table {
-            width: 100%; /* Use 100% of the container's width */
+            
+            width: 100%;
             border-collapse: collapse;
-            table-layout: auto; /* Auto layout for table */
         }
         th, td {
             padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
-            overflow: hidden; /* Hide overflow */
-            text-overflow: ellipsis; /* Ellipsis for overflow text */
-            white-space: nowrap; /* Prevent text from wrapping */
         }
+        #wellTable th,
+#wellTable td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Give materials column a specific width */
+#wellTable th:nth-child(13),
+#wellTable td:nth-child(13) {
+    max-width: 200px; /* Adjust this value as needed */
+    width: 200px;
+}
+
+.materials-cell {
+    max-width: 200px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 200px !important;
+}
+/* Update your existing CSS with these styles */
+.table-container {
+    position: relative;
+    height: 70vh; /* Adjust viewport height as needed */
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+#wellTable {
+    position: relative;
+    width: 100%;
+}
+
+#wellTable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Or any color you prefer */
+    z-index: 1;
+    /* Add shadow to make header stand out */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: Add some padding and style to the container */
+.table-container::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
     </style>
 </head>
 <body>
-    <!-- Your content here -->
-</body>
-</html>
-
-</head>
-<body>
     <div class="container-fluid mt-4 content">
-        <h1 class="page-title">SER Driller Log Data Service</h1> <!-- Apply the page-title class here -->
+        <h1 class="page-title">SER Driller Log Data Service</h1>
 
         <!-- Collapse Button -->
-       
-        
         <button class="button type--A" type="button" data-toggle="collapse" data-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
             <div class="button__line"></div>
             <div class="button__line"></div>
-            <span class="button__text">Filter</span> <!-- Updated text -->
-           
-
+            <span class="button__text">Filter</span>
         </button>
 
         <!-- Collapsible Search Form -->
         <div class="collapse" id="searchForm">
-            <form method="POST">
+            <form method="POST" action="/search">
                 <div class="form-group">
                     <label for="log_service">Log Service:</label>
                     <input type="text" class="form-control" id="log_service" name="log_service">
@@ -386,12 +428,10 @@
                     <label for="materials">Materials:</label>
                     <input type="text" class="form-control" id="materials" name="materials">
                 </div>
-                <!-- Custom button aligned to the left -->
                 <button type="submit" class="button type--A">
                     <div class="button__line"></div>
                     <div class="button__line"></div>
-                    <span class="button__text">Search</span> <!-- Updated text -->
-                    
+                    <span class="button__text">Search</span>
                 </button>
             </form>
         </div>
@@ -413,14 +453,13 @@
                         <th>Well Number</th>
                         <th>Elevation</th>
                         <th>Materials</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="wellTableBody">
                     {% for well in wells %}
                     <tr>
-                        <td>
-                            <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
-                        </td>
+                        <td><a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a></td>
                         <td>{{ well.log_service }}</td>
                         <td>{{ well.company }}</td>
                         <td>{{ well.county }}</td>
@@ -433,22 +472,100 @@
                         <td>{{ well.well_number }}</td>
                         <td>{{ well.elevation }}</td>
                         <td>{{ well.materials }}</td>
+                        <td><button class="delete-button" data-id="{{ well.id }}">Delete</button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls text-center mt-4">
+            <button id="prevPage" class="btn btn-primary" disabled>Previous</button>
+            <span id="pageDisplay">Page 1</span>
+            <button id="nextPage" class="btn btn-primary">Next</button>
+        </div>
     </div>
 
-    <!-- Footer with Image and Text -->
-    <div class="footer">
-        <div class="footer-text" style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
+    <!-- Footer -->
+    <div class="footer text-center mt-4">
+        <div style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
     </div>
 
-    <!-- Bootstrap JS for Collapse -->
+    <!-- Bootstrap and JavaScript for Pagination and Data Loading -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        let currentPage = 1;
+        const resultsPerPage = 100;
 
+        document.addEventListener("DOMContentLoaded", () => {
+            loadPage(currentPage);
+
+            document.getElementById("nextPage").addEventListener("click", () => {
+                currentPage += 1;
+                loadPage(currentPage);
+            });
+
+            document.getElementById("prevPage").addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage -= 1;
+                    loadPage(currentPage);
+                }
+            });
+        });
+
+        function loadPage(page) {
+            fetch(`/data?page=${page}&limit=${resultsPerPage}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayData(data.results);
+                    document.getElementById("pageDisplay").textContent = `Page ${page}`;
+                    document.getElementById("prevPage").disabled = page === 1;
+                    document.getElementById("nextPage").disabled = data.results.length < resultsPerPage;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayData(wells) {
+    const tableBody = document.getElementById("wellTableBody");
+    tableBody.innerHTML = "";
+    
+    wells.forEach(well => {
+        const row = document.createElement("tr");
+        
+        // Convert materials to string and truncate
+        let materialsText = '';
+        if (well.materials != null) {
+            materialsText = String(well.materials).trim();
+            if (materialsText.length > 78) {
+                materialsText = materialsText.substring(0, 75) + '...';
+            }
+        }
+        
+        // Build the entire row at once with the truncated materials
+        row.innerHTML = `
+            <td><a href="${well.hyperlink || '#'}" target="_blank">Open File</a></td>
+            <td>${well.log_service || ''}</td>
+            <td>${well.company || ''}</td>
+            <td>${well.county || ''}</td>
+            <td>${well.farm || ''}</td>
+            <td>${well.commenced_date || ''}</td>
+            <td>${well.completed_date || ''}</td>
+            <td>${well.total_depth || ''}</td>
+            <td>${well.initial_production || ''}</td>
+            <td>${well.location || ''}</td>
+            <td>${well.well_number || ''}</td>
+            <td>${well.elevation || ''}</td>
+            <td class="materials-cell">${materialsText}</td>
+            <td><button class="delete-button" data-id="${well.id}">Delete</button></td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+    </script>
 </body>
 </html>

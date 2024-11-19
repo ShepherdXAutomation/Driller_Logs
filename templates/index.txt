@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SER Driller Log Data Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Your Custom CSS for Buttons and Title */
+        .type--A {
+            --line_color: #555555;
+            --back_color: #FFFFFF;
+        }
+        .type--B {
+            --line_color: #1b1919;
+            --back_color: #E9ECFF;
+        }
+        .type--C {
+            --line_color: #00135C;
+            --back_color: #DEFFFA;
+        }
+        .button {
+    position: relative;
+    z-index: 0;
+    width: 240px;
+    height: 56px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    transition: all .3s ease;
+    display: inline-block; /* Ensure button is not stretched */
+    outline: none; /* Remove default outline */
+    border: none; /* Remove any borders */
+    box-shadow: none; /* Remove any box shadow */
+    background-color: var(--back_color); /* Ensure background is set */
+    border-radius: 28px; /* Ensure it's an oval */
+}
+.delete-button {
+            color: #ffffff;
+            background-color: #dc3545;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+.button__text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    box-shadow: none;
+}
+
+.button::before,
+.button::after,
+.button__text::before,
+.button__text::after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--line_color);
+    transition: all .5s ease;
+    outline: none;
+    box-shadow: none;
+}
+
+.button:hover {
+    letter-spacing: 6px;
+    border: none; /* Ensure no border on hover */
+    box-shadow: none; /* Remove any box shadow on hover */
+}
+
+/* Specific focus and hover states */
+.button:focus,
+.button:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+        .button::before {
+            top: 0;
+            left: 54px;
+            width: calc(100% - 56px * 2 - 16px);
+        }
+        .button::after {
+            top: 0;
+            right: 54px;
+            width: 8px;
+        }
+        .button__text::before {
+            bottom: 0;
+            right: 54px;
+            width: calc(100% - 56px * 2 - 16px);
+        }
+        .button__text::after {
+            bottom: 0;
+            left: 54px;
+            width: 8px;
+        }
+        .button__line {
+            position: absolute;
+            top: 0;
+            width: 56px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .button__line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 150%;
+            height: 100%;
+            box-sizing: border-box;
+            border-radius: 300px;
+            border: solid 3px var(--line_color);
+        }
+        .button__line:nth-child(1),
+        .button__line:nth-child(1)::before {
+            left: 0;
+        }
+        .button__line:nth-child(2),
+        .button__line:nth-child(2)::before {
+            right: 0;
+        }
+        .button:hover {
+            letter-spacing: 6px;
+        }
+        .button:hover::before,
+        .button:hover .button__text::before {
+            width: 8px;
+        }
+        .button:hover::after,
+        .button:hover .button__text::after {
+            width: calc(100% - 56px * 2 - 16px);
+        }
+        .button__drow1,
+        .button__drow2 {
+            position: absolute;
+            z-index: -1;
+            border-radius: 16px;
+            transform-origin: 16px 16px;
+        }
+        .button__drow1 {
+            top: -16px;
+            left: 40px;
+            width: 32px;
+            height: 0;
+            transform: rotate(30deg);
+        }
+        .button__drow2 {
+            top: 44px;
+            left: 77px;
+            width: 32px;
+            height: 0;
+            transform: rotate(-127deg);
+        }
+        .button__drow1::before,
+        .button__drow1::after,
+        .button__drow2::before,
+        .button__drow2::after {
+            content: '';
+            position: absolute;
+        }
+        .button__drow1::before {
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 32px;
+            border-radius: 16px;
+            transform-origin: 16px 16px;
+            transform: rotate(-60deg);
+        }
+        .button__drow1::after {
+            top: -10px;
+            left: 45px;
+            width: 0;
+            height: 32px;
+            border-radius: 16px;
+            transform-origin: 16px 16px;
+            transform: rotate(69deg);
+        }
+        .button__drow2::before {
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 32px;
+            border-radius: 16px;
+            transform-origin: 16px 16px;
+            transform: rotate(-146deg);
+        }
+        .button__drow2::after {
+            bottom: 26px;
+            left: -40px;
+            width: 0;
+            height: 32px;
+            border-radius: 16px;
+            transform-origin: 16px 16px;
+            transform: rotate(-262deg);
+        }
+        .button__drow1,
+        .button__drow1::before,
+        .button__drow1::after,
+        .button__drow2,
+        .button__drow2::before,
+        .button__drow2::after {
+            background: var(--back_color);
+        }
+        .button:hover .button__drow1 {
+            animation: drow1 ease-in .06s;
+            animation-fill-mode: forwards;
+        }
+        .button:hover .button__drow1::before {
+            animation: drow2 linear .08s .06s;
+            animation-fill-mode: forwards;
+        }
+        .button:hover .button__drow1::after {
+            animation: drow3 linear .03s .14s;
+            animation-fill-mode: forwards;
+        }
+        .button:hover .button__drow2 {
+            animation: drow4 linear .06s .2s;
+            animation-fill-mode: forwards;
+        }
+        .button:hover .button__drow2::before {
+            animation: drow3 linear .03s .26s;
+            animation-fill-mode: forwards;
+        }
+        .button:hover .button__drow2::after {
+            animation: drow5 linear .06s .32s;
+            animation-fill-mode: forwards;
+        }
+        @keyframes drow1 {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: 100px;
+            }
+        }
+        @keyframes drow2 {
+            0% {
+                width: 0;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0;
+            }
+            11% {
+                opacity: 1;
+            }
+            100% {
+                width: 120px;
+            }
+        }
+        @keyframes drow3 {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 80px;
+            }
+        }
+        @keyframes drow4 {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: 120px;
+            }
+        }
+        @keyframes drow5 {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 124px;
+            }
+        }
+
+        /* Remove any extra outlines */
+        .button:focus,
+        .button__text:focus,
+        button:focus,
+        button:hover,
+        button[type="submit"]:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        /* Style for Page Title */
+        .page-title {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Restoring Scrollability */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            width: 100%;
+        }
+        table {
+            width: 100%; /* Use 100% of the container's width */
+            border-collapse: collapse;
+            table-layout: auto; /* Auto layout for table */
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Ellipsis for overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+    </style>
+</head>
+<body>
+    <!-- Your content here -->
+</body>
+</html>
+
+</head>
+<body>
+    <div class="container-fluid mt-4 content">
+        <h1 class="page-title">SER Driller Log Data Service</h1> <!-- Apply the page-title class here -->
+
+        <!-- Collapse Button -->
+       
+        
+        <button class="button type--A" type="button" data-toggle="collapse" data-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
+            <div class="button__line"></div>
+            <div class="button__line"></div>
+            <span class="button__text">Filter</span> <!-- Updated text -->
+           
+
+        </button>
+
+        <!-- Collapsible Search Form -->
+        <div class="collapse" id="searchForm">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="log_service">Log Service:</label>
+                    <input type="text" class="form-control" id="log_service" name="log_service">
+                </div>
+                <div class="form-group">
+                    <label for="company">Company:</label>
+                    <input type="text" class="form-control" id="company" name="company">
+                </div>
+                <div class="form-group">
+                    <label for="county">County:</label>
+                    <input type="text" class="form-control" id="county" name="county">
+                </div>
+                <div class="form-group">
+                    <label for="farm">Farm:</label>
+                    <input type="text" class="form-control" id="farm" name="farm">
+                </div>
+                <div class="form-group">
+                    <label for="commenced_date">Commenced Date:</label>
+                    <input type="text" class="form-control" id="commenced_date" name="commenced_date">
+                </div>
+                <div class="form-group">
+                    <label for="completed_date">Completed Date:</label>
+                    <input type="text" class="form-control" id="completed_date" name="completed_date">
+                </div>
+                <div class="form-group">
+                    <label for="total_depth">Total Depth:</label>
+                    <input type="text" class="form-control" id="total_depth" name="total_depth">
+                </div>
+                <div class="form-group">
+                    <label for="initial_production">Initial Production:</label>
+                    <input type="text" class="form-control" id="initial_production" name="initial_production">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" class="form-control" id="location" name="location">
+                </div>
+                <div class="form-group">
+                    <label for="well_number">Well Number:</label>
+                    <input type="text" class="form-control" id="well_number" name="well_number">
+                </div>
+                <div class="form-group">
+                    <label for="elevation">Elevation:</label>
+                    <input type="text" class="form-control" id="elevation" name="elevation">
+                </div>
+                <div class="form-group">
+                    <label for="materials">Materials:</label>
+                    <input type="text" class="form-control" id="materials" name="materials">
+                </div>
+                <!-- Custom button aligned to the left -->
+                <button type="submit" class="button type--A">
+                    <div class="button__line"></div>
+                    <div class="button__line"></div>
+                    <span class="button__text">Search</span> <!-- Updated text -->
+                    
+                </button>
+            </form>
+        </div>
+
+        <div class="table-container mt-4">
+            <table id="wellTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Hyperlink</th>
+                        <th>Log Service</th>
+                        <th>Company</th>
+                        <th>County</th>
+                        <th>Farm</th>
+                        <th>Commenced Date</th>
+                        <th>Completed Date</th>
+                        <th>Total Depth</th>
+                        <th>Initial Production</th>
+                        <th>Location</th>
+                        <th>Well Number</th>
+                        <th>Elevation</th>
+                        <th>Materials</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for well in wells %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a>
+                        </td>
+                        <td>{{ well.log_service }}</td>
+                        <td>{{ well.company }}</td>
+                        <td>{{ well.county }}</td>
+                        <td>{{ well.farm }}</td>
+                        <td>{{ well.commenced_date }}</td>
+                        <td>{{ well.completed_date }}</td>
+                        <td>{{ well.total_depth }}</td>
+                        <td>{{ well.initial_production }}</td>
+                        <td>{{ well.location }}</td>
+                        <td>{{ well.well_number }}</td>
+                        <td>{{ well.elevation }}</td>
+                        <td>{{ well.materials }}</td>
+                        <td><button class="delete-button" data-id="{{ well.id }}">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer with Image and Text -->
+    <div class="footer">
+        <div class="footer-text" style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
+    </div>
+
+    <!-- Bootstrap JS for Collapse -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+     <script>
+     document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.getAttribute('data-id');
+            deleteEntry(id);
+        });
+    });
+});
+
+function deleteEntry(id) {
+    console.log("Delete button clicked for ID:", id);  // Confirm function call
+    fetch(`/delete_entry/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Entry deleted successfully');
+            location.reload();
+        } else {
+            alert('Failed to delete entry');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+ 
+    
+    </script>
+</body>
+</html>

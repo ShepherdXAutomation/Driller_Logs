@@ -1,0 +1,4285 @@
+{
+  "processing_id": "25b3d47f-f9c1-49d6-8c50-d076d386f8dc",
+  "workflow_id": "cb19bee2-32f3-47f1-bd0f-4579d337883d",
+  "workflow_name": "Driller Logs w/ Material",
+  "available_results": [
+    "extractions",
+    "ocr",
+    "page-images",
+    "thumbnail",
+    "pdf",
+    "hocr"
+  ],
+  "extractions": {
+    "schema_version": 1,
+    "document_type": "custom_extraction",
+    "log_service": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9937070608139038,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 99
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 177
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 94
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 183
+        }
+      ],
+      "value": "BESS MASON LOG SERVICE"
+    },
+    "company": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9959560930728912,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 76
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 3
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 45
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 46
+        }
+      ],
+      "value": "CODY & SUM ERS"
+    },
+    "commenced": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9941941499710083,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 102
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 103
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 104
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 105
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 106
+        }
+      ],
+      "value": "2052-05-20"
+    },
+    "completed": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9952174425125122,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 89
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 90
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 91
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 92
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 93
+        }
+      ],
+      "value": "2052-06-15"
+    },
+    "total_depth": null,
+    "initial_production": {
+      "validation_problem": true,
+      "note": "Could not recognize what number is Dry. Please check manually.",
+      "confidence": 0.9204254150390625,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 119
+        }
+      ],
+      "value": "Dry"
+    },
+    "location": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9857588887214661,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 58
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 26
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 23
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 174
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 71
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 0
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 42
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 11
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 4
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 72
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 62
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 63
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 117
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 59
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 27
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 38
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 28
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 10
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 19
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 20
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 79
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 141
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 142
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 64
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 127
+        }
+      ],
+      "value": "T&P RY CO SURVEY BLK 2 SEC 55 ,. 23371 FEL , 16641 FSL of Sec 55, 93 mi SW Palo Pinto , 320 Acres"
+    },
+    "well_number": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9843802750110626,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 21
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 22
+        }
+      ],
+      "value": 1.0
+    },
+    "elevation": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.7568085193634033,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 78
+        }
+      ],
+      "value": 1033.0
+    },
+    "materials": {
+      "validation_problem": false,
+      "note": "",
+      "confidence": 0.9993285367363378,
+      "bbox_refs": [
+        {
+          "page_num": 1,
+          "bbox_id": 121
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 67
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 159
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 160
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 24
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 129
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 9
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 164
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 5
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 130
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 14
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 165
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 120
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 30
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 122
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 31
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 147
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 6
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 180
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 33
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 109
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 48
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 148
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 7
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 60
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 85
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 49
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 86
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 137
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 36
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 166
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 13
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 115
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 54
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 149
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 32
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 123
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 50
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 95
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 1
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 172
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 55
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 150
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 34
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 96
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 39
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 151
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 8
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 179
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 51
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 131
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 167
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 37
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 132
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 40
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 143
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 2
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 173
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 65
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 124
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 43
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 138
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 56
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 125
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 41
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 161
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 66
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 97
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 175
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 139
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 77
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 110
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 144
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 70
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 133
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 176
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 80
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 145
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 68
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 116
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 74
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 162
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 81
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 134
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 75
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 146
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 87
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 135
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 163
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 69
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 111
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 82
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 168
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 128
+        },
+        {
+          "page_num": 1,
+          "bbox_id": 88
+        }
+      ],
+      "value": "soil clay yellot / 18 lino 35 shale 0 lime 75 shale sandy 330 line 340 shale & shells 390 lime 400 shale & rod rocle 430 lime sandy 440 shale 45 lime 468 shale 470 lime 482 lime & sholls 510 shale 585 lime 595 shale a sholls 640 sand water 672 lime 689 shalo & shells 680 coal 885 shale 910 lime 918 shale 1030 lime shells shale 1080 sandy shalo 1170 sand brolken 1190 shale 1248 lime 1256 shale 1440 limo 1445 shalo 1450 sand vator 1460 line 1480 shale sandy 1500"
+    },
+    "county": {
+      "county": {
+        "validation_problem": false,
+        "note": "",
+        "confidence": 0.9909671247005463,
+        "bbox_refs": [
+          {
+            "page_num": 1,
+            "bbox_id": 83
+          },
+          {
+            "page_num": 1,
+            "bbox_id": 126
+          }
+        ],
+        "value": "PALO PINTO"
+      }
+    },
+    "farm": {
+      "farm": {
+        "validation_problem": false,
+        "note": "",
+        "confidence": 0.9838968813419342,
+        "bbox_refs": [
+          {
+            "page_num": 1,
+            "bbox_id": 107
+          },
+          {
+            "page_num": 1,
+            "bbox_id": 136
+          }
+        ],
+        "value": "CHAS 1OTAX"
+      }
+    }
+  },
+  "ocr": {
+    "pages": [
+      {
+        "width": 1877,
+        "height": 2431,
+        "bboxes": [
+          {
+            "id": 0,
+            "x1": 1544,
+            "y1": 338,
+            "x2": 1571,
+            "y2": 367,
+            "text": "2",
+            "text_entropy": 0.006565093994140625
+          },
+          {
+            "id": 1,
+            "x1": 430,
+            "y1": 1427,
+            "x2": 454,
+            "y2": 1455,
+            "text": "&",
+            "text_entropy": 0.030853271484375
+          },
+          {
+            "id": 2,
+            "x1": 447,
+            "y1": 1646,
+            "x2": 471,
+            "y2": 1673,
+            "text": "&",
+            "text_entropy": 0.4404296875
+          },
+          {
+            "id": 3,
+            "x1": 425,
+            "y1": 343,
+            "x2": 457,
+            "y2": 375,
+            "text": "&",
+            "text_entropy": 0.148193359375
+          },
+          {
+            "id": 4,
+            "x1": 1283,
+            "y1": 383,
+            "x2": 1312,
+            "y2": 413,
+            "text": ",.",
+            "text_entropy": 0.1673583984375
+          },
+          {
+            "id": 5,
+            "x1": 791,
+            "y1": 981,
+            "x2": 816,
+            "y2": 1006,
+            "text": "0",
+            "text_entropy": 0.32177734375
+          },
+          {
+            "id": 6,
+            "x1": 444,
+            "y1": 1128,
+            "x2": 471,
+            "y2": 1156,
+            "text": "&",
+            "text_entropy": 0.0130462646484375
+          },
+          {
+            "id": 7,
+            "x1": 444,
+            "y1": 1200,
+            "x2": 471,
+            "y2": 1227,
+            "text": "&",
+            "text_entropy": 0.004352569580078125
+          },
+          {
+            "id": 8,
+            "x1": 447,
+            "y1": 1537,
+            "x2": 471,
+            "y2": 1562,
+            "text": "a",
+            "text_entropy": 0.6142578125
+          },
+          {
+            "id": 9,
+            "x1": 774,
+            "y1": 938,
+            "x2": 818,
+            "y2": 975,
+            "text": "35",
+            "text_entropy": 0.0010442733764648438
+          },
+          {
+            "id": 10,
+            "x1": 1353,
+            "y1": 411,
+            "x2": 1402,
+            "y2": 450,
+            "text": "93",
+            "text_entropy": 0.247314453125
+          },
+          {
+            "id": 11,
+            "x1": 1231,
+            "y1": 378,
+            "x2": 1280,
+            "y2": 412,
+            "text": "55",
+            "text_entropy": 0.049957275390625
+          },
+          {
+            "id": 12,
+            "x1": 332,
+            "y1": 751,
+            "x2": 378,
+            "y2": 785,
+            "text": "10",
+            "text_entropy": 0.0011110305786132812
+          },
+          {
+            "id": 13,
+            "x1": 791,
+            "y1": 1273,
+            "x2": 840,
+            "y2": 1310,
+            "text": "45",
+            "text_entropy": 0.168701171875
+          },
+          {
+            "id": 14,
+            "x1": 772,
+            "y1": 1014,
+            "x2": 823,
+            "y2": 1051,
+            "text": "75",
+            "text_entropy": -1.0788440704345703e-05
+          },
+          {
+            "id": 15,
+            "x1": 1158,
+            "y1": 221,
+            "x2": 1209,
+            "y2": 256,
+            "text": "St.",
+            "text_entropy": 0.10736083984375
+          },
+          {
+            "id": 16,
+            "x1": 391,
+            "y1": 746,
+            "x2": 402,
+            "y2": 790,
+            "text": "3",
+            "text_entropy": 0.1427001953125
+          },
+          {
+            "id": 17,
+            "x1": 404,
+            "y1": 746,
+            "x2": 421,
+            "y2": 790,
+            "text": "/",
+            "text_entropy": 0.1427001953125
+          },
+          {
+            "id": 18,
+            "x1": 423,
+            "y1": 746,
+            "x2": 442,
+            "y2": 790,
+            "text": "4",
+            "text_entropy": 0.1427001953125
+          },
+          {
+            "id": 19,
+            "x1": 1407,
+            "y1": 414,
+            "x2": 1456,
+            "y2": 446,
+            "text": "mi",
+            "text_entropy": 0.004444122314453125
+          },
+          {
+            "id": 20,
+            "x1": 1466,
+            "y1": 414,
+            "x2": 1512,
+            "y2": 443,
+            "text": "SW",
+            "text_entropy": 0.0787353515625
+          },
+          {
+            "id": 21,
+            "x1": 1160,
+            "y1": 489,
+            "x2": 1174,
+            "y2": 522,
+            "text": "*",
+            "text_entropy": 0.32763671875
+          },
+          {
+            "id": 22,
+            "x1": 1176,
+            "y1": 488,
+            "x2": 1190,
+            "y2": 522,
+            "text": "1",
+            "text_entropy": 0.32763671875
+          },
+          {
+            "id": 23,
+            "x1": 1287,
+            "y1": 340,
+            "x2": 1336,
+            "y2": 370,
+            "text": "CO",
+            "text_entropy": 0.1885986328125
+          },
+          {
+            "id": 24,
+            "x1": 769,
+            "y1": 903,
+            "x2": 818,
+            "y2": 932,
+            "text": "18",
+            "text_entropy": 0.0364990234375
+          },
+          {
+            "id": 25,
+            "x1": 1092,
+            "y1": 2360,
+            "x2": 1129,
+            "y2": 2383,
+            "text": "OF",
+            "text_entropy": 0.035797119140625
+          },
+          {
+            "id": 26,
+            "x1": 1231,
+            "y1": 340,
+            "x2": 1283,
+            "y2": 370,
+            "text": "RY",
+            "text_entropy": 0.0018520355224609375
+          },
+          {
+            "id": 27,
+            "x1": 1151,
+            "y1": 416,
+            "x2": 1202,
+            "y2": 446,
+            "text": "of",
+            "text_entropy": 0.00969696044921875
+          },
+          {
+            "id": 28,
+            "x1": 1280,
+            "y1": 415,
+            "x2": 1346,
+            "y2": 451,
+            "text": "55,",
+            "text_entropy": 0.0025844573974609375
+          },
+          {
+            "id": 29,
+            "x1": 1043,
+            "y1": 499,
+            "x2": 1099,
+            "y2": 531,
+            "text": "NO.",
+            "text_entropy": 0.1163330078125
+          },
+          {
+            "id": 30,
+            "x1": 772,
+            "y1": 1055,
+            "x2": 835,
+            "y2": 1088,
+            "text": "330",
+            "text_entropy": 0.00958251953125
+          },
+          {
+            "id": 31,
+            "x1": 774,
+            "y1": 1090,
+            "x2": 838,
+            "y2": 1124,
+            "text": "340",
+            "text_entropy": 0.0626220703125
+          },
+          {
+            "id": 32,
+            "x1": 769,
+            "y1": 1347,
+            "x2": 840,
+            "y2": 1385,
+            "text": "470",
+            "text_entropy": 0.007049560546875
+          },
+          {
+            "id": 33,
+            "x1": 772,
+            "y1": 1126,
+            "x2": 840,
+            "y2": 1162,
+            "text": "390",
+            "text_entropy": 0.00045871734619140625
+          },
+          {
+            "id": 34,
+            "x1": 772,
+            "y1": 1461,
+            "x2": 840,
+            "y2": 1496,
+            "text": "585",
+            "text_entropy": 0.01297760009765625
+          },
+          {
+            "id": 35,
+            "x1": 496,
+            "y1": 746,
+            "x2": 576,
+            "y2": 788,
+            "text": "689t",
+            "text_entropy": 0.2293701171875
+          },
+          {
+            "id": 36,
+            "x1": 772,
+            "y1": 1235,
+            "x2": 838,
+            "y2": 1270,
+            "text": "440",
+            "text_entropy": 0.188720703125
+          },
+          {
+            "id": 37,
+            "x1": 774,
+            "y1": 1568,
+            "x2": 845,
+            "y2": 1604,
+            "text": "672",
+            "text_entropy": 0.00435638427734375
+          },
+          {
+            "id": 38,
+            "x1": 1207,
+            "y1": 414,
+            "x2": 1275,
+            "y2": 448,
+            "text": "Sec",
+            "text_entropy": 0.07537841796875
+          },
+          {
+            "id": 39,
+            "x1": 772,
+            "y1": 1498,
+            "x2": 840,
+            "y2": 1530,
+            "text": "595",
+            "text_entropy": 0.002025604248046875
+          },
+          {
+            "id": 40,
+            "x1": 774,
+            "y1": 1608,
+            "x2": 843,
+            "y2": 1642,
+            "text": "689",
+            "text_entropy": 0.0031299591064453125
+          },
+          {
+            "id": 41,
+            "x1": 774,
+            "y1": 1755,
+            "x2": 843,
+            "y2": 1790,
+            "text": "918",
+            "text_entropy": 0.1480712890625
+          },
+          {
+            "id": 42,
+            "x1": 1156,
+            "y1": 378,
+            "x2": 1226,
+            "y2": 412,
+            "text": "SEC",
+            "text_entropy": 0.0635986328125
+          },
+          {
+            "id": 43,
+            "x1": 772,
+            "y1": 1681,
+            "x2": 843,
+            "y2": 1716,
+            "text": "885",
+            "text_entropy": 0.09259033203125
+          },
+          {
+            "id": 44,
+            "x1": 811,
+            "y1": 2360,
+            "x2": 855,
+            "y2": 2383,
+            "text": "OIL",
+            "text_entropy": 0.1214599609375
+          },
+          {
+            "id": 45,
+            "x1": 464,
+            "y1": 343,
+            "x2": 527,
+            "y2": 375,
+            "text": "SUM",
+            "text_entropy": 0.417236328125
+          },
+          {
+            "id": 46,
+            "x1": 529,
+            "y1": 343,
+            "x2": 601,
+            "y2": 372,
+            "text": "ERS",
+            "text_entropy": 0.320556640625
+          },
+          {
+            "id": 47,
+            "x1": 1388,
+            "y1": 575,
+            "x2": 1454,
+            "y2": 607,
+            "text": ".INT.",
+            "text_entropy": 0.205810546875
+          },
+          {
+            "id": 48,
+            "x1": 772,
+            "y1": 1164,
+            "x2": 838,
+            "y2": 1196,
+            "text": "400",
+            "text_entropy": 0.0989990234375
+          },
+          {
+            "id": 49,
+            "x1": 772,
+            "y1": 1200,
+            "x2": 838,
+            "y2": 1232,
+            "text": "430",
+            "text_entropy": 0.06317138671875
+          },
+          {
+            "id": 50,
+            "x1": 774,
+            "y1": 1387,
+            "x2": 840,
+            "y2": 1419,
+            "text": "482",
+            "text_entropy": 0.157470703125
+          },
+          {
+            "id": 51,
+            "x1": 774,
+            "y1": 1532,
+            "x2": 840,
+            "y2": 1564,
+            "text": "640",
+            "text_entropy": 0.0017919540405273438
+          },
+          {
+            "id": 52,
+            "x1": 713,
+            "y1": 176,
+            "x2": 794,
+            "y2": 213,
+            "text": "Mrs.",
+            "text_entropy": 0.0286865234375
+          },
+          {
+            "id": 53,
+            "x1": 334,
+            "y1": 677,
+            "x2": 398,
+            "y2": 707,
+            "text": "CSG",
+            "text_entropy": 0.0202789306640625
+          },
+          {
+            "id": 54,
+            "x1": 774,
+            "y1": 1314,
+            "x2": 838,
+            "y2": 1343,
+            "text": "468",
+            "text_entropy": 0.1719970703125
+          },
+          {
+            "id": 55,
+            "x1": 772,
+            "y1": 1425,
+            "x2": 840,
+            "y2": 1457,
+            "text": "510",
+            "text_entropy": 0.037353515625
+          },
+          {
+            "id": 56,
+            "x1": 774,
+            "y1": 1719,
+            "x2": 843,
+            "y2": 1752,
+            "text": "910",
+            "text_entropy": 0.0062713623046875
+          },
+          {
+            "id": 57,
+            "x1": 923,
+            "y1": 2360,
+            "x2": 970,
+            "y2": 2383,
+            "text": "GAS",
+            "text_entropy": 0.01153564453125
+          },
+          {
+            "id": 58,
+            "x1": 1158,
+            "y1": 340,
+            "x2": 1224,
+            "y2": 370,
+            "text": "T&P",
+            "text_entropy": 0.02105712890625
+          },
+          {
+            "id": 59,
+            "x1": 1627,
+            "y1": 376,
+            "x2": 1693,
+            "y2": 405,
+            "text": "FSL",
+            "text_entropy": 0.0904541015625
+          },
+          {
+            "id": 60,
+            "x1": 481,
+            "y1": 1202,
+            "x2": 547,
+            "y2": 1232,
+            "text": "rod",
+            "text_entropy": 0.1136474609375
+          },
+          {
+            "id": 61,
+            "x1": 801,
+            "y1": 176,
+            "x2": 887,
+            "y2": 213,
+            "text": "Bess",
+            "text_entropy": 0.0005502700805664062
+          },
+          {
+            "id": 62,
+            "x1": 1433,
+            "y1": 376,
+            "x2": 1476,
+            "y2": 410,
+            "text": "FEL",
+            "text_entropy": 0.0250091552734375
+          },
+          {
+            "id": 63,
+            "x1": 1478,
+            "y1": 376,
+            "x2": 1497,
+            "y2": 410,
+            "text": ",",
+            "text_entropy": 0.0250091552734375
+          },
+          {
+            "id": 64,
+            "x1": 1280,
+            "y1": 454,
+            "x2": 1349,
+            "y2": 484,
+            "text": "320",
+            "text_entropy": 0.048553466796875
+          },
+          {
+            "id": 65,
+            "x1": 774,
+            "y1": 1646,
+            "x2": 843,
+            "y2": 1676,
+            "text": "680",
+            "text_entropy": 0.1844482421875
+          },
+          {
+            "id": 66,
+            "x1": 774,
+            "y1": 1793,
+            "x2": 857,
+            "y2": 1825,
+            "text": "1030",
+            "text_entropy": 0.003444671630859375
+          },
+          {
+            "id": 67,
+            "x1": 332,
+            "y1": 903,
+            "x2": 417,
+            "y2": 937,
+            "text": "clay",
+            "text_entropy": 0.005401611328125
+          },
+          {
+            "id": 68,
+            "x1": 772,
+            "y1": 1938,
+            "x2": 857,
+            "y2": 1972,
+            "text": "1248",
+            "text_entropy": 0.182373046875
+          },
+          {
+            "id": 69,
+            "x1": 772,
+            "y1": 2123,
+            "x2": 857,
+            "y2": 2157,
+            "text": "1460",
+            "text_entropy": 0.050933837890625
+          },
+          {
+            "id": 70,
+            "x1": 772,
+            "y1": 1869,
+            "x2": 860,
+            "y2": 1903,
+            "text": "1170",
+            "text_entropy": 0.004032135009765625
+          },
+          {
+            "id": 71,
+            "x1": 1471,
+            "y1": 340,
+            "x2": 1537,
+            "y2": 367,
+            "text": "BLK",
+            "text_entropy": 0.1260986328125
+          },
+          {
+            "id": 72,
+            "x1": 1317,
+            "y1": 373,
+            "x2": 1412,
+            "y2": 409,
+            "text": "23371",
+            "text_entropy": 0.2164306640625
+          },
+          {
+            "id": 73,
+            "x1": 862,
+            "y1": 2360,
+            "x2": 916,
+            "y2": 2383,
+            "text": "AND",
+            "text_entropy": 0.0015773773193359375
+          },
+          {
+            "id": 74,
+            "x1": 772,
+            "y1": 1976,
+            "x2": 862,
+            "y2": 2010,
+            "text": "1256",
+            "text_entropy": 0.0185089111328125
+          },
+          {
+            "id": 75,
+            "x1": 772,
+            "y1": 2049,
+            "x2": 862,
+            "y2": 2084,
+            "text": "1445",
+            "text_entropy": 0.023406982421875
+          },
+          {
+            "id": 76,
+            "x1": 329,
+            "y1": 343,
+            "x2": 422,
+            "y2": 377,
+            "text": "CODY",
+            "text_entropy": 0.0271759033203125
+          },
+          {
+            "id": 77,
+            "x1": 774,
+            "y1": 1827,
+            "x2": 855,
+            "y2": 1861,
+            "text": "1080",
+            "text_entropy": 0.0087890625
+          },
+          {
+            "id": 78,
+            "x1": 1539,
+            "y1": 487,
+            "x2": 1639,
+            "y2": 524,
+            "text": "1033",
+            "text_entropy": 0.40380859375
+          },
+          {
+            "id": 79,
+            "x1": 1517,
+            "y1": 414,
+            "x2": 1603,
+            "y2": 446,
+            "text": "Palo",
+            "text_entropy": 0.0200958251953125
+          },
+          {
+            "id": 80,
+            "x1": 774,
+            "y1": 1905,
+            "x2": 860,
+            "y2": 1936,
+            "text": "1190",
+            "text_entropy": 0.0229339599609375
+          },
+          {
+            "id": 81,
+            "x1": 772,
+            "y1": 2014,
+            "x2": 857,
+            "y2": 2046,
+            "text": "1440",
+            "text_entropy": 0.122314453125
+          },
+          {
+            "id": 82,
+            "x1": 772,
+            "y1": 2163,
+            "x2": 857,
+            "y2": 2195,
+            "text": "1480",
+            "text_entropy": 0.06512451171875
+          },
+          {
+            "id": 83,
+            "x1": 329,
+            "y1": 416,
+            "x2": 417,
+            "y2": 448,
+            "text": "PALO",
+            "text_entropy": 0.01203155517578125
+          },
+          {
+            "id": 84,
+            "x1": 987,
+            "y1": 573,
+            "x2": 1085,
+            "y2": 607,
+            "text": "TOTAL",
+            "text_entropy": 0.10369873046875
+          },
+          {
+            "id": 85,
+            "x1": 557,
+            "y1": 1202,
+            "x2": 637,
+            "y2": 1232,
+            "text": "rocle",
+            "text_entropy": 0.35693359375
+          },
+          {
+            "id": 86,
+            "x1": 334,
+            "y1": 1240,
+            "x2": 415,
+            "y2": 1270,
+            "text": "lime",
+            "text_entropy": 0.09649658203125
+          },
+          {
+            "id": 87,
+            "x1": 772,
+            "y1": 2090,
+            "x2": 860,
+            "y2": 2121,
+            "text": "1450",
+            "text_entropy": 0.0265350341796875
+          },
+          {
+            "id": 88,
+            "x1": 772,
+            "y1": 2204,
+            "x2": 860,
+            "y2": 2236,
+            "text": "1500",
+            "text_entropy": 0.0031261444091796875
+          },
+          {
+            "id": 89,
+            "x1": 776,
+            "y1": 556,
+            "x2": 789,
+            "y2": 605,
+            "text": "6",
+            "text_entropy": 0.1456298828125
+          },
+          {
+            "id": 90,
+            "x1": 791,
+            "y1": 556,
+            "x2": 811,
+            "y2": 605,
+            "text": "/",
+            "text_entropy": 0.1456298828125
+          },
+          {
+            "id": 91,
+            "x1": 813,
+            "y1": 556,
+            "x2": 839,
+            "y2": 605,
+            "text": "15",
+            "text_entropy": 0.1456298828125
+          },
+          {
+            "id": 92,
+            "x1": 841,
+            "y1": 556,
+            "x2": 861,
+            "y2": 605,
+            "text": "/",
+            "text_entropy": 0.1456298828125
+          },
+          {
+            "id": 93,
+            "x1": 863,
+            "y1": 556,
+            "x2": 898,
+            "y2": 605,
+            "text": "52",
+            "text_entropy": 0.1456298828125
+          },
+          {
+            "id": 94,
+            "x1": 926,
+            "y1": 110,
+            "x2": 1048,
+            "y2": 151,
+            "text": "LOG",
+            "text_entropy": 0.00843048095703125
+          },
+          {
+            "id": 95,
+            "x1": 334,
+            "y1": 1425,
+            "x2": 417,
+            "y2": 1455,
+            "text": "lime",
+            "text_entropy": 0.050628662109375
+          },
+          {
+            "id": 96,
+            "x1": 334,
+            "y1": 1499,
+            "x2": 417,
+            "y2": 1528,
+            "text": "lime",
+            "text_entropy": 0.00608062744140625
+          },
+          {
+            "id": 97,
+            "x1": 334,
+            "y1": 1829,
+            "x2": 417,
+            "y2": 1858,
+            "text": "lime",
+            "text_entropy": 0.141357421875
+          },
+          {
+            "id": 98,
+            "x1": 1014,
+            "y1": 176,
+            "x2": 1121,
+            "y2": 213,
+            "text": "Owner",
+            "text_entropy": 0.08245849609375
+          },
+          {
+            "id": 99,
+            "x1": 564,
+            "y1": 110,
+            "x2": 689,
+            "y2": 151,
+            "text": "BESS",
+            "text_entropy": 0.34521484375
+          },
+          {
+            "id": 100,
+            "x1": 893,
+            "y1": 176,
+            "x2": 982,
+            "y2": 217,
+            "text": "Mason",
+            "text_entropy": 0.0118408203125
+          },
+          {
+            "id": 101,
+            "x1": 984,
+            "y1": 176,
+            "x2": 1001,
+            "y2": 217,
+            "text": ",",
+            "text_entropy": 0.0118408203125
+          },
+          {
+            "id": 102,
+            "x1": 335,
+            "y1": 559,
+            "x2": 349,
+            "y2": 605,
+            "text": "5",
+            "text_entropy": 0.12890625
+          },
+          {
+            "id": 103,
+            "x1": 351,
+            "y1": 559,
+            "x2": 370,
+            "y2": 604,
+            "text": "/",
+            "text_entropy": 0.12890625
+          },
+          {
+            "id": 104,
+            "x1": 372,
+            "y1": 558,
+            "x2": 405,
+            "y2": 603,
+            "text": "20",
+            "text_entropy": 0.12890625
+          },
+          {
+            "id": 105,
+            "x1": 407,
+            "y1": 557,
+            "x2": 419,
+            "y2": 602,
+            "text": "/",
+            "text_entropy": 0.12890625
+          },
+          {
+            "id": 106,
+            "x1": 421,
+            "y1": 556,
+            "x2": 464,
+            "y2": 601,
+            "text": "52",
+            "text_entropy": 0.12890625
+          },
+          {
+            "id": 107,
+            "x1": 332,
+            "y1": 490,
+            "x2": 417,
+            "y2": 519,
+            "text": "CHAS",
+            "text_entropy": 0.00829315185546875
+          },
+          {
+            "id": 108,
+            "x1": 950,
+            "y1": 502,
+            "x2": 1036,
+            "y2": 531,
+            "text": "WELL",
+            "text_entropy": 0.1741943359375
+          },
+          {
+            "id": 109,
+            "x1": 332,
+            "y1": 1164,
+            "x2": 417,
+            "y2": 1194,
+            "text": "lime",
+            "text_entropy": 0.058563232421875
+          },
+          {
+            "id": 110,
+            "x1": 337,
+            "y1": 1867,
+            "x2": 439,
+            "y2": 1900,
+            "text": "sandy",
+            "text_entropy": 0.0019006729125976562
+          },
+          {
+            "id": 111,
+            "x1": 334,
+            "y1": 2166,
+            "x2": 420,
+            "y2": 2195,
+            "text": "line",
+            "text_entropy": 0.08978271484375
+          },
+          {
+            "id": 112,
+            "x1": 632,
+            "y1": 221,
+            "x2": 738,
+            "y2": 256,
+            "text": "Phone",
+            "text_entropy": 0.0035037994384765625
+          },
+          {
+            "id": 113,
+            "x1": 607,
+            "y1": 680,
+            "x2": 655,
+            "y2": 714,
+            "text": "Dr1",
+            "text_entropy": 0.385986328125
+          },
+          {
+            "id": 114,
+            "x1": 657,
+            "y1": 680,
+            "x2": 690,
+            "y2": 714,
+            "text": "td",
+            "text_entropy": 0.385986328125
+          },
+          {
+            "id": 115,
+            "x1": 332,
+            "y1": 1316,
+            "x2": 420,
+            "y2": 1346,
+            "text": "lime",
+            "text_entropy": 0.1126708984375
+          },
+          {
+            "id": 116,
+            "x1": 337,
+            "y1": 1978,
+            "x2": 415,
+            "y2": 2006,
+            "text": "lime",
+            "text_entropy": 0.004608154296875
+          },
+          {
+            "id": 117,
+            "x1": 1517,
+            "y1": 373,
+            "x2": 1615,
+            "y2": 405,
+            "text": "16641",
+            "text_entropy": 0.349365234375
+          },
+          {
+            "id": 118,
+            "x1": 1456,
+            "y1": 568,
+            "x2": 1535,
+            "y2": 609,
+            "text": "PROD",
+            "text_entropy": 0.474365234375
+          },
+          {
+            "id": 119,
+            "x1": 1537,
+            "y1": 565,
+            "x2": 1592,
+            "y2": 606,
+            "text": "Dry",
+            "text_entropy": 0.474365234375
+          },
+          {
+            "id": 120,
+            "x1": 447,
+            "y1": 1055,
+            "x2": 545,
+            "y2": 1087,
+            "text": "sandy",
+            "text_entropy": 0.005641937255859375
+          },
+          {
+            "id": 121,
+            "x1": 334,
+            "y1": 867,
+            "x2": 415,
+            "y2": 895,
+            "text": "soil",
+            "text_entropy": 0.04437255859375
+          },
+          {
+            "id": 122,
+            "x1": 334,
+            "y1": 1090,
+            "x2": 415,
+            "y2": 1118,
+            "text": "line",
+            "text_entropy": 0.08966064453125
+          },
+          {
+            "id": 123,
+            "x1": 334,
+            "y1": 1389,
+            "x2": 415,
+            "y2": 1417,
+            "text": "lime",
+            "text_entropy": 0.0229339599609375
+          },
+          {
+            "id": 124,
+            "x1": 337,
+            "y1": 1684,
+            "x2": 417,
+            "y2": 1711,
+            "text": "coal",
+            "text_entropy": 0.006168365478515625
+          },
+          {
+            "id": 125,
+            "x1": 337,
+            "y1": 1757,
+            "x2": 417,
+            "y2": 1785,
+            "text": "lime",
+            "text_entropy": 0.0205230712890625
+          },
+          {
+            "id": 126,
+            "x1": 425,
+            "y1": 416,
+            "x2": 525,
+            "y2": 448,
+            "text": "PINTO",
+            "text_entropy": 0.01363372802734375
+          },
+          {
+            "id": 127,
+            "x1": 1356,
+            "y1": 452,
+            "x2": 1456,
+            "y2": 484,
+            "text": "Acres",
+            "text_entropy": 0.1331787109375
+          },
+          {
+            "id": 128,
+            "x1": 447,
+            "y1": 2204,
+            "x2": 547,
+            "y2": 2236,
+            "text": "sandy",
+            "text_entropy": 0.0299835205078125
+          },
+          {
+            "id": 129,
+            "x1": 332,
+            "y1": 941,
+            "x2": 415,
+            "y2": 968,
+            "text": "lino",
+            "text_entropy": 0.040863037109375
+          },
+          {
+            "id": 130,
+            "x1": 332,
+            "y1": 1017,
+            "x2": 415,
+            "y2": 1044,
+            "text": "lime",
+            "text_entropy": 0.1484375
+          },
+          {
+            "id": 131,
+            "x1": 337,
+            "y1": 1572,
+            "x2": 420,
+            "y2": 1600,
+            "text": "sand",
+            "text_entropy": 0.0149383544921875
+          },
+          {
+            "id": 132,
+            "x1": 337,
+            "y1": 1610,
+            "x2": 420,
+            "y2": 1638,
+            "text": "lime",
+            "text_entropy": 0.08062744140625
+          },
+          {
+            "id": 133,
+            "x1": 337,
+            "y1": 1905,
+            "x2": 420,
+            "y2": 1932,
+            "text": "sand",
+            "text_entropy": 0.01861572265625
+          },
+          {
+            "id": 134,
+            "x1": 334,
+            "y1": 2054,
+            "x2": 417,
+            "y2": 2082,
+            "text": "limo",
+            "text_entropy": 0.0904541015625
+          },
+          {
+            "id": 135,
+            "x1": 337,
+            "y1": 2128,
+            "x2": 420,
+            "y2": 2155,
+            "text": "sand",
+            "text_entropy": 0.06451416015625
+          },
+          {
+            "id": 136,
+            "x1": 427,
+            "y1": 490,
+            "x2": 530,
+            "y2": 522,
+            "text": "1OTAX",
+            "text_entropy": 0.3447265625
+          },
+          {
+            "id": 137,
+            "x1": 427,
+            "y1": 1240,
+            "x2": 530,
+            "y2": 1272,
+            "text": "sandy",
+            "text_entropy": 0.11968994140625
+          },
+          {
+            "id": 138,
+            "x1": 339,
+            "y1": 1719,
+            "x2": 435,
+            "y2": 1749,
+            "text": "shale",
+            "text_entropy": 0.05810546875
+          },
+          {
+            "id": 139,
+            "x1": 559,
+            "y1": 1829,
+            "x2": 654,
+            "y2": 1858,
+            "text": "shale",
+            "text_entropy": 0.14208984375
+          },
+          {
+            "id": 140,
+            "x1": 559,
+            "y1": 2277,
+            "x2": 654,
+            "y2": 2307,
+            "text": "DEPTH",
+            "text_entropy": 0.2978515625
+          },
+          {
+            "id": 141,
+            "x1": 1153,
+            "y1": 452,
+            "x2": 1240,
+            "y2": 486,
+            "text": "Pinto",
+            "text_entropy": 0.051513671875
+          },
+          {
+            "id": 142,
+            "x1": 1242,
+            "y1": 452,
+            "x2": 1257,
+            "y2": 489,
+            "text": ",",
+            "text_entropy": 0.051513671875
+          },
+          {
+            "id": 143,
+            "x1": 337,
+            "y1": 1646,
+            "x2": 435,
+            "y2": 1676,
+            "text": "shalo",
+            "text_entropy": 0.03662109375
+          },
+          {
+            "id": 144,
+            "x1": 449,
+            "y1": 1867,
+            "x2": 547,
+            "y2": 1896,
+            "text": "shalo",
+            "text_entropy": 0.10052490234375
+          },
+          {
+            "id": 145,
+            "x1": 337,
+            "y1": 1940,
+            "x2": 435,
+            "y2": 1970,
+            "text": "shale",
+            "text_entropy": 0.0161285400390625
+          },
+          {
+            "id": 146,
+            "x1": 337,
+            "y1": 2090,
+            "x2": 435,
+            "y2": 2120,
+            "text": "shalo",
+            "text_entropy": 0.1304931640625
+          },
+          {
+            "id": 147,
+            "x1": 334,
+            "y1": 1128,
+            "x2": 435,
+            "y2": 1158,
+            "text": "shale",
+            "text_entropy": 0.004978179931640625
+          },
+          {
+            "id": 148,
+            "x1": 334,
+            "y1": 1202,
+            "x2": 435,
+            "y2": 1232,
+            "text": "shale",
+            "text_entropy": 0.0180816650390625
+          },
+          {
+            "id": 149,
+            "x1": 334,
+            "y1": 1352,
+            "x2": 435,
+            "y2": 1381,
+            "text": "shale",
+            "text_entropy": 0.017669677734375
+          },
+          {
+            "id": 150,
+            "x1": 337,
+            "y1": 1463,
+            "x2": 437,
+            "y2": 1493,
+            "text": "shale",
+            "text_entropy": 0.12103271484375
+          },
+          {
+            "id": 151,
+            "x1": 334,
+            "y1": 1534,
+            "x2": 435,
+            "y2": 1564,
+            "text": "shale",
+            "text_entropy": 0.008087158203125
+          },
+          {
+            "id": 152,
+            "x1": 1090,
+            "y1": 566,
+            "x2": 1167,
+            "y2": 607,
+            "text": "DEPTA",
+            "text_entropy": 0.50732421875
+          },
+          {
+            "id": 153,
+            "x1": 1169,
+            "y1": 563,
+            "x2": 1173,
+            "y2": 607,
+            "text": "-",
+            "text_entropy": 0.50732421875
+          },
+          {
+            "id": 154,
+            "x1": 1175,
+            "y1": 563,
+            "x2": 1228,
+            "y2": 605,
+            "text": "500",
+            "text_entropy": 0.50732421875
+          },
+          {
+            "id": 155,
+            "x1": 711,
+            "y1": 680,
+            "x2": 728,
+            "y2": 719,
+            "text": "w",
+            "text_entropy": 0.066162109375
+          },
+          {
+            "id": 156,
+            "x1": 733,
+            "y1": 680,
+            "x2": 748,
+            "y2": 719,
+            "text": "/",
+            "text_entropy": 0.066162109375
+          },
+          {
+            "id": 157,
+            "x1": 750,
+            "y1": 680,
+            "x2": 838,
+            "y2": 719,
+            "text": "cable",
+            "text_entropy": 0.066162109375
+          },
+          {
+            "id": 158,
+            "x1": 442,
+            "y1": 2277,
+            "x2": 549,
+            "y2": 2307,
+            "text": "TOTAL",
+            "text_entropy": 0.01125335693359375
+          },
+          {
+            "id": 159,
+            "x1": 426,
+            "y1": 900,
+            "x2": 520,
+            "y2": 932,
+            "text": "yellot",
+            "text_entropy": 0.44091796875
+          },
+          {
+            "id": 160,
+            "x1": 522,
+            "y1": 900,
+            "x2": 535,
+            "y2": 932,
+            "text": "/",
+            "text_entropy": 0.44091796875
+          },
+          {
+            "id": 161,
+            "x1": 337,
+            "y1": 1793,
+            "x2": 435,
+            "y2": 1820,
+            "text": "shale",
+            "text_entropy": 0.0047607421875
+          },
+          {
+            "id": 162,
+            "x1": 337,
+            "y1": 2016,
+            "x2": 435,
+            "y2": 2044,
+            "text": "shale",
+            "text_entropy": 0.0718994140625
+          },
+          {
+            "id": 163,
+            "x1": 430,
+            "y1": 2128,
+            "x2": 527,
+            "y2": 2155,
+            "text": "vator",
+            "text_entropy": 0.373291015625
+          },
+          {
+            "id": 164,
+            "x1": 334,
+            "y1": 979,
+            "x2": 435,
+            "y2": 1006,
+            "text": "shale",
+            "text_entropy": 0.001544952392578125
+          },
+          {
+            "id": 165,
+            "x1": 334,
+            "y1": 1055,
+            "x2": 435,
+            "y2": 1082,
+            "text": "shale",
+            "text_entropy": 0.03106689453125
+          },
+          {
+            "id": 166,
+            "x1": 334,
+            "y1": 1278,
+            "x2": 435,
+            "y2": 1305,
+            "text": "shale",
+            "text_entropy": 0.006748199462890625
+          },
+          {
+            "id": 167,
+            "x1": 430,
+            "y1": 1572,
+            "x2": 530,
+            "y2": 1600,
+            "text": "water",
+            "text_entropy": 0.162109375
+          },
+          {
+            "id": 168,
+            "x1": 337,
+            "y1": 2204,
+            "x2": 437,
+            "y2": 2231,
+            "text": "shale",
+            "text_entropy": 0.0214996337890625
+          },
+          {
+            "id": 169,
+            "x1": 984,
+            "y1": 219,
+            "x2": 1156,
+            "y2": 261,
+            "text": "Guadalupe",
+            "text_entropy": 0.007785797119140625
+          },
+          {
+            "id": 170,
+            "x1": 122,
+            "y1": 499,
+            "x2": 237,
+            "y2": 529,
+            "text": "LESSOR.",
+            "text_entropy": 0.11181640625
+          },
+          {
+            "id": 171,
+            "x1": 410,
+            "y1": 677,
+            "x2": 525,
+            "y2": 707,
+            "text": "RECORD",
+            "text_entropy": 0.03497314453125
+          },
+          {
+            "id": 172,
+            "x1": 466,
+            "y1": 1425,
+            "x2": 581,
+            "y2": 1455,
+            "text": "sholls",
+            "text_entropy": 0.0206756591796875
+          },
+          {
+            "id": 173,
+            "x1": 486,
+            "y1": 1646,
+            "x2": 601,
+            "y2": 1676,
+            "text": "shells",
+            "text_entropy": 0.0217437744140625
+          },
+          {
+            "id": 174,
+            "x1": 1346,
+            "y1": 338,
+            "x2": 1463,
+            "y2": 367,
+            "text": "SURVEY",
+            "text_entropy": 0.0025463104248046875
+          },
+          {
+            "id": 175,
+            "x1": 427,
+            "y1": 1829,
+            "x2": 545,
+            "y2": 1858,
+            "text": "shells",
+            "text_entropy": 0.0102081298828125
+          },
+          {
+            "id": 176,
+            "x1": 425,
+            "y1": 1902,
+            "x2": 545,
+            "y2": 1932,
+            "text": "brolken",
+            "text_entropy": 0.169921875
+          },
+          {
+            "id": 177,
+            "x1": 716,
+            "y1": 110,
+            "x2": 901,
+            "y2": 151,
+            "text": "MASON",
+            "text_entropy": 0.04913330078125
+          },
+          {
+            "id": 178,
+            "x1": 124,
+            "y1": 423,
+            "x2": 263,
+            "y2": 455,
+            "text": "COUNTY",
+            "text_entropy": 0.294677734375
+          },
+          {
+            "id": 179,
+            "x1": 483,
+            "y1": 1534,
+            "x2": 601,
+            "y2": 1562,
+            "text": "sholls",
+            "text_entropy": 0.11041259765625
+          },
+          {
+            "id": 180,
+            "x1": 481,
+            "y1": 1128,
+            "x2": 601,
+            "y2": 1156,
+            "text": "shells",
+            "text_entropy": 0.0133209228515625
+          },
+          {
+            "id": 181,
+            "x1": 975,
+            "y1": 2358,
+            "x2": 1085,
+            "y2": 2383,
+            "text": "DIVISION",
+            "text_entropy": 0.0888671875
+          },
+          {
+            "id": 182,
+            "x1": 1046,
+            "y1": 302,
+            "x2": 1185,
+            "y2": 332,
+            "text": "VILDCAT",
+            "text_entropy": 0.12042236328125
+          },
+          {
+            "id": 183,
+            "x1": 1065,
+            "y1": 110,
+            "x2": 1285,
+            "y2": 154,
+            "text": "SERVICE",
+            "text_entropy": 0.077392578125
+          },
+          {
+            "id": 184,
+            "x1": 817,
+            "y1": 264,
+            "x2": 906,
+            "y2": 306,
+            "text": "Austin",
+            "text_entropy": 0.139892578125
+          },
+          {
+            "id": 185,
+            "x1": 908,
+            "y1": 264,
+            "x2": 925,
+            "y2": 306,
+            "text": ",",
+            "text_entropy": 0.139892578125
+          },
+          {
+            "id": 186,
+            "x1": 931,
+            "y1": 264,
+            "x2": 1015,
+            "y2": 306,
+            "text": "Texas",
+            "text_entropy": 0.139892578125
+          },
+          {
+            "id": 187,
+            "x1": 1314,
+            "y1": 499,
+            "x2": 1493,
+            "y2": 534,
+            "text": "ELEVATION.,",
+            "text_entropy": 0.1856689453125
+          },
+          {
+            "id": 188,
+            "x1": 980,
+            "y1": 347,
+            "x2": 1148,
+            "y2": 379,
+            "text": "LOCATION",
+            "text_entropy": 0.125
+          },
+          {
+            "id": 189,
+            "x1": 584,
+            "y1": 573,
+            "x2": 772,
+            "y2": 607,
+            "text": "COMPLETED.",
+            "text_entropy": 0.294677734375
+          },
+          {
+            "id": 190,
+            "x1": 127,
+            "y1": 347,
+            "x2": 298,
+            "y2": 379,
+            "text": "COMPANY.",
+            "text_entropy": 0.10968017578125
+          },
+          {
+            "id": 191,
+            "x1": 127,
+            "y1": 573,
+            "x2": 332,
+            "y2": 607,
+            "text": "COMMENCED",
+            "text_entropy": 0.2205810546875
+          },
+          {
+            "id": 192,
+            "x1": 742,
+            "y1": 219,
+            "x2": 757,
+            "y2": 258,
+            "text": "6",
+            "text_entropy": 0.1397705078125
+          },
+          {
+            "id": 193,
+            "x1": 759,
+            "y1": 219,
+            "x2": 774,
+            "y2": 258,
+            "text": "-",
+            "text_entropy": 0.1397705078125
+          },
+          {
+            "id": 194,
+            "x1": 776,
+            "y1": 219,
+            "x2": 852,
+            "y2": 258,
+            "text": "9874",
+            "text_entropy": 0.1397705078125
+          },
+          {
+            "id": 195,
+            "x1": 857,
+            "y1": 219,
+            "x2": 867,
+            "y2": 258,
+            "text": "-",
+            "text_entropy": 0.1397705078125
+          },
+          {
+            "id": 196,
+            "x1": 869,
+            "y1": 219,
+            "x2": 884,
+            "y2": 258,
+            "text": "-",
+            "text_entropy": 0.1397705078125
+          },
+          {
+            "id": 197,
+            "x1": 886,
+            "y1": 219,
+            "x2": 962,
+            "y2": 258,
+            "text": "1001",
+            "text_entropy": 0.1397705078125
+          },
+          {
+            "id": 198,
+            "x1": 1134,
+            "y1": 2360,
+            "x2": 1258,
+            "y2": 2383,
+            "text": "RAILROAD",
+            "text_entropy": 0.03424072265625
+          },
+          {
+            "id": 199,
+            "x1": 1263,
+            "y1": 2360,
+            "x2": 1415,
+            "y2": 2383,
+            "text": "COMMISSION",
+            "text_entropy": 0.039093017578125
+          },
+          {
+            "id": 200,
+            "x1": 332,
+            "y1": 2351,
+            "x2": 732,
+            "y2": 2385,
+            "text": "ABBRTÖ6PIOORIERALQRIEbI",
+            "text_entropy": 0.642578125
+          },
+          {
+            "id": 201,
+            "x1": 734,
+            "y1": 2351,
+            "x2": 767,
+            "y2": 2385,
+            "text": "WA",
+            "text_entropy": 0.642578125
+          }
+        ],
+        "fulltext": "BESS MASON LOG SERVICE\nMrs. Bess Mason , Owner\nPhone 6 - 9874 - - 1001 Guadalupe St.\nAustin , Texas VILDCAT\nLOCATION SEC T&P 55 RY ,. CO 23371 SURVEY FEL BLK , 16641 2 FSL\nCOMPANY. CODY & SUM ERS\nof Sec 55, 93 mi SW Palo\nPinto , 320 Acres\n* 1\nPALO PINTO\nCOUNTY\n1033\nCHAS 1OTAX\nLESSOR.\nCOMMENCED 5 / 20 / 52\nWELL NO.\nELEVATION.,\nCOMPLETED. 6 / 15 / 52\nTOTAL DEPTA - 500\n.INT. PROD Dry\nCSG RECORD\nDr1 td w / cable\n10 3 / 4\n689t\nsoil\nclay yellot /\nlino\nshale\nlime\nshale sandy\nline\nshale & shells\nlime\nshale & rod rocle\nlime sandy\nshale\nlime\nshale\nlime\nlime & sholls\nshale\nlime\nshale a sholls\nsand water\nlime\nshalo & shells\ncoal\nshale\nlime\nshale\nlime shells shale\nsandy shalo\nsand brolken\nshale\nlime\nshale\nlimo\nshalo\nsand vator\nline\nshale sandy\n18\n35\n0\n75\n330\n340\n390\n400\n430\n440\n45\n468\n470\n482\n510\n585\n595\n640\n672\n689\n680\n885\n910\n918\n1030\n1080\n1170\n1190\n1248\n1256\n1440\n1445\n1450\n1460\n1480\n1500\nTOTAL DEPTH\nABBRTÖ6PIOORIERALQRIEbI WA\nOIL AND GAS DIVISION OF RAILROAD COMMISSION"
+      },
+      {
+        "width": 1877,
+        "height": 2431,
+        "bboxes": [
+          {
+            "id": 0,
+            "x1": 1290,
+            "y1": 350,
+            "x2": 1300,
+            "y2": 363,
+            "text": "2",
+            "text_entropy": 0.630859375
+          },
+          {
+            "id": 1,
+            "x1": 469,
+            "y1": 575,
+            "x2": 479,
+            "y2": 588,
+            "text": ".",
+            "text_entropy": 0.50390625
+          },
+          {
+            "id": 2,
+            "x1": 454,
+            "y1": 594,
+            "x2": 464,
+            "y2": 607,
+            "text": ".",
+            "text_entropy": 0.267578125
+          },
+          {
+            "id": 3,
+            "x1": 1451,
+            "y1": 984,
+            "x2": 1472,
+            "y2": 1011,
+            "text": "0",
+            "text_entropy": 0.271484375
+          },
+          {
+            "id": 4,
+            "x1": 1412,
+            "y1": 1539,
+            "x2": 1437,
+            "y2": 1564,
+            "text": ".5",
+            "text_entropy": 0.35791015625
+          },
+          {
+            "id": 5,
+            "x1": 1410,
+            "y1": 1651,
+            "x2": 1434,
+            "y2": 1676,
+            "text": "5",
+            "text_entropy": 0.6025390625
+          },
+          {
+            "id": 6,
+            "x1": 1507,
+            "y1": 753,
+            "x2": 1549,
+            "y2": 790,
+            "text": "or",
+            "text_entropy": 0.416259765625
+          },
+          {
+            "id": 7,
+            "x1": 1065,
+            "y1": 943,
+            "x2": 1107,
+            "y2": 978,
+            "text": "SC",
+            "text_entropy": 0.6884765625
+          },
+          {
+            "id": 8,
+            "x1": 674,
+            "y1": 229,
+            "x2": 720,
+            "y2": 263,
+            "text": "1",
+            "text_entropy": 0.59130859375
+          },
+          {
+            "id": 9,
+            "x1": 1065,
+            "y1": 1022,
+            "x2": 1107,
+            "y2": 1053,
+            "text": "C",
+            "text_entropy": 0.48779296875
+          },
+          {
+            "id": 10,
+            "x1": 293,
+            "y1": 340,
+            "x2": 308,
+            "y2": 375,
+            "text": "*",
+            "text_entropy": 0.175537109375
+          },
+          {
+            "id": 11,
+            "x1": 312,
+            "y1": 340,
+            "x2": 327,
+            "y2": 375,
+            "text": "S",
+            "text_entropy": 0.175537109375
+          },
+          {
+            "id": 12,
+            "x1": 1043,
+            "y1": 1354,
+            "x2": 1090,
+            "y2": 1386,
+            "text": "OF",
+            "text_entropy": 0.5673828125
+          },
+          {
+            "id": 13,
+            "x1": 1415,
+            "y1": 494,
+            "x2": 1459,
+            "y2": 524,
+            "text": "O",
+            "text_entropy": 0.54736328125
+          },
+          {
+            "id": 14,
+            "x1": 373,
+            "y1": 416,
+            "x2": 420,
+            "y2": 448,
+            "text": "18",
+            "text_entropy": 0.560546875
+          },
+          {
+            "id": 15,
+            "x1": 430,
+            "y1": 419,
+            "x2": 479,
+            "y2": 451,
+            "text": "Bes",
+            "text_entropy": 0.56884765625
+          },
+          {
+            "id": 16,
+            "x1": 755,
+            "y1": 2360,
+            "x2": 791,
+            "y2": 2385,
+            "text": "19",
+            "text_entropy": 0.47607421875
+          },
+          {
+            "id": 17,
+            "x1": 684,
+            "y1": 494,
+            "x2": 725,
+            "y2": 522,
+            "text": "I",
+            "text_entropy": 0.52392578125
+          },
+          {
+            "id": 18,
+            "x1": 1429,
+            "y1": 753,
+            "x2": 1446,
+            "y2": 792,
+            "text": "4",
+            "text_entropy": 0.55859375
+          },
+          {
+            "id": 19,
+            "x1": 1451,
+            "y1": 753,
+            "x2": 1466,
+            "y2": 792,
+            "text": "\\",
+            "text_entropy": 0.55859375
+          },
+          {
+            "id": 20,
+            "x1": 1468,
+            "y1": 753,
+            "x2": 1484,
+            "y2": 792,
+            "text": "c",
+            "text_entropy": 0.55859375
+          },
+          {
+            "id": 21,
+            "x1": 237,
+            "y1": 343,
+            "x2": 281,
+            "y2": 370,
+            "text": ".",
+            "text_entropy": 0.350341796875
+          },
+          {
+            "id": 22,
+            "x1": 1065,
+            "y1": 908,
+            "x2": 1109,
+            "y2": 935,
+            "text": "BL",
+            "text_entropy": 0.3564453125
+          },
+          {
+            "id": 23,
+            "x1": 608,
+            "y1": 345,
+            "x2": 654,
+            "y2": 372,
+            "text": "YS",
+            "text_entropy": 0.52734375
+          },
+          {
+            "id": 24,
+            "x1": 552,
+            "y1": 345,
+            "x2": 598,
+            "y2": 372,
+            "text": "00",
+            "text_entropy": 0.1612548828125
+          },
+          {
+            "id": 25,
+            "x1": 789,
+            "y1": 504,
+            "x2": 843,
+            "y2": 534,
+            "text": "O4",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 26,
+            "x1": 1048,
+            "y1": 1095,
+            "x2": 1102,
+            "y2": 1125,
+            "text": "CMS",
+            "text_entropy": 0.499755859375
+          },
+          {
+            "id": 27,
+            "x1": 1043,
+            "y1": 1278,
+            "x2": 1102,
+            "y2": 1310,
+            "text": "24",
+            "text_entropy": 0.5791015625
+          },
+          {
+            "id": 28,
+            "x1": 1046,
+            "y1": 1755,
+            "x2": 1099,
+            "y2": 1790,
+            "text": "810",
+            "text_entropy": 0.449462890625
+          },
+          {
+            "id": 29,
+            "x1": 1356,
+            "y1": 494,
+            "x2": 1412,
+            "y2": 524,
+            "text": "XA",
+            "text_entropy": 0.41259765625
+          },
+          {
+            "id": 30,
+            "x1": 1048,
+            "y1": 1133,
+            "x2": 1104,
+            "y2": 1163,
+            "text": "008",
+            "text_entropy": 0.560546875
+          },
+          {
+            "id": 31,
+            "x1": 1048,
+            "y1": 1207,
+            "x2": 1104,
+            "y2": 1236,
+            "text": "04",
+            "text_entropy": 0.466552734375
+          },
+          {
+            "id": 32,
+            "x1": 1048,
+            "y1": 1316,
+            "x2": 1104,
+            "y2": 1346,
+            "text": "Bc",
+            "text_entropy": 0.6025390625
+          },
+          {
+            "id": 33,
+            "x1": 1046,
+            "y1": 1613,
+            "x2": 1102,
+            "y2": 1642,
+            "text": "230",
+            "text_entropy": 0.485107421875
+          },
+          {
+            "id": 34,
+            "x1": 1043,
+            "y1": 1722,
+            "x2": 1099,
+            "y2": 1752,
+            "text": "OIC",
+            "text_entropy": 0.386474609375
+          },
+          {
+            "id": 35,
+            "x1": 1094,
+            "y1": 181,
+            "x2": 1168,
+            "y2": 218,
+            "text": ".21M",
+            "text_entropy": 0.29638671875
+          },
+          {
+            "id": 36,
+            "x1": 667,
+            "y1": 345,
+            "x2": 730,
+            "y2": 377,
+            "text": "90",
+            "text_entropy": 0.5986328125
+          },
+          {
+            "id": 37,
+            "x1": 662,
+            "y1": 385,
+            "x2": 720,
+            "y2": 415,
+            "text": "D83",
+            "text_entropy": 0.5380859375
+          },
+          {
+            "id": 38,
+            "x1": 1048,
+            "y1": 1242,
+            "x2": 1107,
+            "y2": 1272,
+            "text": "O1",
+            "text_entropy": 0.45654296875
+          },
+          {
+            "id": 39,
+            "x1": 1046,
+            "y1": 1427,
+            "x2": 1104,
+            "y2": 1457,
+            "text": "OIC",
+            "text_entropy": 0.56005859375
+          },
+          {
+            "id": 40,
+            "x1": 1046,
+            "y1": 1465,
+            "x2": 1104,
+            "y2": 1495,
+            "text": "C8c",
+            "text_entropy": 0.65478515625
+          },
+          {
+            "id": 41,
+            "x1": 1046,
+            "y1": 1537,
+            "x2": 1104,
+            "y2": 1566,
+            "text": "040",
+            "text_entropy": 0.53125
+          },
+          {
+            "id": 42,
+            "x1": 1043,
+            "y1": 1575,
+            "x2": 1102,
+            "y2": 1604,
+            "text": "STO",
+            "text_entropy": 0.255615234375
+          },
+          {
+            "id": 43,
+            "x1": 1048,
+            "y1": 1055,
+            "x2": 1102,
+            "y2": 1089,
+            "text": "OEZ",
+            "text_entropy": 0.634765625
+          },
+          {
+            "id": 44,
+            "x1": 1028,
+            "y1": 2363,
+            "x2": 1072,
+            "y2": 2385,
+            "text": "Jto",
+            "text_entropy": 0.30908203125
+          },
+          {
+            "id": 45,
+            "x1": 1002,
+            "y1": 181,
+            "x2": 1080,
+            "y2": 218,
+            "text": "caod",
+            "text_entropy": 0.49658203125
+          },
+          {
+            "id": 46,
+            "x1": 789,
+            "y1": 271,
+            "x2": 835,
+            "y2": 301,
+            "text": "*",
+            "text_entropy": 0.50927734375
+          },
+          {
+            "id": 47,
+            "x1": 347,
+            "y1": 340,
+            "x2": 420,
+            "y2": 375,
+            "text": "8,",
+            "text_entropy": 0.6171875
+          },
+          {
+            "id": 48,
+            "x1": 1368,
+            "y1": 345,
+            "x2": 1422,
+            "y2": 372,
+            "text": "UP",
+            "text_entropy": 0.546875
+          },
+          {
+            "id": 49,
+            "x1": 1043,
+            "y1": 1392,
+            "x2": 1097,
+            "y2": 1419,
+            "text": "S3H",
+            "text_entropy": 0.54443359375
+          },
+          {
+            "id": 50,
+            "x1": 799,
+            "y1": 570,
+            "x2": 892,
+            "y2": 612,
+            "text": "JATOT",
+            "text_entropy": 0.417236328125
+          },
+          {
+            "id": 51,
+            "x1": 970,
+            "y1": 2363,
+            "x2": 983,
+            "y2": 2388,
+            "text": "0",
+            "text_entropy": 0.65380859375
+          },
+          {
+            "id": 52,
+            "x1": 985,
+            "y1": 2363,
+            "x2": 996,
+            "y2": 2388,
+            "text": "%",
+            "text_entropy": 0.65380859375
+          },
+          {
+            "id": 53,
+            "x1": 190,
+            "y1": 378,
+            "x2": 259,
+            "y2": 410,
+            "text": "3",
+            "text_entropy": 0.63037109375
+          },
+          {
+            "id": 54,
+            "x1": 540,
+            "y1": 459,
+            "x2": 603,
+            "y2": 489,
+            "text": "OSS",
+            "text_entropy": 0.501953125
+          },
+          {
+            "id": 55,
+            "x1": 1043,
+            "y1": 870,
+            "x2": 1107,
+            "y2": 899,
+            "text": "O",
+            "text_entropy": 0.5712890625
+          },
+          {
+            "id": 56,
+            "x1": 1043,
+            "y1": 1686,
+            "x2": 1107,
+            "y2": 1716,
+            "text": "226",
+            "text_entropy": 0.39208984375
+          },
+          {
+            "id": 57,
+            "x1": 1043,
+            "y1": 1798,
+            "x2": 1107,
+            "y2": 1827,
+            "text": "801",
+            "text_entropy": 0.5546875
+          },
+          {
+            "id": 58,
+            "x1": 914,
+            "y1": 2363,
+            "x2": 960,
+            "y2": 2385,
+            "text": "ZAE",
+            "text_entropy": 0.66845703125
+          },
+          {
+            "id": 59,
+            "x1": 1305,
+            "y1": 753,
+            "x2": 1383,
+            "y2": 788,
+            "text": "103",
+            "text_entropy": 0.5751953125
+          },
+          {
+            "id": 60,
+            "x1": 1490,
+            "y1": 682,
+            "x2": 1549,
+            "y2": 709,
+            "text": "020",
+            "text_entropy": 0.0968017578125
+          },
+          {
+            "id": 61,
+            "x1": 1043,
+            "y1": 1648,
+            "x2": 1102,
+            "y2": 1676,
+            "text": "033",
+            "text_entropy": 0.2509765625
+          },
+          {
+            "id": 62,
+            "x1": 373,
+            "y1": 378,
+            "x2": 457,
+            "y2": 413,
+            "text": ",0",
+            "text_entropy": 0.6083984375
+          },
+          {
+            "id": 63,
+            "x1": 1046,
+            "y1": 1169,
+            "x2": 1107,
+            "y2": 1196,
+            "text": "00",
+            "text_entropy": 0.435791015625
+          },
+          {
+            "id": 64,
+            "x1": 1046,
+            "y1": 1503,
+            "x2": 1107,
+            "y2": 1531,
+            "text": "cec",
+            "text_entropy": 0.3076171875
+          },
+          {
+            "id": 65,
+            "x1": 1341,
+            "y1": 1207,
+            "x2": 1405,
+            "y2": 1234,
+            "text": "6o7",
+            "text_entropy": 0.65576171875
+          },
+          {
+            "id": 66,
+            "x1": 1473,
+            "y1": 494,
+            "x2": 1547,
+            "y2": 524,
+            "text": "BAH0",
+            "text_entropy": 0.473876953125
+          },
+          {
+            "id": 67,
+            "x1": 840,
+            "y1": 112,
+            "x2": 955,
+            "y2": 156,
+            "text": "60",
+            "text_entropy": 0.42626953125
+          },
+          {
+            "id": 68,
+            "x1": 1471,
+            "y1": 421,
+            "x2": 1551,
+            "y2": 453,
+            "text": "OTA9",
+            "text_entropy": 0.4912109375
+          },
+          {
+            "id": 69,
+            "x1": 1468,
+            "y1": 1684,
+            "x2": 1544,
+            "y2": 1714,
+            "text": "Eaop",
+            "text_entropy": 0.501953125
+          },
+          {
+            "id": 70,
+            "x1": 1148,
+            "y1": 226,
+            "x2": 1246,
+            "y2": 263,
+            "text": "enons",
+            "text_entropy": 0.36962890625
+          },
+          {
+            "id": 71,
+            "x1": 857,
+            "y1": 269,
+            "x2": 953,
+            "y2": 306,
+            "text": "esxel",
+            "text_entropy": 0.541015625
+          },
+          {
+            "id": 72,
+            "x1": 955,
+            "y1": 269,
+            "x2": 1068,
+            "y2": 310,
+            "text": "HaJA",
+            "text_entropy": 0.6005859375
+          },
+          {
+            "id": 73,
+            "x1": 1468,
+            "y1": 908,
+            "x2": 1547,
+            "y2": 937,
+            "text": "vsio",
+            "text_entropy": 0.317626953125
+          },
+          {
+            "id": 74,
+            "x1": 1026,
+            "y1": 1871,
+            "x2": 1104,
+            "y2": 1901,
+            "text": "OII",
+            "text_entropy": 0.5615234375
+          },
+          {
+            "id": 75,
+            "x1": 1028,
+            "y1": 2130,
+            "x2": 1107,
+            "y2": 2160,
+            "text": "04I",
+            "text_entropy": 0.35302734375
+          },
+          {
+            "id": 76,
+            "x1": 1469,
+            "y1": 347,
+            "x2": 1483,
+            "y2": 379,
+            "text": "*",
+            "text_entropy": 0.483642578125
+          },
+          {
+            "id": 77,
+            "x1": 1487,
+            "y1": 347,
+            "x2": 1535,
+            "y2": 379,
+            "text": "000",
+            "text_entropy": 0.483642578125
+          },
+          {
+            "id": 78,
+            "x1": 1028,
+            "y1": 1943,
+            "x2": 1060,
+            "y2": 1972,
+            "text": "O1",
+            "text_entropy": 0.57177734375
+          },
+          {
+            "id": 79,
+            "x1": 1064,
+            "y1": 1943,
+            "x2": 1096,
+            "y2": 1972,
+            "text": "sI",
+            "text_entropy": 0.57177734375
+          },
+          {
+            "id": 80,
+            "x1": 1026,
+            "y1": 2092,
+            "x2": 1107,
+            "y2": 2122,
+            "text": "021",
+            "text_entropy": 0.460693359375
+          },
+          {
+            "id": 81,
+            "x1": 1026,
+            "y1": 2168,
+            "x2": 1107,
+            "y2": 2198,
+            "text": "COI",
+            "text_entropy": 0.5009765625
+          },
+          {
+            "id": 82,
+            "x1": 764,
+            "y1": 183,
+            "x2": 870,
+            "y2": 220,
+            "text": "nonwO",
+            "text_entropy": 0.47412109375
+          },
+          {
+            "id": 83,
+            "x1": 1474,
+            "y1": 984,
+            "x2": 1547,
+            "y2": 1011,
+            "text": "Lada",
+            "text_entropy": 0.424072265625
+          },
+          {
+            "id": 84,
+            "x1": 1195,
+            "y1": 115,
+            "x2": 1249,
+            "y2": 156,
+            "text": "2e",
+            "text_entropy": 0.53857421875
+          },
+          {
+            "id": 85,
+            "x1": 1255,
+            "y1": 115,
+            "x2": 1279,
+            "y2": 156,
+            "text": "=",
+            "text_entropy": 0.53857421875
+          },
+          {
+            "id": 86,
+            "x1": 1285,
+            "y1": 115,
+            "x2": 1303,
+            "y2": 156,
+            "text": "8",
+            "text_entropy": 0.53857421875
+          },
+          {
+            "id": 87,
+            "x1": 268,
+            "y1": 378,
+            "x2": 369,
+            "y2": 413,
+            "text": "a8I",
+            "text_entropy": 0.62646484375
+          },
+          {
+            "id": 88,
+            "x1": 241,
+            "y1": 492,
+            "x2": 342,
+            "y2": 527,
+            "text": "E0",
+            "text_entropy": 0.6171875
+          },
+          {
+            "id": 89,
+            "x1": 1024,
+            "y1": 1981,
+            "x2": 1107,
+            "y2": 2010,
+            "text": "CSSI",
+            "text_entropy": 0.5927734375
+          },
+          {
+            "id": 90,
+            "x1": 1353,
+            "y1": 2206,
+            "x2": 1437,
+            "y2": 2236,
+            "text": "Seer",
+            "text_entropy": 0.43115234375
+          },
+          {
+            "id": 91,
+            "x1": 1471,
+            "y1": 946,
+            "x2": 1547,
+            "y2": 973,
+            "text": "or1E",
+            "text_entropy": 0.576171875
+          },
+          {
+            "id": 92,
+            "x1": 1028,
+            "y1": 1833,
+            "x2": 1104,
+            "y2": 1861,
+            "text": "0301",
+            "text_entropy": 0.537109375
+          },
+          {
+            "id": 93,
+            "x1": 1468,
+            "y1": 2171,
+            "x2": 1544,
+            "y2": 2198,
+            "text": "OCTFJ",
+            "text_entropy": 0.59228515625
+          },
+          {
+            "id": 94,
+            "x1": 1182,
+            "y1": 684,
+            "x2": 1278,
+            "y2": 716,
+            "text": "TxG",
+            "text_entropy": 0.5673828125
+          },
+          {
+            "id": 95,
+            "x1": 1468,
+            "y1": 1095,
+            "x2": 1547,
+            "y2": 1122,
+            "text": "orE",
+            "text_entropy": 0.68408203125
+          },
+          {
+            "id": 96,
+            "x1": 1471,
+            "y1": 1245,
+            "x2": 1549,
+            "y2": 1272,
+            "text": "oniI",
+            "text_entropy": 0.64013671875
+          },
+          {
+            "id": 97,
+            "x1": 1468,
+            "y1": 1392,
+            "x2": 1547,
+            "y2": 1419,
+            "text": "oef",
+            "text_entropy": 0.59130859375
+          },
+          {
+            "id": 98,
+            "x1": 1468,
+            "y1": 1430,
+            "x2": 1547,
+            "y2": 1457,
+            "text": "0011",
+            "text_entropy": 0.48779296875
+          },
+          {
+            "id": 99,
+            "x1": 1468,
+            "y1": 1503,
+            "x2": 1547,
+            "y2": 1531,
+            "text": "omil",
+            "text_entropy": 0.5380859375
+          },
+          {
+            "id": 100,
+            "x1": 1466,
+            "y1": 1907,
+            "x2": 1544,
+            "y2": 1934,
+            "text": "bnos",
+            "text_entropy": 0.55078125
+          },
+          {
+            "id": 101,
+            "x1": 1033,
+            "y1": 1907,
+            "x2": 1061,
+            "y2": 1934,
+            "text": "O9",
+            "text_entropy": 0.53466796875
+          },
+          {
+            "id": 102,
+            "x1": 1064,
+            "y1": 1907,
+            "x2": 1093,
+            "y2": 1934,
+            "text": "CI",
+            "text_entropy": 0.53466796875
+          },
+          {
+            "id": 103,
+            "x1": 1028,
+            "y1": 2019,
+            "x2": 1107,
+            "y2": 2046,
+            "text": "CE",
+            "text_entropy": 0.63916015625
+          },
+          {
+            "id": 104,
+            "x1": 1468,
+            "y1": 2057,
+            "x2": 1547,
+            "y2": 2084,
+            "text": "ocil",
+            "text_entropy": 0.3837890625
+          },
+          {
+            "id": 105,
+            "x1": 1033,
+            "y1": 2206,
+            "x2": 1072,
+            "y2": 2233,
+            "text": "00",
+            "text_entropy": 0.568359375
+          },
+          {
+            "id": 106,
+            "x1": 1078,
+            "y1": 2206,
+            "x2": 1096,
+            "y2": 2233,
+            "text": "[",
+            "text_entropy": 0.568359375
+          },
+          {
+            "id": 107,
+            "x1": 887,
+            "y1": 179,
+            "x2": 938,
+            "y2": 216,
+            "text": "no2",
+            "text_entropy": 0.40869140625
+          },
+          {
+            "id": 108,
+            "x1": 940,
+            "y1": 179,
+            "x2": 976,
+            "y2": 216,
+            "text": "sM",
+            "text_entropy": 0.40869140625
+          },
+          {
+            "id": 109,
+            "x1": 1473,
+            "y1": 872,
+            "x2": 1547,
+            "y2": 897,
+            "text": "Iioa",
+            "text_entropy": 0.37890625
+          },
+          {
+            "id": 110,
+            "x1": 1468,
+            "y1": 2133,
+            "x2": 1542,
+            "y2": 2157,
+            "text": "bree",
+            "text_entropy": 0.2391357421875
+          },
+          {
+            "id": 111,
+            "x1": 1468,
+            "y1": 1019,
+            "x2": 1549,
+            "y2": 1046,
+            "text": "oulI",
+            "text_entropy": 0.544921875
+          },
+          {
+            "id": 112,
+            "x1": 1466,
+            "y1": 1613,
+            "x2": 1547,
+            "y2": 1640,
+            "text": "onII",
+            "text_entropy": 0.5126953125
+          },
+          {
+            "id": 113,
+            "x1": 1465,
+            "y1": 1760,
+            "x2": 1499,
+            "y2": 1785,
+            "text": "or",
+            "text_entropy": 0.501953125
+          },
+          {
+            "id": 114,
+            "x1": 1501,
+            "y1": 1758,
+            "x2": 1520,
+            "y2": 1784,
+            "text": "/",
+            "text_entropy": 0.501953125
+          },
+          {
+            "id": 115,
+            "x1": 1522,
+            "y1": 1757,
+            "x2": 1535,
+            "y2": 1783,
+            "text": "T",
+            "text_entropy": 0.501953125
+          },
+          {
+            "id": 116,
+            "x1": 1346,
+            "y1": 2280,
+            "x2": 1437,
+            "y2": 2309,
+            "text": "LATO2",
+            "text_entropy": 0.67578125
+          },
+          {
+            "id": 117,
+            "x1": 1449,
+            "y1": 2092,
+            "x2": 1542,
+            "y2": 2122,
+            "text": "ofade",
+            "text_entropy": 0.1875
+          },
+          {
+            "id": 118,
+            "x1": 1249,
+            "y1": 1207,
+            "x2": 1264,
+            "y2": 1234,
+            "text": "-",
+            "text_entropy": 0.447509765625
+          },
+          {
+            "id": 119,
+            "x1": 1267,
+            "y1": 1207,
+            "x2": 1299,
+            "y2": 1234,
+            "text": "oo",
+            "text_entropy": 0.447509765625
+          },
+          {
+            "id": 120,
+            "x1": 1466,
+            "y1": 1577,
+            "x2": 1542,
+            "y2": 1602,
+            "text": "bnse",
+            "text_entropy": 0.450439453125
+          },
+          {
+            "id": 121,
+            "x1": 1468,
+            "y1": 1983,
+            "x2": 1544,
+            "y2": 2008,
+            "text": "oai!",
+            "text_entropy": 0.5283203125
+          },
+          {
+            "id": 122,
+            "x1": 278,
+            "y1": 419,
+            "x2": 371,
+            "y2": 448,
+            "text": "oln",
+            "text_entropy": 0.65625
+          },
+          {
+            "id": 123,
+            "x1": 850,
+            "y1": 506,
+            "x2": 936,
+            "y2": 534,
+            "text": "JRW.",
+            "text_entropy": 0.310546875
+          },
+          {
+            "id": 124,
+            "x1": 967,
+            "y1": 563,
+            "x2": 1112,
+            "y2": 605,
+            "text": "seere",
+            "text_entropy": 0.53857421875
+          },
+          {
+            "id": 125,
+            "x1": 1356,
+            "y1": 421,
+            "x2": 1461,
+            "y2": 448,
+            "text": "OPIIG",
+            "text_entropy": 0.51806640625
+          },
+          {
+            "id": 126,
+            "x1": 686,
+            "y1": 525,
+            "x2": 711,
+            "y2": 536,
+            "text": "am",
+            "text_entropy": 0.6044921875
+          },
+          {
+            "id": 127,
+            "x1": 628,
+            "y1": 563,
+            "x2": 789,
+            "y2": 612,
+            "text": "OOSaG",
+            "text_entropy": 0.59765625
+          },
+          {
+            "id": 128,
+            "x1": 1468,
+            "y1": 1171,
+            "x2": 1549,
+            "y2": 1196,
+            "text": "oit",
+            "text_entropy": 0.52880859375
+          },
+          {
+            "id": 129,
+            "x1": 1468,
+            "y1": 1321,
+            "x2": 1549,
+            "y2": 1346,
+            "text": "o1I",
+            "text_entropy": 0.52978515625
+          },
+          {
+            "id": 130,
+            "x1": 1454,
+            "y1": 1133,
+            "x2": 1544,
+            "y2": 1160,
+            "text": "olorie",
+            "text_entropy": 0.283935546875
+          },
+          {
+            "id": 131,
+            "x1": 1226,
+            "y1": 2280,
+            "x2": 1329,
+            "y2": 2309,
+            "text": "HTT",
+            "text_entropy": 0.60595703125
+          },
+          {
+            "id": 132,
+            "x1": 427,
+            "y1": 459,
+            "x2": 532,
+            "y2": 489,
+            "text": "asoA",
+            "text_entropy": 0.6435546875
+          },
+          {
+            "id": 133,
+            "x1": 1454,
+            "y1": 1057,
+            "x2": 1547,
+            "y2": 1084,
+            "text": "efsde",
+            "text_entropy": 0.4306640625
+          },
+          {
+            "id": 134,
+            "x1": 1339,
+            "y1": 1057,
+            "x2": 1444,
+            "y2": 1087,
+            "text": "zbrra",
+            "text_entropy": 0.5869140625
+          },
+          {
+            "id": 135,
+            "x1": 1361,
+            "y1": 1245,
+            "x2": 1454,
+            "y2": 1272,
+            "text": "vbnse",
+            "text_entropy": 0.4697265625
+          },
+          {
+            "id": 136,
+            "x1": 1451,
+            "y1": 1283,
+            "x2": 1544,
+            "y2": 1310,
+            "text": "oeds",
+            "text_entropy": 0.5712890625
+          },
+          {
+            "id": 137,
+            "x1": 1449,
+            "y1": 1465,
+            "x2": 1542,
+            "y2": 1493,
+            "text": "ofada",
+            "text_entropy": 0.291748046875
+          },
+          {
+            "id": 138,
+            "x1": 1449,
+            "y1": 1722,
+            "x2": 1542,
+            "y2": 1749,
+            "text": "olede",
+            "text_entropy": 0.396484375
+          },
+          {
+            "id": 139,
+            "x1": 1449,
+            "y1": 1871,
+            "x2": 1542,
+            "y2": 1899,
+            "text": "vbrse",
+            "text_entropy": 0.55419921875
+          },
+          {
+            "id": 140,
+            "x1": 1339,
+            "y1": 1871,
+            "x2": 1432,
+            "y2": 1899,
+            "text": "oforle",
+            "text_entropy": 0.358642578125
+          },
+          {
+            "id": 141,
+            "x1": 1449,
+            "y1": 1945,
+            "x2": 1542,
+            "y2": 1972,
+            "text": "oEarla",
+            "text_entropy": 0.326904296875
+          },
+          {
+            "id": 142,
+            "x1": 1449,
+            "y1": 2019,
+            "x2": 1542,
+            "y2": 2046,
+            "text": "ofade",
+            "text_entropy": 0.318359375
+          },
+          {
+            "id": 143,
+            "x1": 1451,
+            "y1": 2206,
+            "x2": 1544,
+            "y2": 2233,
+            "text": "ofede",
+            "text_entropy": 0.306396484375
+          },
+          {
+            "id": 144,
+            "x1": 427,
+            "y1": 343,
+            "x2": 542,
+            "y2": 374,
+            "text": "T02",
+            "text_entropy": 0.5673828125
+          },
+          {
+            "id": 145,
+            "x1": 1031,
+            "y1": 684,
+            "x2": 1168,
+            "y2": 721,
+            "text": "eIdepl",
+            "text_entropy": 0.399658203125
+          },
+          {
+            "id": 146,
+            "x1": 1451,
+            "y1": 1207,
+            "x2": 1547,
+            "y2": 1234,
+            "text": "efeda",
+            "text_entropy": 0.315673828125
+          },
+          {
+            "id": 147,
+            "x1": 1451,
+            "y1": 1356,
+            "x2": 1547,
+            "y2": 1384,
+            "text": "oEane",
+            "text_entropy": 0.14990234375
+          },
+          {
+            "id": 148,
+            "x1": 1451,
+            "y1": 1537,
+            "x2": 1547,
+            "y2": 1564,
+            "text": "ofnde",
+            "text_entropy": 0.144287109375
+          },
+          {
+            "id": 149,
+            "x1": 613,
+            "y1": 459,
+            "x2": 730,
+            "y2": 491,
+            "text": ".odnt",
+            "text_entropy": 0.5810546875
+          },
+          {
+            "id": 150,
+            "x1": 1412,
+            "y1": 2351,
+            "x2": 1544,
+            "y2": 2385,
+            "text": "dEE88",
+            "text_entropy": 0.6240234375
+          },
+          {
+            "id": 151,
+            "x1": 1229,
+            "y1": 1833,
+            "x2": 1327,
+            "y2": 1861,
+            "text": "olwrie",
+            "text_entropy": 0.499267578125
+          },
+          {
+            "id": 152,
+            "x1": 278,
+            "y1": 570,
+            "x2": 449,
+            "y2": 612,
+            "text": "oon.",
+            "text_entropy": 0.69189453125
+          },
+          {
+            "id": 153,
+            "x1": 1449,
+            "y1": 1651,
+            "x2": 1472,
+            "y2": 1676,
+            "text": "o",
+            "text_entropy": 0.5615234375
+          },
+          {
+            "id": 154,
+            "x1": 1474,
+            "y1": 1651,
+            "x2": 1532,
+            "y2": 1676,
+            "text": "Eara",
+            "text_entropy": 0.5615234375
+          },
+          {
+            "id": 155,
+            "x1": 1449,
+            "y1": 1798,
+            "x2": 1542,
+            "y2": 1823,
+            "text": "oisre",
+            "text_entropy": 0.52880859375
+          },
+          {
+            "id": 156,
+            "x1": 1302,
+            "y1": 1427,
+            "x2": 1419,
+            "y2": 1457,
+            "text": "alfode",
+            "text_entropy": 0.29345703125
+          },
+          {
+            "id": 157,
+            "x1": 1283,
+            "y1": 1648,
+            "x2": 1400,
+            "y2": 1678,
+            "text": "afforla",
+            "text_entropy": 0.36181640625
+          },
+          {
+            "id": 158,
+            "x1": 1361,
+            "y1": 682,
+            "x2": 1481,
+            "y2": 712,
+            "text": "CE000",
+            "text_entropy": 0.40283203125
+          },
+          {
+            "id": 159,
+            "x1": 1339,
+            "y1": 908,
+            "x2": 1459,
+            "y2": 937,
+            "text": "tolfor",
+            "text_entropy": 0.466552734375
+          },
+          {
+            "id": 160,
+            "x1": 598,
+            "y1": 110,
+            "x2": 811,
+            "y2": 159,
+            "text": "BJIV932",
+            "text_entropy": 0.470458984375
+          },
+          {
+            "id": 161,
+            "x1": 1647,
+            "y1": 504,
+            "x2": 1754,
+            "y2": 531,
+            "text": "AC22",
+            "text_entropy": 0.53857421875
+          },
+          {
+            "id": 162,
+            "x1": 1356,
+            "y1": 1577,
+            "x2": 1454,
+            "y2": 1602,
+            "text": "sodat",
+            "text_entropy": 0.4111328125
+          },
+          {
+            "id": 163,
+            "x1": 1356,
+            "y1": 2133,
+            "x2": 1454,
+            "y2": 2157,
+            "text": "sod",
+            "text_entropy": 0.69970703125
+          },
+          {
+            "id": 164,
+            "x1": 1622,
+            "y1": 426,
+            "x2": 1757,
+            "y2": 458,
+            "text": "Y4U0D",
+            "text_entropy": 0.5107421875
+          },
+          {
+            "id": 165,
+            "x1": 982,
+            "y1": 115,
+            "x2": 1170,
+            "y2": 156,
+            "text": "WOZAM",
+            "text_entropy": 0.34716796875
+          },
+          {
+            "id": 166,
+            "x1": 728,
+            "y1": 224,
+            "x2": 894,
+            "y2": 261,
+            "text": "equlcbsue",
+            "text_entropy": 0.51806640625
+          },
+          {
+            "id": 167,
+            "x1": 698,
+            "y1": 307,
+            "x2": 830,
+            "y2": 337,
+            "text": "TADCII.",
+            "text_entropy": 0.468505859375
+          },
+          {
+            "id": 168,
+            "x1": 1334,
+            "y1": 1907,
+            "x2": 1451,
+            "y2": 1934,
+            "text": "Hozforzd",
+            "text_entropy": 0.75537109375
+          },
+          {
+            "id": 169,
+            "x1": 1283,
+            "y1": 1133,
+            "x2": 1402,
+            "y2": 1160,
+            "text": "eCode",
+            "text_entropy": 0.63037109375
+          },
+          {
+            "id": 170,
+            "x1": 1280,
+            "y1": 1534,
+            "x2": 1400,
+            "y2": 1562,
+            "text": "eifors",
+            "text_entropy": 0.273681640625
+          },
+          {
+            "id": 171,
+            "x1": 799,
+            "y1": 2360,
+            "x2": 909,
+            "y2": 2385,
+            "text": "OIBIV",
+            "text_entropy": 0.51220703125
+          },
+          {
+            "id": 172,
+            "x1": 1595,
+            "y1": 352,
+            "x2": 1757,
+            "y2": 384,
+            "text": "YMAMOO",
+            "text_entropy": 0.52978515625
+          },
+          {
+            "id": 173,
+            "x1": 471,
+            "y1": 376,
+            "x2": 659,
+            "y2": 415,
+            "text": "AYEES..0",
+            "text_entropy": 0.533203125
+          },
+          {
+            "id": 174,
+            "x1": 546,
+            "y1": 417,
+            "x2": 594,
+            "y2": 452,
+            "text": ",43",
+            "text_entropy": 0.53564453125
+          },
+          {
+            "id": 175,
+            "x1": 601,
+            "y1": 417,
+            "x2": 614,
+            "y2": 453,
+            "text": "-",
+            "text_entropy": 0.53564453125
+          },
+          {
+            "id": 176,
+            "x1": 616,
+            "y1": 418,
+            "x2": 679,
+            "y2": 454,
+            "text": "032",
+            "text_entropy": 0.53564453125
+          },
+          {
+            "id": 177,
+            "x1": 691,
+            "y1": 420,
+            "x2": 714,
+            "y2": 455,
+            "text": "0",
+            "text_entropy": 0.53564453125
+          },
+          {
+            "id": 178,
+            "x1": 628,
+            "y1": 2360,
+            "x2": 750,
+            "y2": 2385,
+            "text": "CAOJAR",
+            "text_entropy": 0.712890625
+          },
+          {
+            "id": 179,
+            "x1": 733,
+            "y1": 352,
+            "x2": 899,
+            "y2": 384,
+            "text": "WOITAO01",
+            "text_entropy": 0.376953125
+          },
+          {
+            "id": 180,
+            "x1": 395,
+            "y1": 504,
+            "x2": 564,
+            "y2": 536,
+            "text": "HOTAG39",
+            "text_entropy": 0.431396484375
+          },
+          {
+            "id": 181,
+            "x1": 1126,
+            "y1": 578,
+            "x2": 1300,
+            "y2": 610,
+            "text": "0513JSMOO",
+            "text_entropy": 0.398681640625
+          },
+          {
+            "id": 182,
+            "x1": 906,
+            "y1": 226,
+            "x2": 988,
+            "y2": 262,
+            "text": "1001",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 183,
+            "x1": 990,
+            "y1": 225,
+            "x2": 999,
+            "y2": 261,
+            "text": "-",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 184,
+            "x1": 1001,
+            "y1": 224,
+            "x2": 1018,
+            "y2": 261,
+            "text": "-",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 185,
+            "x1": 1020,
+            "y1": 224,
+            "x2": 1040,
+            "y2": 261,
+            "text": "4",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 186,
+            "x1": 1042,
+            "y1": 224,
+            "x2": 1059,
+            "y2": 260,
+            "text": "(",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 187,
+            "x1": 1061,
+            "y1": 223,
+            "x2": 1098,
+            "y2": 259,
+            "text": "89",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 188,
+            "x1": 1100,
+            "y1": 222,
+            "x2": 1109,
+            "y2": 259,
+            "text": "-",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 189,
+            "x1": 1111,
+            "y1": 222,
+            "x2": 1128,
+            "y2": 259,
+            "text": "0",
+            "text_entropy": 0.490966796875
+          },
+          {
+            "id": 190,
+            "x1": 1141,
+            "y1": 2353,
+            "x2": 1356,
+            "y2": 2385,
+            "text": "SO",
+            "text_entropy": 0.61669921875
+          },
+          {
+            "id": 191,
+            "x1": 469,
+            "y1": 2360,
+            "x2": 623,
+            "y2": 2388,
+            "text": "AgEINMO",
+            "text_entropy": 0.60888671875
+          },
+          {
+            "id": 192,
+            "x1": 1407,
+            "y1": 559,
+            "x2": 1752,
+            "y2": 614,
+            "text": "selosMMOO",
+            "text_entropy": 0.60791015625
+          },
+          {
+            "id": 193,
+            "x1": 1341,
+            "y1": 1833,
+            "x2": 1460,
+            "y2": 1861,
+            "text": "eLiode",
+            "text_entropy": 0.62451171875
+          },
+          {
+            "id": 194,
+            "x1": 1463,
+            "y1": 1833,
+            "x2": 1534,
+            "y2": 1861,
+            "text": "ortl",
+            "text_entropy": 0.62451171875
+          }
+        ],
+        "fulltext": "BJIV932 60 WOZAM 2e = 8\nnonwO no2 sM caod .21M\n1 equlcbsue 1001 - - 4 ( 89 - 0 enons\n* esxel HaJA\nTADCII.\n3 . a8I * S 8, ,0 T02 AYEES..0 00 YS D83 90 WOITAO01\nUP\n* 000\n2\nYMAMOO\noln 18 Bes\n,43 - 032 0\nOPIIG OTA9\nY4U0D\nasoA OSS .odnt\nE0\nI\nam\nXA O BAH0\nHOTAG39\nO4 JRW.\nAC22\nselosMMOO\nOOSaG JATOT\nseere 0513JSMOO\noon. . .\nCE000 020\neIdepl TxG\n103\n4 \\ c or\nO\nBL\nSC\nIioa\ntolfor vsio\nor1E\n0 Lada\noulI\nC\nOEZ\nCMS\n008\n00\n04\nO1\n24\nBc\nOF\nS3H\nOIC\nC8c\ncec\n040\nSTO\n230\n033\n226\nOIC\n810\n801\n0301\nOII\nO9 CI\nO1 sI\nCSSI\nCE\nzbrra efsde\norE\nolorie\noit\nefeda\neCode\n- oo\n6o7\nvbnse oniI\noeds\no1I\noEane\noef\n0011\nofada\nomil\nalfode\neifors .5 ofnde\nsodat bnse\nonII\nafforla 5 o Eara\nEaop\nolede\nor / T\noisre\nolwrie eLiode ortl\noforle vbrse\nHozforzd bnos\noEarla\noai!\nofade\nocil\nofade\n021\n04I\nCOI\n00 [\nsod bree\nOCTFJ\nSeer ofede\nHTT LATO2\ndEE88\nSO\nAgEINMO CAOJAR 19 OIBIV ZAE 0 %\nJto"
+      }
+    ]
+  }
+}
