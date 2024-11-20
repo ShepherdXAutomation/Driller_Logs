@@ -6,6 +6,12 @@
     <title>SER Driller Log Data Search</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
         .type--A {
             --line_color: #555555;
             --back_color: #FFFFFF;
@@ -17,6 +23,9 @@
         .type--C {
             --line_color: #00135C;
             --back_color: #DEFFFA;
+        }
+        tr.editing {
+            background-color: #f9f9f9;
         }
         .button {
             position: relative;
@@ -38,6 +47,15 @@
         .delete-button {
             color: #ffffff;
             background-color: #dc3545;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .edit-button {
+            color: #ffffff;
+            background-color: #617fa1;
             border: none;
             padding: 5px 10px;
             border-radius: 5px;
@@ -312,7 +330,15 @@
     max-width: 200px; /* Adjust this value as needed */
     width: 200px;
 }
-
+.edit-mode {
+    display: table-cell; /* Show cells when edit mode is enabled */
+}
+.edit-visible {
+    display: table-cell;
+}
+.edit-hidden {
+        display: none; /* Hide cells by default */
+}
 .materials-cell {
     max-width: 200px !important;
     white-space: nowrap !important;
@@ -376,6 +402,11 @@
             <div class="button__line"></div>
             <span class="button__text">Filter</span>
         </button>
+        <button class="button type--A" id="toggleEditMode" type="button">
+            <div class="button__line"></div>
+            <div class="button__line"></div>
+            <span class="button__text">Edit Mode</span>
+        </button>
 
         <!-- Collapsible Search Form -->
         <div class="collapse" id="searchForm">
@@ -426,7 +457,9 @@
                 </div>
                 <div class="form-group">
                     <label for="materials">Materials:</label>
-                    <input type="text" class="form-control" id="materials" name="materials">
+                    <input type="text" class="form-control" id="materials" name="materials" placeholder="Enter terms separated by commas">
+                    <small>Special terms will be highlighted as you type.</small>
+                    <div id="materialsPreview" style="margin-top: 10px; font-size: 14px; line-height: 1.5;"></div>
                 </div>
                 <button type="submit" class="button type--A">
                     <div class="button__line"></div>
@@ -440,6 +473,7 @@
             <table id="wellTable" class="table table-striped">
                 <thead>
                     <tr>
+                        <th class="edit-hidden">Edit</th>
                         <th>Hyperlink</th>
                         <th>Log Service</th>
                         <th>Company</th>
@@ -453,12 +487,13 @@
                         <th>Well Number</th>
                         <th>Elevation</th>
                         <th>Materials</th>
-                        <th>Delete</th>
+                        <th class="edit-hidden">Delete</th>
                     </tr>
                 </thead>
                 <tbody id="wellTableBody">
                     {% for well in wells %}
                     <tr>
+                        <td class="edit-hidden"><button class="edit-button" data-id="{{ well.id }}">Edit</button></td>
                         <td><a href="{{ url_for('serve_file', file_path=well.hyperlink) }}" target="_blank">Open File</a></td>
                         <td>{{ well.log_service }}</td>
                         <td>{{ well.company }}</td>
@@ -472,7 +507,7 @@
                         <td>{{ well.well_number }}</td>
                         <td>{{ well.elevation }}</td>
                         <td>{{ well.materials }}</td>
-                        <td><button class="delete-button" data-id="{{ well.id }}">Delete</button></td>
+                        <td class="edit-hidden"><button class="delete-button" data-id="{{ well.id }}">Delete</button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -486,7 +521,12 @@
             <button id="nextPage" class="btn btn-primary">Next</button>
         </div>
     </div>
-
+    <div class="results-summary text-center mt-3">
+        <span id="resultsLabel">
+            Showing results {{ start }}-{{ end }} of {{ total_results }} (Page {{ current_page }} of {{ total_pages }})
+        </span>
+    </div>
+    
     <!-- Footer -->
     <div class="footer text-center mt-4">
         <div style="font-size: 9px; color: grey;">Developed with Shepherd Automation LLC</div>
@@ -497,45 +537,241 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        const SPECIAL_KEY_TERMS = [
+            "O SD", "O. SD", "O. STN", "O STN", "SO", "S/O", "SSG", "SSO", "SS/O", 
+            "SG", "SO&G", "SO&W", "SHG O", "SD SO", "O", "OIH", "O&G", "O&GCM", 
+            "OS&W", "OAW", "OO", "OC", "OCM", "OCW", "OC SW", "SC", "OIH", 
+            "G&O", "G&O CM", "G O", "FNT", "FLUO", "ST", "STN", "STRKS", "SPKS", "TR"
+        ];
+    
+        let currentFilters = {}; // To store the active filters
         let currentPage = 1;
+        let totalPages = 1; // Add this to track total pages
         const resultsPerPage = 100;
-
+        let isEditMode = false; // Track global edit mode state
+    
+        // Preprocess materials input (split by commas)
+        function preprocessMaterialsQuery(query) {
+            const terms = query.split(",").map(term => term.trim()); // Split by commas and trim
+            const specialTerms = terms.filter(term => SPECIAL_KEY_TERMS.includes(term.toUpperCase()));
+            const normalTerms = terms.filter(term => !SPECIAL_KEY_TERMS.includes(term.toUpperCase()));
+            return { specialTerms, normalTerms };
+        }
+    
+        function loadPage(page) {
+            console.log(`Loading page ${page}`);
+            currentFilters.page = page; // Add or update the page number in the filters
+    
+            // Preprocess the materials query
+            const materialsQuery = currentFilters.materials || "";
+            const { specialTerms, normalTerms } = preprocessMaterialsQuery(materialsQuery);
+    
+            // Update the filters object to include special terms
+            if (specialTerms.length > 0) {
+                currentFilters.specialMaterials = specialTerms.join(",");
+            }
+            if (normalTerms.length > 0) {
+                currentFilters.materials = normalTerms.join(",");
+            }
+    
+            // Prepare the query string for the GET request
+            const queryString = new URLSearchParams(currentFilters).toString();
+            console.log(`Fetching /data?${queryString}`); // Log the request URL
+    
+            fetch(`/data?${queryString}`, { method: "GET" })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Response received:", data); // Log the response data
+                    displayData(data.results);
+    
+                    // Update total pages
+                    totalPages = data.total_pages;
+    
+                    // Update pagination information
+                    document.getElementById("pageDisplay").textContent = `Page ${data.current_page}`;
+                    document.getElementById("resultsLabel").textContent = `Showing results ${data.start}-${data.end} of ${data.total_results} (Page ${data.current_page} of ${data.total_pages})`;
+    
+                    // Enable/disable buttons based on page boundaries
+                    document.getElementById("prevPage").disabled = data.current_page === 1;
+                    document.getElementById("nextPage").disabled = data.current_page === data.total_pages;
+    
+                    // Sync frontend `currentPage` with backend
+                    currentPage = data.current_page;
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+    
+        document.querySelector("form").addEventListener("submit", (e) => {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(e.target);
+    
+            // Convert form data to an object
+            currentFilters = Object.fromEntries(formData.entries());
+            currentPage = 1; // Reset to page 1 on a new search
+            loadPage(currentPage); // Load the first page with the filters
+        });
+    
         document.addEventListener("DOMContentLoaded", () => {
             loadPage(currentPage);
-
+    
+            // Next page button
             document.getElementById("nextPage").addEventListener("click", () => {
-                currentPage += 1;
-                loadPage(currentPage);
+                if (currentPage < totalPages) {
+                    currentPage += 1;
+                    loadPage(currentPage);
+                }
             });
-
-            document.getElementById("prevPage").addEventListener("click", () => {
+    
+            // Previous page button
+            document.getElementById("prevPage").addEventListener("click", (e) => {
+                e.preventDefault();
                 if (currentPage > 1) {
                     currentPage -= 1;
                     loadPage(currentPage);
                 }
             });
-        });
+            document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("delete-button")) {
+            const row = e.target.closest("tr");
+            const rowId = e.target.dataset.id;
 
-        function loadPage(page) {
-            fetch(`/data?page=${page}&limit=${resultsPerPage}`)
-                .then(response => response.json())
-                .then(data => {
-                    displayData(data.results);
-                    document.getElementById("pageDisplay").textContent = `Page ${page}`;
-                    document.getElementById("prevPage").disabled = page === 1;
-                    document.getElementById("nextPage").disabled = data.results.length < resultsPerPage;
+            // Confirm deletion with the user
+            if (confirm("Are you sure you want to delete this entry?")) {
+                // Send DELETE request to the backend
+                fetch(`/delete_entry/${rowId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                 })
-                .catch(error => console.error('Error:', error));
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (response.ok) {
+                            // Remove the row from the table
+                            row.remove();
+                            console.log("Entry deleted successfully.");
+                        } else {
+                            console.error("Failed to delete entry:", data.message);
+                            alert("Failed to delete entry: " + data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        alert("An error occurred while deleting the entry.");
+                    });
+            }
         }
+    });
+            document.addEventListener("click", (e) => {
+                if (e.target.classList.contains("edit-button")) {
+                    const row = e.target.closest("tr");
+                    toggleRowEdit(row);
+                }
+            });
+    
+            const materialsInput = document.getElementById("materials");
+            const previewContainer = document.getElementById("materialsPreview");
+    
+            materialsInput.addEventListener("input", () => {
+                const inputValue = materialsInput.value;
+                const highlightedText = highlightSpecialTerms(inputValue);
+                previewContainer.innerHTML = highlightedText;
+            });
+            const toggleEditModeButton = document.getElementById("toggleEditMode");
 
+// Fetch all cells in Edit and Delete columns, including headers and data cells.
+            const editCells = document.querySelectorAll("th.edit-hidden, td.edit-hidden");
+
+            toggleEditModeButton.addEventListener("click", () => {
+    const editCells = document.querySelectorAll("th.edit-hidden, td.edit-hidden, th.edit-visible, td.edit-visible");
+    editCells.forEach(cell => {
+        if (cell.classList.contains("edit-hidden")) {
+            cell.classList.remove("edit-hidden");
+            cell.classList.add("edit-visible");
+        } else {
+            cell.classList.remove("edit-visible");
+            cell.classList.add("edit-hidden");
+        }
+    });
+});
+
+    
+    
+        });
+    
+        function highlightSpecialTerms(input) {
+            const terms = input.split(",").map(term => term.trim());
+            const highlightedTerms = terms.map(term => {
+                if (SPECIAL_KEY_TERMS.includes(term.toUpperCase())) {
+                    return `<span class="highlight">${term}</span>`;
+                } else {
+                    return term;
+                }
+            });
+            return highlightedTerms.join(", ");
+        }
+    
+        function toggleRowEdit(row) {
+            const isEditing = row.classList.contains("editing");
+            const editButton = row.querySelector(".edit-button");
+            const cells = row.querySelectorAll("td");
+    
+            if (isEditing) {
+                // Save changes
+                const updatedData = {};
+                cells.forEach((cell, index) => {
+                    if (cell.querySelector("button") || index === 1) return;
+    
+                    if (cell.querySelector("input")) {
+                        const input = cell.querySelector("input");
+                        updatedData[`column${index}`] = input.value;
+                        cell.textContent = input.value;
+                    }
+                });
+    
+                const rowId = editButton.dataset.id;
+                fetch(`/update/${rowId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Data saved successfully.");
+                            editButton.textContent = "Edit";
+                            editButton.classList.remove("btn-success");
+                        } else {
+                            console.error("Failed to save changes.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+    
+                row.classList.remove("editing");
+            } else {
+                // Enable editing
+                cells.forEach((cell, index) => {
+                    if (cell.querySelector("button") || index === 1) return;
+    
+                    const text = cell.textContent.trim();
+                    cell.innerHTML = `<input type="text" value="${text}" class="form-control">`;
+                });
+                row.classList.add("editing");
+    
+                editButton.textContent = "Save";
+                editButton.classList.add("btn-success");
+            }
+        }
+    
         function displayData(wells) {
     const tableBody = document.getElementById("wellTableBody");
     tableBody.innerHTML = "";
-    
+
     wells.forEach(well => {
         const row = document.createElement("tr");
-        
-        // Convert materials to string and truncate
+
         let materialsText = '';
         if (well.materials != null) {
             materialsText = String(well.materials).trim();
@@ -543,10 +779,13 @@
                 materialsText = materialsText.substring(0, 75) + '...';
             }
         }
-        
-        // Build the entire row at once with the truncated materials
+
+        // Construct the correct href for the hyperlink
+        const fileHref = `/serve-file/?file_path=${encodeURIComponent(well.hyperlink)}`;
+
         row.innerHTML = `
-            <td><a href="${well.hyperlink || '#'}" target="_blank">Open File</a></td>
+            <td class="edit-hidden"><button class="edit-button" data-id="${well.id}">Edit</button></td>
+            <td><a href="${fileHref}" target="_blank">Open File</a></td>
             <td>${well.log_service || ''}</td>
             <td>${well.company || ''}</td>
             <td>${well.county || ''}</td>
@@ -559,13 +798,16 @@
             <td>${well.well_number || ''}</td>
             <td>${well.elevation || ''}</td>
             <td class="materials-cell">${materialsText}</td>
-            <td><button class="delete-button" data-id="${well.id}">Delete</button></td>
+            <td class="edit-hidden"><button class="delete-button" data-id="${well.id}">Delete</button></td>
         `;
-        
+
         tableBody.appendChild(row);
     });
 }
 
     </script>
+    
+    
+    
 </body>
 </html>
