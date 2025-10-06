@@ -183,10 +183,20 @@ def remove_blank_pages(input_dir, output_dir, progress_label, progress_bar):
                 blanks.append(f"{file_path} - Page {page_number + 1}")
                 print(f"Page {page_number + 1} marked for removal.")
 
+        # Validate indices before removing pages
         if pages_to_remove:
             print(f"Removing {len(pages_to_remove)} pages.")
-            for page_number in reversed(pages_to_remove):
-                pdf_document.delete_page(page_number)
+            for page_number in sorted(pages_to_remove, reverse=True):
+                # Revalidate the index before deletion
+                try:
+                    # Revalidate the index before deletion
+                    if 0 <= page_number < len(pdf_document):
+                        pdf_document.delete_page(page_number)
+                        print(f"Deleted page {page_number}. Remaining pages: {len(pdf_document)}")
+                    else:
+                        print(f"Invalid page number: {page_number}, skipping.")
+                except IndexError as e:
+                    print(f"Error deleting page {page_number}: {e}")
 
             temp_file_path = os.path.join(output_dir, f"temp_{filename}")
             try:
@@ -251,41 +261,82 @@ def remove_blank_pages2(input_dir, output_dir, progress_label, progress_bar):
                 failed_files.append({'File Path': input_path, 'Error': str(e)})
             continue
 
-        pages_to_remove = []
-
-        for page_number in range(len(pdf_document)):
-            print(f"Checking page {page_number + 1}/{len(pdf_document)}")
-            page = pdf_document[page_number]
-            is_blank = is_blank_page(
-                page,
-                text_threshold=10,
-                image_threshold=1,
-                dark_pixel_ratio_threshold=0.01,
-                dpi=150,
-                adaptive_threshold=False
-            )
-            if is_blank:
-                pages_to_remove.append(page_number)
-                blanks.append(f"{input_path} - Page {page_number + 1}")
-                print(f"Page {page_number + 1} marked for removal.")
-
-        if pages_to_remove:
-            print(f"Removing {len(pages_to_remove)} pages.")
-            for page_number in reversed(pages_to_remove):
-                pdf_document.delete_page(page_number)
-
-        # Save the document (even if no pages were removed)
+        # Safer approach: create a new PDF and insert only non-blank pages.
         try:
-            if len(pdf_document) > 0:
-                pdf_document.save(unique_output_path)
-                print(f"Saved modified PDF to {unique_output_path}")
-            pdf_document.close()
+            new_doc = fitz.open()
         except Exception as e:
-            print(f"Failed to save modified PDF {unique_output_path}: {e}")
+            print(f"Failed to create new PDF document for {input_path}: {e}")
+            pdf_document.close()
             with failed_files_lock:
-                failed_files.append({'File Path': unique_output_path, 'Error': str(e)})
+                failed_files.append({'File Path': input_path, 'Error': str(e)})
             continue
 
+        removed_count = 0
+        for page_number in range(len(pdf_document)):
+            print(f"Checking page {page_number + 1}/{len(pdf_document)}")
+            try:
+                page = pdf_document[page_number]
+            except Exception as e:
+                print(f"Failed to access page {page_number} in {input_path}: {e}")
+                continue
+
+            try:
+                is_blank = is_blank_page(
+                    page,
+                    text_threshold=10,
+                    image_threshold=1,
+                    dark_pixel_ratio_threshold=0.01,
+                    dpi=150,
+                    adaptive_threshold=False
+                )
+            except Exception as e:
+                print(f"Error while checking if page {page_number + 1} is blank: {e}")
+                # Treat as non-blank to avoid accidental deletion when OCR fails
+                is_blank = False
+
+            if is_blank:
+                removed_count += 1
+                blanks.append(f"{input_path} - Page {page_number + 1}")
+                print(f"Page {page_number + 1} marked for removal.")
+            else:
+                # insert a copy of the page into new_doc
+                try:
+                    new_doc.insert_pdf(pdf_document, from_page=page_number, to_page=page_number)
+                except Exception as e:
+                    print(f"Failed to copy page {page_number + 1} to new document: {e}")
+                    # If copy fails, skip that page but continue processing
+
+        # Save new document if it has pages, otherwise save empty indicator or skip saving
+        try:
+            if len(new_doc) > 0:
+                new_doc.save(unique_output_path)
+                print(f"Saved modified PDF to {unique_output_path} (removed {removed_count} pages)")
+            else:
+                # No pages left after removal: save an empty file or skip. We'll create a small PDF with a note page.
+                print(f"All pages removed from {input_path}. Creating placeholder PDF with note.")
+                placeholder = fitz.open()
+                rect = fitz.Rect(0, 0, 612, 792)
+                page = placeholder.new_page(width=rect.width, height=rect.height)
+                page.insert_text((72, 72), f"All pages removed from original file: {os.path.basename(input_path)}\nOriginal file path: {input_path}", fontsize=12)
+                placeholder.save(unique_output_path)
+                placeholder.close()
+                print(f"Saved placeholder PDF to {unique_output_path}")
+            new_doc.close()
+            pdf_document.close()
+        except Exception as e:
+            print(f"Failed to save modified PDF for {input_path}: {e}")
+            with failed_files_lock:
+                failed_files.append({'File Path': input_path, 'Error': str(e)})
+            # ensure documents are closed
+            try:
+                new_doc.close()
+            except:
+                pass
+            try:
+                pdf_document.close()
+            except:
+                pass
+            continue
         progress_label.config(text=f"Processed {idx}/{total_files} files, {len(blanks)} blank pages found and removed")
         progress_bar["value"] = idx
         root.update_idletasks()
@@ -660,6 +711,9 @@ frame.pack()
 
 output_dir_label = tk.Label(frame, text="Output: None")
 output_dir_label.pack(pady=10)
+
+input_dir_label = tk.Label(frame, text="Input: None")
+input_dir_label.pack(pady=10)
 
 # Listbox to display selected folders
 listbox_frame = tk.Frame(frame)

@@ -20,6 +20,7 @@ def search_database(query, column):
     if query:
         sql_query = f"SELECT * FROM wells WHERE {column} LIKE ?"
         cursor.execute(sql_query, ('%' + query + '%',))
+        
     else:
         sql_query = "SELECT * FROM wells LIMIT 1000"
         cursor.execute(sql_query)

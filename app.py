@@ -2,14 +2,26 @@ import os
 import re
 from flask import Flask, render_template, request, send_file, abort, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
+from sqlalchemy import text, or_  # Importing the or_ function for SQLAlchemy filters
 from urllib.parse import unquote
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/ChrisClayton/desktop/Driller_Logs/well_data.db'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/calla/desktop/Driller_Logs/well_data.db'
+
+# Check for an environment variable to use the earlier version of the database
+use_early_version = os.getenv('USE_EARLY_DB', 'false').lower() == 'true'
+
+if use_early_version:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'instance', 'early_versions', 'well_data.db')
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'well_data.db')
+
 db = SQLAlchemy(app)
 
+# Debugging prints to verify environment variable and database path
+print(f"USE_EARLY_DB: {os.getenv('USE_EARLY_DB')}, use_early_version: {use_early_version}")
+print(f"Database path: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
 class Well(db.Model):
     __tablename__ = 'wells'

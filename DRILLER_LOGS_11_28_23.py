@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, Listbox, Scrollbar
 from tkinter.ttk import Progressbar
 import threading
+import time
 
 # Natif API constants
 NATIF_API_BASE_URL = "https://api.natif.ai"
@@ -62,12 +63,14 @@ def check_date(date):
         return date
 
 
-def process_via_natif_api(file_path, workflow, language, include):
+# Updated process_via_natif_api function with retry logic and result retrieval
+def process_via_natif_api(file_path, workflow_id, language, include):
     headers = {"Accept": "application/json", "Authorization": f"ApiKey {API_KEY}"}
     params = {"include": include}
     workflow_config = {"language": language}
-    url = f"{NATIF_API_BASE_URL}/processing/{workflow}?{urllib.parse.urlencode(params, doseq=True)}"
-    
+    url = f"{NATIF_API_BASE_URL}/processing/{workflow_id}?{urllib.parse.urlencode(params, doseq=True)}"
+
+    # Submit the file for processing
     with open(file_path, "rb") as file:
         response = requests.post(
             url,
@@ -75,14 +78,28 @@ def process_via_natif_api(file_path, workflow, language, include):
             data={"parameters": json.dumps(workflow_config)},
             files={"file": file},
         )
-        
         if not response.ok:
-            raise Exception(response.text)
-        while response.status_code == 202:
-            processing_id = response.json()["processing_id"]
-            RESULT_URI = f"{NATIF_API_BASE_URL}/processing/results/{processing_id}?{urllib.parse.urlencode(params)}"
-            response = requests.get(RESULT_URI, headers=headers)
+            raise Exception(f"Error submitting file: {response.text}")
+
+    # Extract processing_id from the response
+    processing_id = response.json().get("processing_id")
+    if not processing_id:
+        raise Exception("No processing_id returned by the API.")
+
+    print(f"File submitted successfully. Processing ID: {processing_id}")
+
+    # Retry logic for long-running workflows
+    while response.status_code == 202:
+        print("Processing in progress. Retrying...")
+        time.sleep(5)  # Wait before retrying
+        result_url = f"{NATIF_API_BASE_URL}/processing/results/{processing_id}"
+        response = requests.get(result_url, headers=headers)
+
+    # Final result retrieval
+    if response.ok:
         return response.json()
+    else:
+        raise Exception(f"Error retrieving results: {response.text}")
 
 def add_folder():
     folder = filedialog.askdirectory(title="Select Input Directory")
@@ -132,7 +149,7 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
         
         for idx, filename in enumerate(pdf_files, 1):
             file_path = os.path.join(folder, filename)
-            workflow = "cb19bee2-32f3-47f1-bd0f-4579d337883d"
+            workflow = "799d451f-b24a-4f3b-b23e-ea78c21d36ed"
             lang = "de"
             include = ["extractions", "ocr"]
 
