@@ -14,7 +14,7 @@ NATIF_API_BASE_URL = "https://api.natif.ai"
 API_KEY = "r5KeXmtDF0Au07Tc3seyRBzrFAH5h2mx"  # TODO: Insert your API key here
 
 class Well:
-    def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, materials, hyperlink):
+    def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink):
         self.file_name = file_name
         self.log_service = log_service
         self.company = company
@@ -27,7 +27,6 @@ class Well:
         self.location = location
         self.well_number = well_number
         self.elevation = elevation
-        self.materials = materials
         self.hyperlink = hyperlink
 
 def extract(field, result):
@@ -128,14 +127,13 @@ def store_in_database(well):
             location TEXT,
             well_number TEXT,
             elevation TEXT,
-            materials TEXT,
             hyperlink TEXT
         )
     ''')
     cursor.execute('''
-        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, materials, hyperlink)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.materials, well.hyperlink))
+        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.hyperlink))
     conn.commit()
     conn.close()
 
@@ -149,7 +147,7 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
         
         for idx, filename in enumerate(pdf_files, 1):
             file_path = os.path.join(folder, filename)
-            workflow = "799d451f-b24a-4f3b-b23e-ea78c21d36ed"
+            workflow = "0f89941a-f867-4444-a981-b571fd98467d"
             lang = "de"
             include = ["extractions", "ocr"]
 
@@ -176,7 +174,6 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
                 location=extract('location', result),
                 well_number=extract('well_number', result),
                 elevation=extract('elevation', result),
-                materials=extract('materials', result),
                 hyperlink=build_hyperlink
             )
             my_well.commenced_date = check_date(my_well.commenced_date)
