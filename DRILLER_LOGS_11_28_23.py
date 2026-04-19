@@ -160,6 +160,9 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
             
             # Print the API response result to the command line
             print(f"API response for {filename}: {json.dumps(result, indent=4)}")
+            # Debug: show extracted materials from the result
+            extracted_materials = extract("materials", result)
+            print(f"Extracted materials for {filename}: {extracted_materials!r}")
             
             build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
             
@@ -205,10 +208,16 @@ def start_process():
 
 # Function to add all child folders in the selected directory
 def add_child_folders():
-    parent_folder = filedialog.askdirectory(title="Select Parent Directory")
-    if parent_folder:
-        for root_dir, dirs, files in os.walk(parent_folder):
-            for dir_name in dirs:
+                # Debug: print materials being stored
+                try:
+                    print(f"Inserting to DB — file: {well.file_name}, materials: {well.materials!r}")
+                except Exception:
+                    print("Inserting to DB — file: (unable to print file name or materials)")
+
+                cursor.execute('''
+                    INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink, materials)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.hyperlink, json.dumps(well.materials, indent=4)))
                 folder_path = os.path.join(root_dir, dir_name)
                 input_dirs_listbox.insert(tk.END, folder_path)
 
