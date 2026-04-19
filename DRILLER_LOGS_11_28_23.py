@@ -14,7 +14,7 @@ NATIF_API_BASE_URL = "https://api.natif.ai"
 API_KEY = "r5KeXmtDF0Au07Tc3seyRBzrFAH5h2mx"  # TODO: Insert your API key here
 
 class Well:
-    def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink):
+    def __init__(self, file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink, materials=None):
         self.file_name = file_name
         self.log_service = log_service
         self.company = company
@@ -28,6 +28,7 @@ class Well:
         self.well_number = well_number
         self.elevation = elevation
         self.hyperlink = hyperlink
+        self.materials = materials or []
 
 def extract(field, result):
     """Extract field value handling nested structures like county.county"""
@@ -127,13 +128,14 @@ def store_in_database(well):
             location TEXT,
             well_number TEXT,
             elevation TEXT,
-            hyperlink TEXT
+            hyperlink TEXT,
+            materials TEXT
         )
     ''')
     cursor.execute('''
-        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.hyperlink))
+        INSERT INTO wells (file_name, log_service, company, county, farm, commenced_date, completed_date, total_depth, initial_production, location, well_number, elevation, hyperlink, materials)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (well.file_name, well.log_service, well.company, well.county, well.farm, well.commenced_date, well.completed_date, well.total_depth, well.initial_production, well.location, well.well_number, well.elevation, well.hyperlink, json.dumps(well.materials, indent=4)))
     conn.commit()
     conn.close()
 
@@ -161,6 +163,7 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
             
             build_hyperlink = f'=HYPERLINK("{file_path}", "{filename}")'
             
+            materials = extract("materials", result) or []
             my_well = Well(
                 file_path,
                 log_service=extract("log_service", result),
@@ -174,13 +177,18 @@ def process_files(input_dirs, progress_label, progress_bar, current_file_label):
                 location=extract('location', result),
                 well_number=extract('well_number', result),
                 elevation=extract('elevation', result),
-                hyperlink=build_hyperlink
+                hyperlink=build_hyperlink,
+                materials=materials
             )
             my_well.commenced_date = check_date(my_well.commenced_date)
             my_well.completed_date = check_date(my_well.completed_date)
             
             # Store in the SQL database
             store_in_database(my_well)
+
+            # Make the well available to the GUI and update the results listbox
+            processed_wells.append(my_well)
+            root.after(0, lambda mw=my_well: add_result_to_listbox(mw))
 
             processed_files += 1
             progress_label.config(text=f"Processed {processed_files}/{total_files} files")
@@ -246,5 +254,51 @@ progress_bar.pack(pady=10)
 # Label to display the current file being processed
 current_file_label = tk.Label(frame, text="Current file: None")
 current_file_label.pack(pady=10)
+
+# In-memory list of processed wells for lookup from the GUI
+processed_wells = []
+
+# Results listbox to show processed files and allow opening materials popup
+results_frame = tk.Frame(frame)
+results_frame.pack(pady=5, fill=tk.BOTH, expand=True)
+
+results_listbox = Listbox(results_frame, width=80, height=8)
+results_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+results_scroll = Scrollbar(results_frame, orient=tk.VERTICAL)
+results_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+results_listbox.config(yscrollcommand=results_scroll.set)
+results_scroll.config(command=results_listbox.yview)
+
+def add_result_to_listbox(well):
+    display = f"{os.path.basename(well.file_name)}  —  {well.company or ''}  —  {well.log_service or ''}"
+    results_listbox.insert(tk.END, display)
+
+def on_result_double_click(event):
+    sel = results_listbox.curselection()
+    if not sel:
+        return
+    idx = sel[0]
+    well = processed_wells[idx]
+    show_materials_popup(well.materials)
+
+results_listbox.bind("<Double-1>", on_result_double_click)
+
+# Function to display materials in a pop-up window
+def show_materials_popup(materials):
+    popup = tk.Toplevel()
+    popup.title("Materials Found")
+
+    materials_label = tk.Label(popup, text="Materials Found:", font=("Arial", 14))
+    materials_label.pack(pady=10)
+
+    materials_listbox = Listbox(popup, width=50, height=15)
+    materials_listbox.pack(pady=10)
+
+    for material in materials:
+        materials_listbox.insert(tk.END, material)
+
+    close_button = tk.Button(popup, text="Close", command=popup.destroy)
+    close_button.pack(pady=10)
 
 root.mainloop()

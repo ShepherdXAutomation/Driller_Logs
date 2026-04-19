@@ -506,7 +506,10 @@
                         <td>{{ well.location }}</td>
                         <td>{{ well.well_number }}</td>
                         <td>{{ well.elevation }}</td>
-                        <td>{{ well.materials }}</td>
+                        <td>
+                            <span class="materials-text">{{ well.materials }}</span>
+                            <button class="btn btn-sm btn-info" type="button" onclick='showMaterialsModal({{ well.materials|tojson|safe }})'>View</button>
+                        </td>
                         <td class="edit-hidden"><button class="delete-button" data-id="{{ well.id }}">Delete</button></td>
                     </tr>
                     {% endfor %}
@@ -526,6 +529,26 @@
             Showing results {{ start }}-{{ end }} of {{ total_results }} (Page {{ current_page }} of {{ total_pages }})
         </span>
     </div>
+    
+        <!-- Materials Modal -->
+        <div class="modal fade" id="materialsModal" tabindex="-1" role="dialog" aria-labelledby="materialsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="materialsModalLabel">Materials Found</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="materialsModalBody">
+                        <!-- materials will be injected here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     
     <!-- Footer -->
     <div class="footer text-center mt-4">
@@ -783,6 +806,9 @@
         // Construct the correct href for the hyperlink
         const fileHref = `/serve-file/?file_path=${encodeURIComponent(well.hyperlink)}`;
 
+        // Prepare a safe materials payload for the modal button
+        const materialsPayload = (well.materials === null || well.materials === undefined) ? null : JSON.stringify(well.materials);
+
         row.innerHTML = `
             <td class="edit-hidden"><button class="edit-button" data-id="${well.id}">Edit</button></td>
             <td><a href="${fileHref}" target="_blank">Open File</a></td>
@@ -797,13 +823,55 @@
             <td>${well.location || ''}</td>
             <td>${well.well_number || ''}</td>
             <td>${well.elevation || ''}</td>
-            <td class="materials-cell">${materialsText}</td>
+            <td class="materials-cell">${materialsText} <button class="btn btn-sm btn-info" type="button" onclick='showMaterialsModal(${materialsPayload})'>View</button></td>
             <td class="edit-hidden"><button class="delete-button" data-id="${well.id}">Delete</button></td>
         `;
 
         tableBody.appendChild(row);
     });
 }
+
+    // Show materials in modal. Accepts string, JSON string, or array.
+    function showMaterialsModal(materials) {
+        let items = [];
+        if (!materials) {
+            items = ["No materials found."];
+        } else {
+            try {
+                // Try to parse if materials is a JSON string
+                if (typeof materials === 'string') {
+                    const trimmed = materials.trim();
+                    if ((trimmed.startsWith('[') && trimmed.endsWith(']')) || (trimmed.startsWith('{') && trimmed.endsWith('}'))) {
+                        const parsed = JSON.parse(materials);
+                        if (Array.isArray(parsed)) items = parsed;
+                        else items = [JSON.stringify(parsed)];
+                    } else {
+                        // Fallback: split by commas or newlines
+                        items = materials.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+                    }
+                } else if (Array.isArray(materials)) {
+                    items = materials;
+                } else {
+                    items = [String(materials)];
+                }
+            } catch (e) {
+                items = [String(materials)];
+            }
+        }
+
+        const body = document.getElementById('materialsModalBody');
+        body.innerHTML = '';
+        const ul = document.createElement('ul');
+        ul.className = 'list-group';
+        items.forEach(it => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = it;
+            ul.appendChild(li);
+        });
+        body.appendChild(ul);
+        $('#materialsModal').modal('show');
+    }
 
     </script>
     
